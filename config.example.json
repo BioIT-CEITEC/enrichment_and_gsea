@@ -1,26 +1,29 @@
 {
-  "lib_forward_read_length": 151,
-  "lib_reverse_read_length": 0,
-  "UMI": "Quantseq FWD",
-  "organism": "homsap",
-  "reference": "GRCh38-p10",
-  "lib_ROI": "wgs",
-  "pair": "SE",
-  "perc_mismatch": 0.1,
-  'map_perc': 0.66,
-  'map_score': 0.66,
-  "strandness": "fwd",
-  "max_intron": 1000000,
-  "umi_usage": "markDups",
-  "mark_duplicates":true,
-  "remove_duplicates":true,
-  "keep_not_markDups_bam":false,
-  "samples": {
-    "id4": {
-      "sample_name": "Mut-1"
+  "cutoff_log2fc": 1,
+  "cutoff_padj": 0.05,
+  "enrich_padj": 0.1,
+  "gsea_padj" : 0.1,
+  "organism": "human",
+  "n_up": 15,
+  "n_down": 15,
+  "colors" : {
+    "col_posi": "firebrick",
+    "col_zero": "white",
+    "col_nega": "royalblue"
+  },
+  "de_analysis": "RSEM",
+  "conditions": {
+    "cond1": {
+      "name": "CTRL"
     },
-    "id5": {
-      "sample_name": "Mut-2"
+    "cond2": {
+      "name": "G"
+    },
+    "cond3": {
+      "name": "GI"
+    },
+    "cond4": {
+      "name": "GS"
     }
   }
 }

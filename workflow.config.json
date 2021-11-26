@@ -4,10 +4,10 @@
     "version": 1.0,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
-    "inputs": "mRNA_DE_{de_analysis}/{cond1}_vs_{cond2}/all/DESeq2.tsv",
+    "inputs": "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/all/DESeq2.tsv",
     "outputs": [
-      "mRNA_DE_{de_analysis}/{cond1}_vs_{cond2}/enrichment/*",
-      "mRNA_DE_{de_analysis}/{cond1}_vs_{cond2}/enrichment/logs/*"
+      "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/enrichment/*",
+      "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/enrichment/logs/*"
     ],
     "report_index": "qc_reports/all_samples/alignment_RNA_multiqc/multiqc.html",
     "reports":[
@@ -23,14 +23,47 @@
   ],
   "gui_params": {
     "primary": {
-      "reference": {
-        "label": "Genomic Reference",
+      "organism": {
+        "label": "Organism",
         "type": "enum",
-        "default": ##INCLUDE:reference_info/default_reference.json##,
-        "list": ##INCLUDE:reference_info/reference.json##
+        "default": "human",
+        "list": {
+          "human": "human",
+          "mouse": "mouse"
+        }
       },
-      "RNAseq_type" : {
-        "label": "RNAseq type",
+      "cutoff_log2fc": {
+        "label": "Log2FC cut-off",
+        "type": "float",
+        "default": 1
+      },
+      "cutoff_padj": {
+        "label": "Adjusted p-value cut-off",
+        "type": "float",
+        "default": 0.05
+      },
+      "enrich_padj": {
+        "label": "Enrichment adjusted p-value cut-off",
+        "type": "float",
+        "default": 0.1
+      },
+      "gsea_padj": {
+        "label": "GSEA adjusted p-value cut-off",
+        "type": "float",
+        "default": 0.1
+      },
+      "n_up": {
+        "label": "Number of enriched genes",
+        "type": "int",
+        "default": 15
+      },
+      "n_down": {
+        "label": "Number of enriched genes (down regulated for GSEA)",
+        "type": "int",
+        "default": 15
+      },
+      "colors" : {
+        "label": "Colors",
         "type": "enum",
         "default": "classic_rev",
         "list": {
