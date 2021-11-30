@@ -35,18 +35,18 @@
       },
       "cutoff_padj": {
         "label": "Adjusted p-value cut-off",
-        "type": "float",
-        "default": 0.05
+        "type": "string",
+        "default": "0.05"
       },
       "enrich_padj": {
         "label": "Enrichment adjusted p-value cut-off",
-        "type": "float",
-        "default": 0.1
+        "type": "string",
+        "default": "0.1"
       },
       "gsea_padj": {
         "label": "GSEA adjusted p-value cut-off",
-        "type": "float",
-        "default": 0.1
+        "type": "string",
+        "default": "0.1"
       },
       "n_up": {
         "label": "Number of enriched genes",
@@ -63,7 +63,29 @@
         "type": "enum",
         "default": "red_white_blue",
         "list": {
-          "red_white_blue": "firebrick:white:royalblue"
+          "red_white_blue": "firebrick:white:royalblue",
+          "red_yellow_green": "firebrick3:lemonchiffon:springgreen4",
+          "red_yellow_blue": "firebrick3:lemonchiffon:steelblue",
+          "red_white_grey": "red3:white:gray25",
+          "orange_purple": "darkorange2:gray97:mediumpurple4",
+          "purple_green": "mediumorchid4:gray97:springgreen4",
+          "pink_green": "#D01C8B:gray97:olivedrab",
+          "brown_blue": "sienna:gray96:turquoise4",
+          "custom": "custom colors"
+        }
+      },
+      "custom_colors": {
+        "label": "Custom colors (color +:color 0:color -)",
+        "type": "string",
+        "default": "firebrick:white:royalblue",
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "colors": "custom"
+            }
+          }
         }
       }
     }
