@@ -69,7 +69,7 @@
           "red_white_grey": "red3:white:gray25",
           "orange_purple": "darkorange2:gray97:mediumpurple4",
           "purple_green": "mediumorchid4:gray97:springgreen4",
-          "pink_green": "#D01C8B:gray97:olivedrab",
+          "pink_green": "violetred:gray97:olivedrab",
           "brown_blue": "sienna:gray96:turquoise4",
           "custom": "custom colors"
         }
