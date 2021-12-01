@@ -29,6 +29,21 @@
           "mouse": "mouse"
         }
       },
+      "onthology": {
+        "label": "Run GO enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "kegg": {
+        "label": "Run pathway enrichment - KEGG",
+        "type": "bool",
+        "default": true
+      },
+      "wikipathways": {
+        "label": "Run pathway enrichment - Wiki Pathways",
+        "type": "bool",
+        "default": true
+      },
       "cutoff_log2fc": {
         "label": "Log2FC cut-off",
         "type": "float",
