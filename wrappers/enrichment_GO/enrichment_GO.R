@@ -20,6 +20,11 @@ run_all <- function(args){
   if(!require(organism, character.only = T)) {BiocManager::install(organism, update = F)}
   library(organism, character.only = T)
   database <- get(organism)
+  if(organism == "org.At.tair.db"){
+    KEYID <- "TAIR"
+  }else{
+    KEYID <- "ENSEMBL"
+  }
 
   setwd(WORKDIR)
 
@@ -39,19 +44,19 @@ run_all <- function(args){
   }
 
   ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- select(database, keys=keys(database), columns = c('ENSEMBL','ENTREZID','SYMBOL'))
+  universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
 
-  deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = "ENSEMBL", all.x=T)
+  deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
   egoBP <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe$ENSEMBL,
+                    universe      = universe[,KEYID],
                     OrgDb         = database,
-                    keyType       = "ENSEMBL",
+                    keyType       = KEYID,
                     ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = enrich_padjmethod,
                     pvalueCutoff  = enrich_padj,
-                    readable      = TRUE,
+                    readable      = FALSE,
                     minGSSize     = enrich_minGSSize,
                     maxGSSize     = enrich_maxGSSize)
 
@@ -59,13 +64,13 @@ run_all <- function(args){
   fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
 
   egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe$ENSEMBL,
+                    universe      = universe[,KEYID],
                     OrgDb         = database,
-                    keyType       = "ENSEMBL",
+                    keyType       = KEYID,
                     ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = enrich_padjmethod,
                     pvalueCutoff  = enrich_padj,
-                    readable      = TRUE,
+                    readable      = FALSE,
                     minGSSize     = enrich_minGSSize,
                     maxGSSize     = enrich_maxGSSize)
 
@@ -73,13 +78,13 @@ run_all <- function(args){
   fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/GO_enrich_MF.tsv"), sep="\t")
 
   egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe$ENSEMBL,
+                    universe      = universe[,KEYID],
                     OrgDb         = database,
-                    keyType       = "ENSEMBL",
+                    keyType       = KEYID,
                     ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = enrich_padjmethod,
                     pvalueCutoff  = enrich_padj,
-                    readable      = TRUE,
+                    readable      = FALSE,
                     minGSSize     = enrich_minGSSize,
                     maxGSSize     = enrich_maxGSSize)
 
