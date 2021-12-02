@@ -106,7 +106,7 @@ run_all <- function(args){
 
     filtRes <- head(go.table, n = nUp)
 
-    g = ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
+    g <- ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
       geom_col(fill = mycol) +
       coord_flip() +
       labs(x="", y="Count",
