@@ -1,29 +1,26 @@
 {
-  "cutoff_log2fc": 1,
-  "cutoff_padj": 0.05,
-  "enrich_padj": 0.1,
-  "gsea_padj" : 0.1,
-  "organism": "human",
+  "de_analysis": "RSEM",
+  "condition": ["CTRL", "G", "GI", "GS"],
+  "onthology": true,
+  "organism_go": "org.Hs.eg.db",
+  "kegg": true,
+  "organism_kegg": "hsa",
+  "wikipathways": true,
+  "organism_wp": "Homo sapiens",
+  "cutoff_log2fc": "1",
+  "cutoff_padj": "0.05",
   "n_up": 15,
   "n_down": 15,
-  "colors" : {
-    "col_posi": "firebrick",
-    "col_zero": "white",
-    "col_nega": "royalblue"
-  },
-  "de_analysis": "RSEM",
-  "conditions": {
-    "cond1": {
-      "name": "CTRL"
-    },
-    "cond2": {
-      "name": "G"
-    },
-    "cond3": {
-      "name": "GI"
-    },
-    "cond4": {
-      "name": "GS"
-    }
-  }
+  "colors" : "firebrick:white:royalblue",
+  "enrich_padj": "0.1",
+  "enrich_padjmethod": "BH",
+  "enrich_minGSSize": "2",
+  "enrich_maxGSSize": "Inf",
+  "gsea_padj": "0.1",
+  "gsea_padjmethod": "BH",
+  "gsea_minGSSize": "2",
+  "gsea_maxGSSize": "Inf",
+  "gsea_eps": "0",
+  "gsea_nPermSimple": 10000,
+  "gsea_by": "fgsea"
 }

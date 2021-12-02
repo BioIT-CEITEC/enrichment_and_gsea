@@ -12,23 +12,13 @@
   },
   "general_params": [
     "de_analysis",
-    "condA",
-    "condB"
+    "condition"
   ],
   "requested_params": [
     "is_paired"
   ],
   "gui_params": {
     "primary": {
-      "organism": {
-        "label": "Organism",
-        "type": "enum",
-        "default": "human",
-        "list": {
-          "human": "human",
-          "mouse": "mouse"
-        }
-      },
       "onthology": {
         "label": "Run GO enrichment",
         "type": "bool",
@@ -208,8 +198,8 @@
       },
       "gsea_nPermSimple": {
         "label": "GSEA Number of permutations for preliminary estimation of p-values",
-        "type": "string",
-        "default": "10000"
+        "type": int,
+        "default": 10000
       },
       "gsea_by": {
         "label": "GSEA Number of permutations for preliminary estimation of p-values",

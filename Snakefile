@@ -19,16 +19,23 @@ config["organism"] = [organism_name.lower().replace(" ","_") for organism_name i
 #
 reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
 
-# Samples
+# Conditions
 #
-sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
+def gene_enrichment_input(wildcards):
+  input = {}
+  condition_list = config["conditions"]
+  comparison_dir_list = list()
+  for condition1 in condition_list:
+    if ':' in condition1:
+      conditions = condition1.split(":")
+      comparison_dir_list.append(conditions[0] + "_vs_" + conditions[1])
+    else:
+      for condition2 in condition_list[condition_list.index(condition1):]:
+        if ':' not in condition2 and condition2 != condition1:
+          comparison_dir_list.append(condition2 + "_vs_" + condition1)
+  input['tsv'] = expand("mRNA_DE_{de_analysis}/{comparison}/all/DESeq2.tsv",comparison=comparison_dir_list)
 
-if not config["is_paired"]:
-    read_pair_tags = [""]
-    paired = "SE"
-else:
-    read_pair_tags = ["_R1","_R2"]
-    paired = "PE"
+
 
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name),
@@ -45,4 +52,4 @@ rule all:
 
 ##### Modules #####
 
-include: "rules/alignment_RNA.smk"
+include: "rules/enrichment_GO.smk"
