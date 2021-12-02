@@ -34,15 +34,60 @@
         "type": "bool",
         "default": true
       },
+      "organism_go": {
+        "label": "Organism for GO enrichment",
+        "type": "enum",
+        "default": ##INCLUDE:reference_info/default_enrich_reference.json##,
+        "list": ##INCLUDE:reference_info/GO_reference.json##,
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "onthology": true
+            }
+          }
+        }
+      },
       "kegg": {
         "label": "Run pathway enrichment - KEGG",
         "type": "bool",
         "default": true
       },
+      "organism_kegg": {
+        "label": "Organism for GO enrichment",
+        "type": "enum",
+        "default": ##INCLUDE:reference_info/default_enrich_reference.json##,
+        "list": ##INCLUDE:reference_info/kegg_reference.json##,
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "kegg": true
+            }
+          }
+        }
+      },
       "wikipathways": {
         "label": "Run pathway enrichment - Wiki Pathways",
         "type": "bool",
         "default": true
+      },
+      "organism_wp": {
+        "label": "Organism for GO enrichment",
+        "type": "enum",
+        "default": ##INCLUDE:reference_info/default_enrich_reference.json##,
+        "list": ##INCLUDE:reference_info/wp_reference.json##,
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "wikipathways": true
+            }
+          }
+        }
       },
       "cutoff_log2fc": {
         "label": "Log2FC cut-off",
