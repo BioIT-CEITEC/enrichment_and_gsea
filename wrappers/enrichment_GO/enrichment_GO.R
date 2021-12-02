@@ -131,7 +131,7 @@ run_all <- function(args){
 
   GO_MF_plot <- myEnrichPlot(dtegoMF,
                            nUp = n.up,
-                           GOPADJ = GOPADJ,
+                           GOPADJ = enrich_padj,
                            mycol = COLOR,
                            ploTitle = "GO - Molecular Function")
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.pdf",sep=""),
@@ -143,7 +143,7 @@ run_all <- function(args){
 
   GO_CC_plot <- myEnrichPlot(dtegoCC,
                            nUp = n.up,
-                           GOPADJ = GOPADJ,
+                           GOPADJ = enrich_padj,
                            mycol = COLOR,
                            ploTitle = "GO - Cellular Componenet")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.pdf",sep=""),
