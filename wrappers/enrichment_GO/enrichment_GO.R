@@ -17,6 +17,7 @@ run_all <- function(args){
   library("clusterProfiler")
   library("ggplot2")
 
+  if(!require(organism, character.only = T)) {BiocManager::install(organism, update = F)}
   library(organism, character.only = T)
   database <- get(organism)
 
