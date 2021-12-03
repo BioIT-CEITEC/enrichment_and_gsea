@@ -1,5 +1,5 @@
 #############################################################
-# wrapper for rule: enrichment_GO
+# wrapper for rule: GSEA_GO
 #############################################################
 import os
 from snakemake.shell import shell
@@ -8,7 +8,7 @@ log_filename = str(snakemake.log)
 
 
 f = open(log_filename, 'a+')
-f.write("\n##\n## RULE: enrichment_GO \n##\n")
+f.write("\n##\n## RULE: GSEA_GO \n##\n")
 f.close()
 
 command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_GO.R "+\

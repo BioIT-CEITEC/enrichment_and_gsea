@@ -153,6 +153,8 @@ run_all <- function(args){
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 
+  fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/GO_enrichment_GeneID.tsv"), sep="\t")
+
 }
 
 # run as Rscript
@@ -161,7 +163,7 @@ args <- commandArgs(trailingOnly = T)
 # args <- character(12)
 # args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
 # args[2] <- "DESeq2.tsv" # input_genes
-# args[3] <- "enrichment_GO" # OUTPUT_DIR
+# args[3] <- "clusterProfiler" # OUTPUT_DIR
 # args[4] <- "org.Hs.eg.db" # organism
 # args[5] <- "1" # cutoff_log2fc
 # args[6] <- "0.05" # cutoff_padj

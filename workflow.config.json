@@ -4,18 +4,20 @@
     "version": 1.0,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
-    "inputs": "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/all/DESeq2.tsv",
+    "inputs": "mRNA_DE_{de_analysis}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
-      "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/enrichment/*",
-      "mRNA_DE_{de_analysis}/{condA}_vs_{condB}/enrichment/logs/*"
+      "mRNA_DE_{de_analysis}/{comparison}/enrichment/*",
+      "mRNA_DE_{de_analysis}/{comparison}/enrichment/logs/*"
     ]
   },
   "general_params": [
-    "de_analysis",
+    "sample_name",
     "condition"
   ],
   "requested_params": [
-    "is_paired"
+    "feature_count",
+    "RSEM",
+    "condition"
   ],
   "gui_params": {
     "primary": {
