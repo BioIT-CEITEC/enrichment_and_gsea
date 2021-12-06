@@ -17,7 +17,8 @@
   "requested_params": [
     "feature_count",
     "RSEM",
-    "condition"
+    "condition",
+    "biotypes"
   ],
   "gui_params": {
     "primary": {
