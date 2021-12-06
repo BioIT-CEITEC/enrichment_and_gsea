@@ -18,8 +18,23 @@ f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference.json"),)
 reference_dict = json.load(f)
 f.close()
 #config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
-config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 config["species"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
+reference_GO = json.load(f)
+f.close()
+config["organism_go"] = reference_GO[config["species"]]
+
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"),)
+reference_kegg = json.load(f)
+f.close()
+config["organism_kegg"] = reference_kegg[config["species"]]
+
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"),)
+reference_wp = json.load(f)
+f.close()
+config["organism_wp"] = reference_wp[config["species"]]
 
 ##### Config processing #####
 # Folders

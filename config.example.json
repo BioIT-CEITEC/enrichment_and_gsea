@@ -1,6 +1,9 @@
 {
   "de_analysis": "RSEM",
   "condition": ["CTRL", "G", "GI", "GS"],
+  "reference": "GRCh38-p10",
+  "organism": "homo_sapiens",
+  "species": "Homo sapiens (human)",
   "onthology": true,
   "organism_go": "org.Hs.eg.db",
   "kegg": true,
