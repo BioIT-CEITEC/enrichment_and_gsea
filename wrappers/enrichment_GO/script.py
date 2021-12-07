@@ -12,16 +12,18 @@ f.write("\n##\n## RULE: enrichment_GO \n##\n")
 f.close()
 
 command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_GO.R "+\
-            snakemake.input.cfg_tab+ " " +\
-            snakemake.input.expression_tab+ " " +\
-            os.path.dirname(snakemake.output.table)+ " " +\
-            snakemake.input.sqlite+ " " +\
-            snakemake.input.biotype_groups+ " " +\
-            snakemake.wildcards.comparison+ " " +\
-            snakemake.params.count_type + " " +\
-            snakemake.params.organism + " " +\
-            str(snakemake.params.use_tag_to_pair_samples) + " " +\
-            str(snakemake.params.ref_from_trans_assembly) +\
+            snakemake.params.workdir + " " +\
+            snakemake.input.tsv + " " +\
+            snakemake.params.outdir + " " +\
+            snakemake.params.organism_go + " " +\
+            snakemake.params.cutoff_log2fc + " " +\
+            snakemake.params.cutoff_padj + " " +\
+            snakemake.params.n_up + " " +\
+            snakemake.params.colors + " " +\
+            snakemake.params.enrich_padj + " " +\
+            snakemake.params.enrich_padjmethod + " " +\
+            snakemake.params.enrich_minGSSize + " " +\
+            snakemake.params.enrich_maxGSSize +\
             " >> " + log_filename + " 2>&1 "
 
 f = open(log_filename, 'a+')

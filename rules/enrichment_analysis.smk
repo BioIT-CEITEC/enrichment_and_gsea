@@ -31,8 +31,9 @@ def DE_computation_input(wildcards):
 rule enrichment_GO:
     input: unpack(DE_computation_input)
     output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
-    params: count_type="{analysis_type}",
-            organism = config["organism_go"],
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
+            organism_go = config["organism_go"],
             cutoff_log2fc = config["cutoff_log2fc"],
             cutoff_padj = config["cutoff_padj"],
             n_up = config["n_up"],
@@ -48,12 +49,15 @@ rule enrichment_GO:
 rule GSEA_GO:
     input: unpack(DE_computation_input)
     output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
-    params: count_type="{analysis_type}",
-            organism = config["organism_go"],
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
+            organism_go = config["organism_go"],
+            cutoff_log2fc = config["cutoff_log2fc"],
+            cutoff_padj = config["cutoff_padj"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
-            gsea_padj = config["colors"],
+            gsea_padj = config["gsea_padj"],
             gsea_padjmethod = config["gsea_padjmethod"],
             gsea_minGSSize = config["gsea_minGSSize"],
             gsea_maxGSSize = config["gsea_maxGSSize"],
