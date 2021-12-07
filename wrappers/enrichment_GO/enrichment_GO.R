@@ -3,7 +3,7 @@ run_all <- function(args){
   WORKDIR <- args[1]
   input_genes <- args[2]
   OUTPUT_DIR <- args[3]
-  organism <- args[4]
+  organism_go <- args[4]
   cutoff_log2fc <- as.numeric(args[5])
   cutoff_padj <- as.numeric(args[6])
   n_up <- as.integer(args[7])
@@ -17,10 +17,10 @@ run_all <- function(args){
   library("clusterProfiler")
   library("ggplot2")
 
-  if(!require(organism, character.only = T)) {BiocManager::install(organism, update = F)}
-  library(organism, character.only = T)
-  database <- get(organism)
-  if(organism == "org.At.tair.db"){
+  if(!require(organism_go, character.only = T)) {BiocManager::install(organism_go, update = F)}
+  library(organism_go, character.only = T)
+  database <- get(organism_go)
+  if(organism_go == "org.At.tair.db"){
     KEYID <- "TAIR"
   }else{
     KEYID <- "ENSEMBL"
@@ -162,7 +162,7 @@ args <- commandArgs(trailingOnly = T)
 # args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
 # args[2] <- "DESeq2.tsv" # input_genes
 # args[3] <- "enrichment_GO" # OUTPUT_DIR
-# args[4] <- "org.Hs.eg.db" # organism
+# args[4] <- "org.Hs.eg.db" # organism_go
 # args[5] <- "1" # cutoff_log2fc
 # args[6] <- "0.05" # cutoff_padj
 # args[7] <- 10 # n_up

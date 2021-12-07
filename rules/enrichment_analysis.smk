@@ -67,3 +67,21 @@ rule GSEA_GO:
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_GO.log"
     conda:  "../wrappers/GSEA_GO/env.yaml"
     script: "../wrappers/GSEA_GO/script.py"
+
+rule enrichment_kegg:
+    input: unpack(DE_computation_input)
+    output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_kegg/GO_enrich_CC.png",
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
+            organism_kegg = config["organism_kegg"],
+            cutoff_log2fc = config["cutoff_log2fc"],
+            cutoff_padj = config["cutoff_padj"],
+            n_up = config["n_up"],
+            colors = config["colors"],
+            enrich_padj = config["enrich_padj"],
+            enrich_padjmethod = config["enrich_padjmethod"],
+            enrich_minGSSize = config["enrich_minGSSize"],
+            enrich_maxGSSize = config["enrich_maxGSSize"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_KEGG.log"
+    conda:  "../wrappers/enrichment_KEGG/env.yaml"
+    script: "../wrappers/enrichment_KEGG/script.py"
