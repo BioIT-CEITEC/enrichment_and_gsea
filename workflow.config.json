@@ -11,9 +11,11 @@
       "results/*/{comparison}/GSEA*/*",
       "results/*/{comparison}/GSEA*/logs/*"
     ],
-    "report_index": "results/{comparison}/{biotype}/edgeR.tsv",
+    "report_index": "results/{comparison}/{biotype}/DESeq2.tsv",
     "reports":[
-       "results/*"
+      "results/{comparison}/{biotype}/*/*.pdf",
+      "results/{comparison}/{biotype}/*/*.svg",
+      "results/{comparison}/{biotype}/*/*.png"
     ]
   },
   "general_params": [
