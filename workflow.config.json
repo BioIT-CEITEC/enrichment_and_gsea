@@ -6,8 +6,10 @@
     "type": "gene_enrichment",
     "inputs": "mRNA_DE_{de_analysis}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
-      "mRNA_DE_{de_analysis}/{comparison}/enrichment/*",
-      "mRNA_DE_{de_analysis}/{comparison}/enrichment/logs/*"
+      "mRNA_DE_{de_analysis}/{comparison}/enrichment*/*",
+      "mRNA_DE_{de_analysis}/{comparison}/enrichment*/logs/*",
+      "mRNA_DE_{de_analysis}/{comparison}/GSEA*/*",
+      "mRNA_DE_{de_analysis}/{comparison}/GSEA*/logs/*"
     ]
   },
   "general_params": [
