@@ -10,6 +10,10 @@
       "results/*/{comparison}/enrichment*/logs/*",
       "results/*/{comparison}/GSEA*/*",
       "results/*/{comparison}/GSEA*/logs/*"
+    ],
+    "report_index": "results/{comparison}/{biotype}/edgeR.tsv",
+    "reports":[
+       "results/*"
     ]
   },
   "general_params": [
