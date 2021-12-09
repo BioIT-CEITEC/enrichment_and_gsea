@@ -3,7 +3,7 @@ run_all <- function(args){
   WORKDIR <- args[1]
   input_genes <- args[2]
   OUTPUT_DIR <- args[3]
-  organism_kegg <- args[4]
+  organism_reactome <- args[4]
   cutoff_log2fc <- as.numeric(args[5])
   cutoff_padj <- as.numeric(args[6])
   n_up <- as.integer(args[7])
@@ -16,6 +16,7 @@ run_all <- function(args){
 
   library("data.table")
   library("clusterProfiler")
+  library("ReactomePA")
   library("ggplot2")
 
   if(!require(organism_go, character.only = T)) {BiocManager::install(organism_go, update = F)}
@@ -51,24 +52,23 @@ run_all <- function(args){
 
   fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
-  ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+  ereact <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
                     universe      = universe$ENTREZID,
-                    organism      = organism_kegg,
-                    keyType       = "kegg",
+                    organism      = organism_reactome,
                     pAdjustMethod = enrich_padjmethod,
                     pvalueCutoff  = enrich_padj,
                     minGSSize     = enrich_minGSSize,
                     maxGSSize     = enrich_maxGSSize)
 
-  dtekegg <- as.data.table(ekegg)
-  fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
+  dtereact <- as.data.table(ereact)
+  fwrite(dtereact, file = paste0(OUTPUT_DIR,"/REACTOME_enrich.tsv"), sep="\t")
 
   # Plot enrichment plot
-  myEnrichPlot <- function(go.table = dtekegg,
+  myEnrichPlot <- function(go.table = dtereact,
                          nUp = 10,
                          PADJ = 0.05,
                          mycol = "firebrick",
-                         ploTitle = "KEGG pathways"){
+                         ploTitle = "REACTOME pathways"){
     go.table <- go.table[p.adjust <= PADJ,]
     setorder(go.table, p.adjust)
 
@@ -89,16 +89,16 @@ run_all <- function(args){
     return(g)
     }
 
-  KEGG_plot <- myEnrichPlot(dtekegg,
+  REACTOME_plot <- myEnrichPlot(dtereact,
                              nUp = n_up,
                              PADJ = enrich_padj,
                              mycol = COLORS,
-                             ploTitle = "KEGG pathways")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.pdf",sep=""),
+                             ploTitle = "REACTOME pathways")
+  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.svg",sep=""),
+  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.svg",sep=""),
        width = 10, height = 7, device = svg, bg='transparent')
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.png",sep=""),
+  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 
 }
@@ -110,7 +110,7 @@ args <- commandArgs(trailingOnly = T)
 # args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
 # args[2] <- "DESeq2.tsv" # input_genes
 # args[3] <- "enrichment_KEGG" # OUTPUT_DIR
-# args[4] <- "hsa" # organism_kegg
+# args[4] <- "human" # organism_kegg
 # args[5] <- "1" # cutoff_log2fc
 # args[6] <- "0.05" # cutoff_padj
 # args[7] <- 15 # n_up

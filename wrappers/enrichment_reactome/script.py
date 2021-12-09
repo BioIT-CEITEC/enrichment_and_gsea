@@ -1,5 +1,5 @@
 #############################################################
-# wrapper for rule: enrichment_kegg
+# wrapper for rule: enrichment_reactome
 #############################################################
 import os
 from snakemake.shell import shell
@@ -8,14 +8,14 @@ log_filename = str(snakemake.log)
 
 
 f = open(log_filename, 'a+')
-f.write("\n##\n## RULE: enrichment_kegg \n##\n")
+f.write("\n##\n## RULE: enrichment_reactome \n##\n")
 f.close()
 
 command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_reactome.R " +\
             snakemake.params.workdir + " " +\
             snakemake.input.tsv + " " +\
             snakemake.params.outdir + " " +\
-            snakemake.params.organism_kegg + " " +\
+            snakemake.params.organism_reactome + " " +\
             snakemake.params.cutoff_log2fc + " " +\
             snakemake.params.cutoff_padj + " " +\
             snakemake.params.n_up + " " +\

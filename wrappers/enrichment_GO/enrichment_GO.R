@@ -94,10 +94,10 @@ run_all <- function(args){
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtegoBP,
                          nUp = 10,
-                         GOPADJ = 0.05,
+                         PADJ = 0.05,
                          mycol = "firebrick",
                          ploTitle = "GO - Biological Processes"){
-    go.table <- go.table[p.adjust <= GOPADJ,]
+    go.table <- go.table[p.adjust <= PADJ,]
     setorder(go.table, p.adjust)
 
     nUp <- ifelse(nUp < 0, 10, nUp)
@@ -119,7 +119,7 @@ run_all <- function(args){
 
   GO_BP_plot <- myEnrichPlot(dtegoBP,
                              nUp = n_up,
-                             GOPADJ = enrich_padj,
+                             PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "GO - Biological Process")
   ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.pdf",sep=""),
@@ -131,7 +131,7 @@ run_all <- function(args){
 
   GO_MF_plot <- myEnrichPlot(dtegoMF,
                            nUp = n_up,
-                           GOPADJ = enrich_padj,
+                           PADJ = enrich_padj,
                            mycol = COLORS,
                            ploTitle = "GO - Molecular Function")
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.pdf",sep=""),
@@ -143,7 +143,7 @@ run_all <- function(args){
 
   GO_CC_plot <- myEnrichPlot(dtegoCC,
                            nUp = n_up,
-                           GOPADJ = enrich_padj,
+                           PADJ = enrich_padj,
                            mycol = COLORS,
                            ploTitle = "GO - Cellular Componenet")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.pdf",sep=""),

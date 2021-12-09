@@ -109,3 +109,22 @@ rule GSEA_kegg:
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_KEGG.log"
     conda:  "../wrappers/GSEA_kegg/env.yaml"
     script: "../wrappers/GSEA_kegg/script.py"
+
+rule enrichment_reactome:
+    input: unpack(DE_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_reactome/REACTOME_enrich.png",
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_reactome",
+            organism_kegg = config["organism_reactome"],
+            cutoff_log2fc = config["cutoff_log2fc"],
+            cutoff_padj = config["cutoff_padj"],
+            n_up = config["n_up"],
+            colors = config["colors"],
+            enrich_padj = config["enrich_padj"],
+            enrich_padjmethod = config["enrich_padjmethod"],
+            enrich_minGSSize = config["enrich_minGSSize"],
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            organism_go = config["organism_go"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_REACTOME.log"
+    conda:  "../wrappers/enrichment_REACTOME/env.yaml"
+    script: "../wrappers/enrichment_REACTOME/script.py"
