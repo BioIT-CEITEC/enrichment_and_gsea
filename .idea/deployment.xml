@@ -5,14 +5,14 @@
       <paths name="245957@147.251.158.118:15888">
         <serverdata>
           <mappings>
-            <mapping deploy="enrichment-and-gsea" local="$PROJECT_DIR$" web="" />
+            <mapping deploy="enrichment_and_gsea" local="$PROJECT_DIR$" web="" />
           </mappings>
         </serverdata>
       </paths>
       <paths name="Vojta Bioroot">
         <serverdata>
           <mappings>
-            <mapping deploy="enrichment-and-gsea" local="$PROJECT_DIR$" web="" />
+            <mapping deploy="enrichment_and_gsea" local="$PROJECT_DIR$" web="" />
           </mappings>
         </serverdata>
       </paths>

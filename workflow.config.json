@@ -18,7 +18,7 @@
   "requested_params": [
     "feature_count",
     "RSEM",
-    "condition",
+    "conditions_to_compare",
     "biotypes",
     "reference",
     "ref_from_trans_assembly"
