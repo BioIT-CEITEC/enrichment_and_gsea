@@ -121,7 +121,7 @@ run_all <- function(args){
   myGSEAPlot <- function(fgsea.table = dtgseGOBP,
                          nUp = 10,
                          nDown = 10,
-                         GOPADJ = 0.05,
+                         Padj = 0.05,
                          gradient = c("firebrick","white","royalblue"),
                          ploTitle = "GO - Biological Processes"){
     fgsea.table <- fgsea.table[p.adjust <= Padj,]
@@ -154,9 +154,9 @@ run_all <- function(args){
     return(g)
     }
 
-  GSEA_BP_plot <- myEnrichPlot(dtgseGOBP,
+  GSEA_BP_plot <- myGSEAPlot(dtgseGOBP,
                                nUp = n_up,
-                               nDown = n_dn,
+                               nDown = n_down,
                                Padj = gsea_padj,
                                gradient = COLORS,
                                ploTitle = "GSEA - Biological Process")
@@ -167,9 +167,9 @@ run_all <- function(args){
   ggsave(GSEA_BP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_BP.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
-  GSEA_MF_plot <- myEnrichPlot(dtgseGOMF,
+  GSEA_MF_plot <- myGSEAPlot(dtgseGOMF,
                                nUp = n_up,
-                               nDown = n_dn,
+                               nDown = n_down,
                                Padj = gsea_padj,
                                gradient = COLORS,
                                ploTitle = "GSEA - Molecular Function")
@@ -180,9 +180,9 @@ run_all <- function(args){
   ggsave(GSEA_MF_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_MF.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
-  GSEA_CC_plot <- myEnrichPlot(dtgseGOCC,
+  GSEA_CC_plot <- myGSEAPlot(dtgseGOCC,
                                nUp = n_up,
-                               nDown = n_dn,
+                               nDown = n_down,
                                Padj = gsea_padj,
                                gradient = COLORS,
                                ploTitle = "GSEA - Cellular Component")

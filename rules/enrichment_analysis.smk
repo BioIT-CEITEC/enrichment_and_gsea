@@ -30,7 +30,7 @@ def DE_computation_input(wildcards):
 
 rule enrichment_GO:
     input: unpack(DE_computation_input)
-    output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
             organism_go = config["organism_go"],
@@ -48,7 +48,7 @@ rule enrichment_GO:
 
 rule GSEA_GO:
     input: unpack(DE_computation_input)
-    output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
@@ -70,9 +70,9 @@ rule GSEA_GO:
 
 rule enrichment_kegg:
     input: unpack(DE_computation_input)
-    output: table = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_kegg/GO_enrich_CC.png",
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_kegg/KEGG_enrich.png",
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
             organism_kegg = config["organism_kegg"],
             cutoff_log2fc = config["cutoff_log2fc"],
             cutoff_padj = config["cutoff_padj"],
@@ -81,7 +81,31 @@ rule enrichment_kegg:
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
-            enrich_maxGSSize = config["enrich_maxGSSize"]
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            organism_go = config["organism_go"]
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_KEGG.log"
     conda:  "../wrappers/enrichment_KEGG/env.yaml"
     script: "../wrappers/enrichment_KEGG/script.py"
+
+rule GSEA_kegg:
+    input: unpack(DE_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
+            organism_kegg = config["organism_kegg"],
+            cutoff_log2fc = config["cutoff_log2fc"],
+            cutoff_padj = config["cutoff_padj"],
+            n_up = config["n_up"],
+            n_down= config["n_down"],
+            colors = config["colors"],
+            gsea_padj = config["gsea_padj"],
+            gsea_padjmethod = config["gsea_padjmethod"],
+            gsea_minGSSize = config["gsea_minGSSize"],
+            gsea_maxGSSize = config["gsea_maxGSSize"],
+            gsea_eps = config["gsea_eps"],
+            gsea_nPermSimple = config["gsea_nPermSimple"],
+            gsea_by = config["gsea_by"],
+            organism_go = config["organism_go"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_KEGG.log"
+    conda:  "../wrappers/GSEA_kegg/env.yaml"
+    script: "../wrappers/GSEA_kegg/script.py"

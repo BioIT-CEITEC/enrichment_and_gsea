@@ -1,5 +1,5 @@
 #############################################################
-# wrapper for rule: enrichment_kegg
+# wrapper for rule: GSEA_kegg
 #############################################################
 import os
 from snakemake.shell import shell
@@ -8,22 +8,26 @@ log_filename = str(snakemake.log)
 
 
 f = open(log_filename, 'a+')
-f.write("\n##\n## RULE: enrichment_kegg \n##\n")
+f.write("\n##\n## RULE: GSEA_kegg \n##\n")
 f.close()
 
-command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_kegg.R " +\
+command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_kegg.R "+\
             snakemake.params.workdir + " " +\
             snakemake.input.tsv + " " +\
             snakemake.params.outdir + " " +\
-            snakemake.params.organism_kegg + " " +\
+            snakemake.params.organism_go + " " +\
             snakemake.params.cutoff_log2fc + " " +\
             snakemake.params.cutoff_padj + " " +\
             snakemake.params.n_up + " " +\
+            snakemake.params.n_down + " " +\
             snakemake.params.colors + " " +\
-            snakemake.params.enrich_padj + " " +\
-            snakemake.params.enrich_padjmethod + " " +\
-            snakemake.params.enrich_minGSSize + " " +\
-            snakemake.params.enrich_maxGSSize +\ " " +\
+            snakemake.params.gsea_padj + " " +\
+            snakemake.params.gsea_padjmethod + " " +\
+            snakemake.params.gsea_minGSSize + " " +\
+            snakemake.params.gsea_maxGSSize + " " +\
+            snakemake.params.gsea_eps + " " +\
+            snakemake.params.gsea_nPermSimple + " " +\
+            snakemake.params.gsea_by +\ " " +\
             snakemake.params.organism_go +\
             " >> " + log_filename + " 2>&1 "
 

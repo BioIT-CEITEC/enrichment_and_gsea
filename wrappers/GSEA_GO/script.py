@@ -11,7 +11,7 @@ f = open(log_filename, 'a+')
 f.write("\n##\n## RULE: GSEA_GO \n##\n")
 f.close()
 
-command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_GO.R "+\
+command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_kegg.R "+\
             snakemake.params.workdir + " " +\
             snakemake.input.tsv + " " +\
             snakemake.params.outdir + " " +\
