@@ -1,6 +1,7 @@
 {
-  "de_analysis": "RSEM",
   "condition": ["CTRL", "G", "GI", "GS"],
+  "feature_count": true,
+  "RSEM": true,
   "reference": "GRCh38-p10",
   "organism": "homo_sapiens",
   "species": "Homo sapiens (human)",

@@ -45,15 +45,6 @@ reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["re
 #
 sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 
-
-if config["is_paired"] == False:
-    read_pair_tags = [""]
-    paired = "SE"
-else:
-    read_pair_tags = ["_R1","_R2"]
-    paired = "PE"
-
-
 wildcard_constraints:
      sample = "|".join(sample_tab.sample_name) + "|all_samples",
      lib_name="[^\.\/]+",
@@ -83,7 +74,12 @@ def input_all(wildcards):
 
         biotype_dir_list = config['biotypes'].split(",")
 
-        input['tsv'] = expand("results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
+        if config["feature_count"]:
+            input['tsv'] = expand("results/DE_feature_count/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
+        if config["RSEM"]:
+            input['tsv'] = expand("results/DE_RSEM/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
+
+        # input['tsv'] = expand("results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
 
         if config["ref_from_trans_assembly"] != False:
             input['trans_ids_map'] = \
