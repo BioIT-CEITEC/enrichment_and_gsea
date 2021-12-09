@@ -69,7 +69,7 @@ run_all <- function(args){
   deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
-  gseGOBP <- gseGO(gene          = rankGenes,
+  gseaGOBP <- gseGO(gene          = rankGenes,
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
@@ -82,10 +82,10 @@ run_all <- function(args){
                     eps           = gsea_eps,
                     by            = gsea_by)
 
-  dtgseGOBP <- as.data.table(gseGOBP)
-  fwrite(dtgseGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
+  dtgseaGOBP <- as.data.table(gseaGOBP)
+  fwrite(dtgseaGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
 
-  gseGOMF <- gseGO(gene          = rankGenes,
+  gseaGOMF <- gseGO(gene          = rankGenes,
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
@@ -98,10 +98,10 @@ run_all <- function(args){
                     eps           = gsea_eps,
                     by            = gsea_by)
 
-  dtgseGOMF <- as.data.table(gseGOMF)
-  fwrite(dtgseGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
+  dtgseaGOMF <- as.data.table(gseaGOMF)
+  fwrite(dtgseaGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
 
-  gseGOCC <- gseGO(gene          = rankGenes,
+  gseaGOCC <- gseGO(gene          = rankGenes,
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
@@ -114,11 +114,11 @@ run_all <- function(args){
                     eps           = gsea_eps,
                     by            = gsea_by)
 
-  dtgseGOCC <- as.data.table(gseGOCC)
-  fwrite(dtgseGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
+  dtgseaGOCC <- as.data.table(gseaGOCC)
+  fwrite(dtgseaGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
 
   # Plot enrichment plot
-  myGSEAPlot <- function(fgsea.table = dtgseGOBP,
+  myGSEAPlot <- function(fgsea.table = dtgseaGOBP,
                          nUp = 10,
                          nDown = 10,
                          Padj = 0.05,
@@ -154,7 +154,7 @@ run_all <- function(args){
     return(g)
     }
 
-  GSEA_BP_plot <- myGSEAPlot(dtgseGOBP,
+  GSEA_BP_plot <- myGSEAPlot(dtgseaGOBP,
                                nUp = n_up,
                                nDown = n_down,
                                Padj = gsea_padj,
@@ -167,7 +167,7 @@ run_all <- function(args){
   ggsave(GSEA_BP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_BP.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
-  GSEA_MF_plot <- myGSEAPlot(dtgseGOMF,
+  GSEA_MF_plot <- myGSEAPlot(dtgseaGOMF,
                                nUp = n_up,
                                nDown = n_down,
                                Padj = gsea_padj,
@@ -180,7 +180,7 @@ run_all <- function(args){
   ggsave(GSEA_MF_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_MF.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
-  GSEA_CC_plot <- myGSEAPlot(dtgseGOCC,
+  GSEA_CC_plot <- myGSEAPlot(dtgseaGOCC,
                                nUp = n_up,
                                nDown = n_down,
                                Padj = gsea_padj,

@@ -66,7 +66,7 @@ run_all <- function(args){
   }
 
 
-  gseKEGG <- gseKEGG(gene         = rankGenes,
+  gseaKEGG <- gseKEGG(gene         = rankGenes,
                     organism      = organism_kegg,
                     keyType       = "kegg",
                     pAdjustMethod = gsea_padjmethod,
@@ -77,11 +77,11 @@ run_all <- function(args){
                     eps           = gsea_eps,
                     by            = gsea_by)
 
-  dtgseKEGG <- as.data.table(gseKEGG)
-  fwrite(dtgseKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
+  dtgseaKEGG <- as.data.table(gseaKEGG)
+  fwrite(dtgseaKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
 
   # Plot enrichment plot
-  myGSEAPlot <- function(fgsea.table = dtgseKEGG,
+  myGSEAPlot <- function(fgsea.table = dtgseaKEGG,
                          nUp = 10,
                          nDown = 10,
                          Padj = 0.05,
@@ -117,7 +117,7 @@ run_all <- function(args){
     return(g)
     }
 
-  GSEA_KEGG_plot <- myGSEAPlot(dtgseKEGG,
+  GSEA_KEGG_plot <- myGSEAPlot(dtgseaKEGG,
                                nUp = n_up,
                                nDown = n_down,
                                Padj = gsea_padj,

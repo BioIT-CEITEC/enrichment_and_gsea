@@ -24,7 +24,14 @@ config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
 reference_GO = json.load(f)
 f.close()
-config["organism_go"] = reference_GO[config["species"]]
+if config["species"] in reference_GO.keys():
+    config["organism_go"] = reference_GO[config["species"]]
+    config["onthology"] = True
+
+else:
+    raise ValueError("There is no "+config["species"]+" in GO references!")
+    config["onthology"] = False
+
 
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"),)
 reference_kegg = json.load(f)
