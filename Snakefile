@@ -24,6 +24,7 @@ config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_
 #
 reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
 
+# setting references for enrichment
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
 reference_GO = json.load(f)
 f.close()

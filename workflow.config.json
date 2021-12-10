@@ -16,14 +16,6 @@
     "sample_name",
     "condition"
   ],
-  "requested_params": [
-    "feature_count",
-    "RSEM",
-    "conditions_to_compare",
-    "biotypes",
-    "reference",
-    "ref_from_trans_assembly"
-  ],
   "gui_params": {
     "primary": {
       "cutoff_log2fc": {
