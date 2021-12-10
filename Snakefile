@@ -46,6 +46,10 @@ reference_wp = json.load(f)
 f.close()
 config["organism_wp"] = reference_wp[config["species"]]
 
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"),)
+reference_wp = json.load(f)
+f.close()
+config["organism_reactome"] = reference_wp[config["species"]]
 
 
 # Samples
