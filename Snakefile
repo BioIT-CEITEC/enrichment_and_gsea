@@ -19,6 +19,11 @@ f.close()
 config["species"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 
+##### Config processing #####
+# Folders
+#
+reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
+
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
 reference_GO = json.load(f)
 f.close()
@@ -41,10 +46,7 @@ reference_wp = json.load(f)
 f.close()
 config["organism_wp"] = reference_wp[config["species"]]
 
-##### Config processing #####
-# Folders
-#
-reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
+
 
 # Samples
 #

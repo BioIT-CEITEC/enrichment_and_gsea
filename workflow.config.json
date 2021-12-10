@@ -6,20 +6,15 @@
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
-      "results/DE_{analysis_type}/{comparison}/enrichment*/*",
-      "results/DE_{analysis_type}/{comparison}/enrichment*/logs/*",
-      "results/DE_{analysis_type}/{comparison}/GSEA*/*",
-      "results/DE_{analysis_type}/{comparison}/GSEA*/logs/*"
-    ],
-    "report_index": "results/{comparison}/{biotype}/DESeq2.tsv",
-    "reports":[
-      "results/{comparison}/{biotype}/*/*.pdf",
-      "results/{comparison}/{biotype}/*/*.svg",
-      "results/{comparison}/{biotype}/*/*.png"
+      "results/DE_{analysis_type}/{comparison}/enrichment_*/*",
+      "results/DE_{analysis_type}/{comparison}/enrichment_*/logs/*",
+      "results/DE_{analysis_type}/{comparison}/GSEA_*/*",
+      "results/DE_{analysis_type}/{comparison}/GSEA_*/logs/*"
     ]
   },
   "general_params": [
-    "samples"
+    "sample_name",
+    "condition"
   ],
   "requested_params": [
     "feature_count",
@@ -40,6 +35,127 @@
         "label": "Adjusted p-value cut-off",
         "type": "string",
         "default": "0.05"
+      },
+      "n_up": {
+        "label": "Number of enriched genes",
+        "type": "int",
+        "default": 15
+      },
+      "n_down": {
+        "label": "Number of enriched genes (down regulated for GSEA)",
+        "type": "int",
+        "default": 15
+      },
+      "colors" : {
+        "label": "Colors",
+        "type": "enum",
+        "default": "red_white_blue",
+        "list": {
+          "red_white_blue": "firebrick:white:royalblue",
+          "red_yellow_green": "firebrick3:lemonchiffon:springgreen4",
+          "red_yellow_blue": "firebrick3:lemonchiffon:steelblue",
+          "red_white_grey": "red3:white:gray25",
+          "orange_white_purple": "darkorange2:white:mediumpurple4",
+          "purple_white_green": "mediumorchid4:white:springgreen4",
+          "pink_white_green": "violetred:white:olivedrab",
+          "brown_white_turquoise": "sienna:white:turquoise4",
+          "custom": "custom colors"
+        }
+      },
+      "custom_colors": {
+        "label": "Custom colors (color +:color 0:color -)",
+        "type": "string",
+        "default": "firebrick:white:royalblue",
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "colors": "custom"
+            }
+          }
+        }
+      }
+    },
+    "detailed": {
+      "enrich_padj": {
+        "label": "Enrichment adjusted p-value cut-off",
+        "type": "string",
+        "default": "0.1"
+      },
+      "enrich_padjmethod": {
+        "label": "Enrichment adjusted p-value method",
+        "type": "enum",
+        "default": "BH",
+        "list": {
+          "BH": "BH",
+          "BY": "BY",
+          "fdr": "fdr",
+          "holm": "holm",
+          "hochberg": "hochberg",
+          "hommel": "hommel",
+          "bonferroni": "bonferroni",
+          "none": "none"
+        }
+      },
+      "enrich_minGSSize": {
+        "label": "Enrichment minimal size of genes annotated",
+        "type": "string",
+        "default": "2"
+      },
+      "enrich_maxGSSize": {
+        "label": "Enrichment maximal size of genes annotated",
+        "type": "string",
+        "default": "Inf"
+      },
+      "gsea_padj": {
+        "label": "GSEA adjusted p-value cut-off",
+        "type": "string",
+        "default": "0.1"
+      },
+      "gsea_padjmethod": {
+        "label": "GSEA adjusted p-value method",
+        "type": "enum",
+        "default": "BH",
+        "list": {
+          "BH": "BH",
+          "BY": "BY",
+          "fdr": "fdr",
+          "holm": "holm",
+          "hochberg": "hochberg",
+          "hommel": "hommel",
+          "bonferroni": "bonferroni",
+          "none": "none"
+        }
+      },
+      "gsea_minGSSize": {
+        "label": "GSEA minimal size of genes annotated",
+        "type": "string",
+        "default": "2"
+      },
+      "gsea_maxGSSize": {
+        "label": "GSEA maximal size of genes annotated",
+        "type": "string",
+        "default": "Inf"
+      },
+      "gsea_eps": {
+        "label": "GSEA boundary for p-value calculation",
+        "type": "string",
+        "default": "0"
+      },
+      "gsea_nPermSimple": {
+        "label": "GSEA Number of permutations for preliminary estimation of p-values",
+        "type": "int",
+        "default": 10000
+      },
+      "gsea_by": {
+        "label": "GSEA Number of permutations for preliminary estimation of p-values",
+        "type": "enum",
+        "default": "fgsea",
+        "list": {
+          "fgsea": "fgsea",
+          "DOSE": "DOSE"
+        }
       }
     }
   }
