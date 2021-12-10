@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="245957@147.251.158.118:15888" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="Niko Home" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
-      <paths name="245957@147.251.158.118:15888">
+      <paths name="Niko Home">
         <serverdata>
           <mappings>
-            <mapping deploy="enrichment_and_gsea" local="$PROJECT_DIR$" web="" />
+            <mapping deploy="enrichment_and_gsea" local="$PROJECT_DIR$/../enrichment_and_gsea" web="" />
           </mappings>
         </serverdata>
       </paths>
       <paths name="Vojta Bioroot">
         <serverdata>
           <mappings>
-            <mapping deploy="enrichment_and_gsea" local="$PROJECT_DIR$" web="" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>

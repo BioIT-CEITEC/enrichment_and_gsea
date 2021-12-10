@@ -8,10 +8,8 @@ min_version("5.18.0")
 
 GLOBAL_REF_PATH = "/mnt/references/"
 
-
 if not "ref_from_trans_assembly" in config:
     config["ref_from_trans_assembly"] = "F"
-
 
 # setting organism from reference
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference.json"),)
@@ -63,41 +61,14 @@ wildcard_constraints:
 
 def input_all(wildcards):
     input = {}
-    if (sample_tab.condition != "").all() and (sample_tab.tag != "").all():
-        if config['conditions_to_compare'] == "all":
-            condition_list = sorted(sample_tab.condition)
-        else:
-            condition_list = config['conditions_to_compare'].split(",")
-
-        comparison_dir_list = list()
-        for condition1 in condition_list:
-            if ':' in condition1:
-                conditions = condition1.split(":")
-                comparison_dir_list.append(conditions[0] + "_vs_" + conditions[1])
-            else:
-                for condition2 in condition_list[condition_list.index(condition1):]:
-                    if ':' not in condition2 and condition2 != condition1:
-                        comparison_dir_list.append(condition2 + "_vs_" + condition1)
-
-        biotype_dir_list = config['biotypes'].split(",")
-
-        if config["feature_count"]:
-            input['tsv'] = expand("results/DE_feature_count/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
-        if config["RSEM"]:
-            input['tsv'] = expand("results/DE_RSEM/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
-
-        # input['tsv'] = expand("results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv",comparison=comparison_dir_list,biotype=biotype_dir_list)
-
-        if config["ref_from_trans_assembly"] != False:
-            input['trans_ids_map'] = \
-            expand("{ref_dir}/annot/{ref}.transdecoder_ids_map",ref_dir=reference_directory,ref=config["reference"])[0]
-    else:
-        raise ValueError("There is no conditions or tag for samples!")
+    if config["feature_count"]:
+        input["feature_count"] = "results/feature_count_final_report.html"
+    if config["RSEM"]:
+        input["RSEM"] = "results/RSEM_final_report.html"
     return input
 
 rule all:
     input:  unpack(input_all)
-
 
 ##### Modules #####
 

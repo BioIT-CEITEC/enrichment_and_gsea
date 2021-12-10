@@ -4,12 +4,12 @@
     "version": 1.0,
     "label": "Gene enrichment and GSEA2",
     "type": "gene_enrichment",
-    "inputs": "results/*/{comparison}/{biotype}/DESeq2.tsv",
+    "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
-      "results/*/{comparison}/enrichment*/*",
-      "results/*/{comparison}/enrichment*/logs/*",
-      "results/*/{comparison}/GSEA*/*",
-      "results/*/{comparison}/GSEA*/logs/*"
+      "results/DE_{analysis_type}/{comparison}/enrichment*/*",
+      "results/DE_{analysis_type}/{comparison}/enrichment*/logs/*",
+      "results/DE_{analysis_type}/{comparison}/GSEA*/*",
+      "results/DE_{analysis_type}/{comparison}/GSEA*/logs/*"
     ],
     "report_index": "results/{comparison}/{biotype}/DESeq2.tsv",
     "reports":[
