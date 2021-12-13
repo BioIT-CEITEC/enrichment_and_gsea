@@ -18,15 +18,25 @@
   ],
   "gui_params": {
     "primary": {
-      "cutoff_log2fc": {
-        "label": "Log2FC cut-off",
+      "cutoff_log2fc_enrich": {
+        "label": "Log2FC cut-off to sort DESeq2 result before enrichment",
         "type": "string",
         "default": "1"
       },
-      "cutoff_padj": {
-        "label": "Adjusted p-value cut-off",
+      "cutoff_padj_enrich": {
+        "label": "Adjusted p-value cut-off to sort DESeq2 result before enrichment",
         "type": "string",
         "default": "0.05"
+      },
+      "cutoff_log2fc_gsea": {
+        "label": "Log2FC cut-off to sort DESeq2 result before GSEA",
+        "type": "string",
+        "default": "0"
+      },
+      "cutoff_padj_gsea": {
+        "label": "Adjusted p-value cut-off to sort DESeq2 result before GSEA",
+        "type": "string",
+        "default": "1"
       },
       "n_up": {
         "label": "Number of enriched genes",

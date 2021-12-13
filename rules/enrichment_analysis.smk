@@ -1,4 +1,4 @@
-def DE_computation_input(wildcards):
+def de_computation_input(wildcards):
     input = {}
 
     if (sample_tab.condition != "").all() and (sample_tab.tag != "").all():
@@ -29,13 +29,13 @@ def DE_computation_input(wildcards):
 
 
 rule enrichment_GO:
-    input: unpack(DE_computation_input)
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
             organism_go = config["organism_go"],
-            cutoff_log2fc = config["cutoff_log2fc"],
-            cutoff_padj = config["cutoff_padj"],
+            cutoff_log2fc = config["cutoff_log2fc_enrich"],
+            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
@@ -47,13 +47,13 @@ rule enrichment_GO:
     script: "../wrappers/enrichment_GO/script.py"
 
 rule GSEA_GO:
-    input: unpack(DE_computation_input)
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
-            cutoff_log2fc = config["cutoff_log2fc"],
-            cutoff_padj = config["cutoff_padj"],
+            cutoff_log2fc = config["cutoff_log2fc_gsea"],
+            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -69,13 +69,13 @@ rule GSEA_GO:
     script: "../wrappers/GSEA_GO/script.py"
 
 rule enrichment_kegg:
-    input: unpack(DE_computation_input)
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_kegg/KEGG_enrich.png",
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_kegg/KEGG_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
             organism_kegg = config["organism_kegg"],
-            cutoff_log2fc = config["cutoff_log2fc"],
-            cutoff_padj = config["cutoff_padj"],
+            cutoff_log2fc = config["cutoff_log2fc_enrich"],
+            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
@@ -88,13 +88,13 @@ rule enrichment_kegg:
     script: "../wrappers/enrichment_KEGG/script.py"
 
 rule GSEA_kegg:
-    input: unpack(DE_computation_input)
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
             organism_kegg = config["organism_kegg"],
-            cutoff_log2fc = config["cutoff_log2fc"],
-            cutoff_padj = config["cutoff_padj"],
+            cutoff_log2fc = config["cutoff_log2fc_gsea"],
+            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -111,13 +111,13 @@ rule GSEA_kegg:
     script: "../wrappers/GSEA_kegg/script.py"
 
 rule enrichment_reactome:
-    input: unpack(DE_computation_input)
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_reactome/REACTOME_enrich.png",
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_reactome/REACTOME_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_reactome",
             organism_kegg = config["organism_reactome"],
-            cutoff_log2fc = config["cutoff_log2fc"],
-            cutoff_padj = config["cutoff_padj"],
+            cutoff_log2fc = config["cutoff_log2fc_enrich"],
+            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
@@ -126,5 +126,70 @@ rule enrichment_reactome:
             enrich_maxGSSize = config["enrich_maxGSSize"],
             organism_go = config["organism_go"]
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_REACTOME.log"
-    conda:  "../wrappers/enrichment_REACTOME/env.yaml"
-    script: "../wrappers/enrichment_REACTOME/script.py"
+    conda:  "../wrappers/enrichment_reactome/env.yaml"
+    script: "../wrappers/enrichment_reactome/script.py"
+
+rule GSEA_reactome:
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
+            organism_kegg = config["organism_reactome"],
+            cutoff_log2fc = config["cutoff_log2fc_gsea"],
+            cutoff_padj = config["cutoff_padj_gsea"],
+            n_up = config["n_up"],
+            n_down= config["n_down"],
+            colors = config["colors"],
+            gsea_padj = config["gsea_padj"],
+            gsea_padjmethod = config["gsea_padjmethod"],
+            gsea_minGSSize = config["gsea_minGSSize"],
+            gsea_maxGSSize = config["gsea_maxGSSize"],
+            gsea_eps = config["gsea_eps"],
+            gsea_nPermSimple = config["gsea_nPermSimple"],
+            gsea_by = config["gsea_by"],
+            organism_go = config["organism_go"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_REACTOME.log"
+    conda:  "../wrappers/GSEA_reactome/env.yaml"
+    script: "../wrappers/GSEA_reactome/script.py"
+
+rule enrichment_wp:
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_wp/WP_enrich.png"
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_wp",
+            organism_kegg = config["organism_wp"],
+            cutoff_log2fc = config["cutoff_log2fc_enrich"],
+            cutoff_padj = config["cutoff_padj_enrich"],
+            n_up = config["n_up"],
+            colors = config["colors"],
+            enrich_padj = config["enrich_padj"],
+            enrich_padjmethod = config["enrich_padjmethod"],
+            enrich_minGSSize = config["enrich_minGSSize"],
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            organism_go = config["organism_go"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_WP.log"
+    conda:  "../wrappers/enrichment_wp/env.yaml"
+    script: "../wrappers/enrichment_wp/script.py"
+
+rule GSEA_wp:
+    input: unpack(de_computation_input)
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
+    params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
+            outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
+            organism_kegg = config["organism_wp"],
+            cutoff_log2fc = config["cutoff_log2fc_gsea"],
+            cutoff_padj = config["cutoff_padj_gsea"],
+            n_up = config["n_up"],
+            n_down= config["n_down"],
+            colors = config["colors"],
+            gsea_padj = config["gsea_padj"],
+            gsea_padjmethod = config["gsea_padjmethod"],
+            gsea_minGSSize = config["gsea_minGSSize"],
+            gsea_maxGSSize = config["gsea_maxGSSize"],
+            gsea_eps = config["gsea_eps"],
+            gsea_nPermSimple = config["gsea_nPermSimple"],
+            gsea_by = config["gsea_by"],
+            organism_go = config["organism_go"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
+    conda:  "../wrappers/GSEA_wp/env.yaml"
+    script: "../wrappers/GSEA_wp/script.py"
