@@ -75,7 +75,6 @@ run_all <- function(args){
                     ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = gsea_padjmethod,
                     pvalueCutoff  = gsea_padj,
-                    readable      = FALSE,
                     minGSSize     = gsea_minGSSize,
                     maxGSSize     = gsea_maxGSSize,
                     nPermSimple   = gsea_nPermSimple,
@@ -91,7 +90,6 @@ run_all <- function(args){
                     ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = gsea_padjmethod,
                     pvalueCutoff  = gsea_padj,
-                    readable      = FALSE,
                     minGSSize     = gsea_minGSSize,
                     maxGSSize     = gsea_maxGSSize,
                     nPermSimple   = gsea_nPermSimple,
@@ -107,7 +105,6 @@ run_all <- function(args){
                     ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
                     pAdjustMethod = gsea_padjmethod,
                     pvalueCutoff  = gsea_padj,
-                    readable      = FALSE,
                     minGSSize     = gsea_minGSSize,
                     maxGSSize     = gsea_maxGSSize,
                     nPermSimple   = gsea_nPermSimple,
@@ -125,7 +122,7 @@ run_all <- function(args){
                          gradient = c("firebrick","white","royalblue"),
                          ploTitle = "GO - Biological Processes"){
     fgsea.table <- fgsea.table[p.adjust <= Padj,]
-    setorder(fgsea.table, p.adjust)
+    setorder(fgsea.table, -NES)
     fgsea.table[, Enrichment := ifelse(NES > 0, "Up-regulated", "Down-regulated")]
 
     nUp <- ifelse(nUp < 0, 0, nUp)

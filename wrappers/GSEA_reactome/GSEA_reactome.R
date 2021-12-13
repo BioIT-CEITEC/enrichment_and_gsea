@@ -3,7 +3,7 @@ run_all <- function(args){
   WORKDIR <- args[1]
   input_genes <- args[2]
   OUTPUT_DIR <- args[3]
-  organism_kegg <- args[4]
+  organism_reactome <- args[4]
   cutoff_log2fc <- as.numeric(args[5])
   cutoff_padj <- as.numeric(args[6])
   n_up <- as.integer(args[7])
@@ -20,6 +20,7 @@ run_all <- function(args){
 
   library("data.table")
   library("clusterProfiler")
+  library("ReactomePA")
   library("ggplot2")
 
   if(!require(organism_go, character.only = T)) {BiocManager::install(organism_go, update = F)}
@@ -66,27 +67,26 @@ run_all <- function(args){
   }
 
 
-  gseaKEGG <- gseKEGG(gene         = rankGenes,
-                    organism      = organism_kegg,
-                    keyType       = "kegg",
-                    pAdjustMethod = gsea_padjmethod,
-                    pvalueCutoff  = gsea_padj,
-                    minGSSize     = gsea_minGSSize,
-                    maxGSSize     = gsea_maxGSSize,
-                    nPermSimple   = gsea_nPermSimple,
-                    eps           = gsea_eps,
-                    by            = gsea_by)
+  gseaREACTOME <- gsePathway(gene         = rankGenes,
+                            organism      = organism_reactome,
+                            pAdjustMethod = gsea_padjmethod,
+                            pvalueCutoff  = gsea_padj,
+                            minGSSize     = gsea_minGSSize,
+                            maxGSSize     = gsea_maxGSSize,
+                            nPermSimple   = gsea_nPermSimple,
+                            eps           = gsea_eps,
+                            by            = gsea_by)
 
-  dtgseaKEGG <- as.data.table(gseaKEGG)
-  fwrite(dtgseaKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
+  dtgseaREACTOME <- as.data.table(gseaREACTOME)
+  fwrite(dtgseaREACTOME, file = paste0(OUTPUT_DIR,"/GSEA_REACTOME.tsv"), sep="\t")
 
   # Plot enrichment plot
-  myGSEAPlot <- function(fgsea.table = dtgseaKEGG,
+  myGSEAPlot <- function(fgsea.table = dtgseaREACTOME,
                          nUp = 10,
                          nDown = 10,
                          Padj = 0.05,
                          gradient = c("firebrick","white","royalblue"),
-                         ploTitle = "GSEA - KEGG pathways"){
+                         ploTitle = "GSEA - REACTOME pathways"){
     fgsea.table <- fgsea.table[p.adjust <= Padj,]
     setorder(fgsea.table, -NES)
     fgsea.table[, Enrichment := ifelse(NES > 0, "Up-regulated", "Down-regulated")]
@@ -117,17 +117,17 @@ run_all <- function(args){
     return(g)
     }
 
-  GSEA_KEGG_plot <- myGSEAPlot(dtgseaKEGG,
+  GSEA_REACTOME_plot <- myGSEAPlot(dtgseaREACTOME,
                                nUp = n_up,
                                nDown = n_down,
                                Padj = gsea_padj,
                                gradient = COLORS,
-                               ploTitle = "GSEA - KEGG pathways")
-  ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.pdf",sep=""),
+                               ploTitle = "GSEA - REACTOME pathways")
+  ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
-  ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.svg",sep=""),
+  ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.svg",sep=""),
          width = 10, height = 7, device = svg, bg='transparent')
-  ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.png",sep=""),
+  ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
 }
@@ -138,8 +138,8 @@ args <- commandArgs(trailingOnly = T)
 # args <- character(17)
 # args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
 # args[2] <- "DESeq2.tsv" # input_genes
-# args[3] <- "GSEA_KEGG" # OUTPUT_DIR
-# args[4] <- "hsa" # organism_kegg
+# args[3] <- "GSEA_REACTOME" # OUTPUT_DIR
+# args[4] <- "human" # organism_kegg
 # args[5] <- "0" # cutoff_log2fc
 # args[6] <- "1" # cutoff_padj
 # args[7] <- 10 # n_up

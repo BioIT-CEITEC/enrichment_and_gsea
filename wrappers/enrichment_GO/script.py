@@ -11,7 +11,7 @@ f = open(log_filename, 'a+')
 f.write("\n##\n## RULE: enrichment_GO \n##\n")
 f.close()
 
-command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_reactome.R " +\
+command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GO.R " +\
             snakemake.params.workdir + " " +\
             snakemake.input.tsv + " " +\
             snakemake.params.outdir + " " +\
