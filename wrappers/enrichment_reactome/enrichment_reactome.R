@@ -109,8 +109,8 @@ args <- commandArgs(trailingOnly = T)
 # args <- character(13)
 # args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
 # args[2] <- "DESeq2.tsv" # input_genes
-# args[3] <- "enrichment_KEGG" # OUTPUT_DIR
-# args[4] <- "human" # organism_kegg
+# args[3] <- "enrichment_REACTOME" # OUTPUT_DIR
+# args[4] <- "human" # organism_reactome
 # args[5] <- "1" # cutoff_log2fc
 # args[6] <- "0.05" # cutoff_padj
 # args[7] <- 15 # n_up
