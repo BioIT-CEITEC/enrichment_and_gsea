@@ -52,13 +52,13 @@ run_all <- function(args){
 
   fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
-  ereact <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
-                    universe      = universe$ENTREZID,
-                    organism      = organism_reactome,
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
+  ereact <- enrichPathway(gene        = deseq2_tab$ENTREZID,
+                        universe      = universe$ENTREZID,
+                        organism      = organism_reactome,
+                        pAdjustMethod = enrich_padjmethod,
+                        pvalueCutoff  = enrich_padj,
+                        minGSSize     = enrich_minGSSize,
+                        maxGSSize     = enrich_maxGSSize)
 
   dtereact <- as.data.table(ereact)
   fwrite(dtereact, file = paste0(OUTPUT_DIR,"/REACTOME_enrich.tsv"), sep="\t")
