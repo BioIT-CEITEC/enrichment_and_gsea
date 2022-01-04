@@ -1,5 +1,6 @@
 {
-  "condition": ["CTRL", "G", "GI", "GS"],
+  "comparison": "INHnucl_vs_CTLnucl",
+  "biotype": "all",
   "feature_count": true,
   "RSEM": true,
   "reference": "GRCh38-p10",

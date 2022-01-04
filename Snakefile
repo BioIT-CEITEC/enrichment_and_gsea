@@ -70,25 +70,45 @@ else:
     raise ValueError("There is no "+config["species"]+" in REACTOME references!")
     config["reactome"] = False
 
-# Samples
 #
-sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
-
 wildcard_constraints:
-     sample = "|".join(sample_tab.sample_name) + "|all_samples",
-     lib_name="[^\.\/]+",
-     analysis_type= "feature_count|RSEM",
-     #data_type= "tsv|RData"
-
+    analysis_type = "feature_count|RSEM",
+    comparison = "*_vs_*"
 
 ##### Target rules #####
 
 def input_all(wildcards):
     input = {}
     if config["feature_count"]:
-        input["feature_count"] = "results/feature_count_final_report.html"
+        if config["onthology"]:
+            input["feature_count_go"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
+                                      "results/DE_feature_count/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"]
+        if config["kegg"]:
+            input["feature_count_kegg"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",
+                                      "results/DE_feature_count/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png"]
+        if config["wikipathways"]:
+            input["feature_count_wp"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",
+                                      "results/DE_feature_count/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"]
+        if config["reactome"]:
+            input["feature_count_reactome"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",
+                                      "results/DE_feature_count/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"]
+
     if config["RSEM"]:
-        input["RSEM"] = "results/RSEM_final_report.html"
+        if config["onthology"]:
+            input["RSEM_go"] = [
+                "results/DE_RSEM/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
+                "results/DE_RSEM/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"]
+        if config["kegg"]:
+            input["RSEM_kegg"] = [
+                "results/DE_RSEM/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",
+                "results/DE_RSEM/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png"]
+        if config["wikipathways"]:
+            input["RSEM_wp"] = ["results/DE_RSEM/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",
+                "results/DE_RSEM/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"]
+        if config["reactome"]:
+            input["RSEM_reactome"] = [
+                "results/DE_RSEM/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",
+                "results/DE_RSEM/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"]
     return input
 
 rule all:
