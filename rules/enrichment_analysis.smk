@@ -1,33 +1,5 @@
-def de_computation_input(wildcards):
-    input = {}
-    path = r"results"
-    deseq_files = []
-    for root, dirs, files in os.walk(path):
-        for name in files:
-            if "DESeq2.tsv" in name:
-                deseq_files.append(os.path.join(root,name))
-
-    analysis_type = [d.rsplit("/",4)[1].split("DE_")[1] for d in deseq_files]
-    comparison_dir_list = [d.rsplit("/", 4)[2] for d in deseq_files]
-    biotype_dir_list = [d.rsplit("/", 4)[3] for d in deseq_files]
-
-    # comparison_dir_list = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path,d)) and "_vs_" in d]
-    # biotype_dir_list = []
-    # for comp in comparison_dir_list:
-    #     biotype_dir_list.extend([d for d in os.listdir(os.path.join(path,comp))])
-
-    input['tsv'] = expand("results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv", comparison=comparison_dir_list, biotype=biotype_dir_list)
-
-    if len(comparison_dir_list) > 0:
-        print(comparison_dir_list)
-    else:
-        raise ValueError("There is no differential analysis results!")
-
-    return input
-
-
 rule enrichment_GO:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
@@ -45,7 +17,7 @@ rule enrichment_GO:
     script: "../wrappers/enrichment_GO/script.py"
 
 rule GSEA_GO:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
@@ -67,7 +39,7 @@ rule GSEA_GO:
     script: "../wrappers/GSEA_GO/script.py"
 
 rule enrichment_kegg:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
@@ -86,7 +58,7 @@ rule enrichment_kegg:
     script: "../wrappers/enrichment_KEGG/script.py"
 
 rule GSEA_kegg:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
@@ -109,7 +81,7 @@ rule GSEA_kegg:
     script: "../wrappers/GSEA_kegg/script.py"
 
 rule enrichment_reactome:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME",
@@ -128,7 +100,7 @@ rule enrichment_reactome:
     script: "../wrappers/enrichment_reactome/script.py"
 
 rule GSEA_reactome:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
@@ -151,7 +123,7 @@ rule GSEA_reactome:
     script: "../wrappers/GSEA_reactome/script.py"
 
 rule enrichment_wp:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP",
@@ -170,7 +142,7 @@ rule enrichment_wp:
     script: "../wrappers/enrichment_wp/script.py"
 
 rule GSEA_wp:
-    input:  tsv = "results/DE_{{analysis_type}}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
