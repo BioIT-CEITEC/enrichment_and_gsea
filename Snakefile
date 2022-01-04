@@ -8,8 +8,8 @@ min_version("5.18.0")
 
 GLOBAL_REF_PATH = "/mnt/references/"
 
-if not "ref_from_trans_assembly" in config:
-    config["ref_from_trans_assembly"] = "F"
+# if not "ref_from_trans_assembly" in config:
+#     config["ref_from_trans_assembly"] = "F"
 
 # setting organism from reference
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"),)
@@ -25,6 +25,7 @@ config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_
 reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
 
 # setting references for enrichment
+# GO
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
 reference_GO = json.load(f)
 f.close()
@@ -36,22 +37,38 @@ else:
     raise ValueError("There is no "+config["species"]+" in GO references!")
     config["onthology"] = False
 
+# KEGG
+ff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"),)
+reference_kegg = json.load(ff)
+ff.close()
+if config["species"] in reference_kegg.keys():
+    config["organism_kegg"] = reference_kegg[config["species"]]
+    config["kegg"] = True
+else:
+    raise ValueError("There is no "+config["species"]+" in KEGG references!")
+    config["kegg"] = False
 
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"),)
-reference_kegg = json.load(f)
-f.close()
-config["organism_kegg"] = reference_kegg[config["species"]]
+# WIKIPATHWAYS
+fff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"),)
+reference_wp = json.load(fff)
+fff.close()
+if config["species"] in reference_wp.keys():
+    config["organism_wp"] = reference_wp[config["species"]]
+    config["wikipathways"] = True
+else:
+    raise ValueError("There is no "+config["species"]+" in WikiPathways references!")
+    config["wikipathways"] = False
 
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"),)
-reference_wp = json.load(f)
-f.close()
-config["organism_wp"] = reference_wp[config["species"]]
-
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"),)
-reference_wp = json.load(f)
-f.close()
-config["organism_reactome"] = reference_wp[config["species"]]
-
+# REACTOME
+ffff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"),)
+reference_reactome = json.load(ffff)
+ffff.close()
+if config["species"] in reference_reactome.keys():
+    config["organism_reactome"] = reference_reactome[config["species"]]
+    config["reactome"] = True
+else:
+    raise ValueError("There is no "+config["species"]+" in REACTOME references!")
+    config["reactome"] = False
 
 # Samples
 #

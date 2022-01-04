@@ -7,9 +7,9 @@
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
       "results/DE_{analysis_type}/{comparison}/enrichment_*/*",
-      "results/DE_{analysis_type}/{comparison}/enrichment_*/logs/*",
+      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_*.log",
       "results/DE_{analysis_type}/{comparison}/GSEA_*/*",
-      "results/DE_{analysis_type}/{comparison}/GSEA_*/logs/*"
+      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
     ]
   },
   "general_params": [

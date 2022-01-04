@@ -11,6 +11,8 @@
   "organism_kegg": "hsa",
   "wikipathways": true,
   "organism_wp": "Homo sapiens",
+  "reactome": true,
+  "organism_reactome": "human",
   "cutoff_log2fc": "1",
   "cutoff_padj": "0.05",
   "n_up": 15,
