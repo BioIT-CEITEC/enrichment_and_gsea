@@ -12,8 +12,10 @@
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
     ]
   },
+  "general_params": [
+    "reference"
+  ],
   "requested_params": [
-    "reference",
     "feature_count",
     "RSEM"
   ],
