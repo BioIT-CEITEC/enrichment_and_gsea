@@ -10,6 +10,10 @@
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_*.log",
       "results/DE_{analysis_type}/{comparison}/GSEA_*/*",
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
+    ],
+    "report_index": "results/DE_{analysis_type}/{comparison}/GSEA_*/index.html",
+    "reports":[
+       "results/DE_{analysis_type}/{comparison}/GSEA_*/index.html"
     ]
   },
   "general_params": [
