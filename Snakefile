@@ -86,7 +86,7 @@ wildcard_constraints:
 def input_all(wildcards):
     input = {}
     if config["feature_count"]:
-        input["feature_count"] = "results/DE_feature_count/{comparison}/{biotype}/DESeq2.tsv",
+        input["feature_count"] = "results/DE_feature_count/{comparison}/{biotype}/DESeq2.tsv"
         if config["onthology"]:
             input["feature_count_go"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
                                       "results/DE_feature_count/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"]
@@ -101,7 +101,7 @@ def input_all(wildcards):
                                       "results/DE_feature_count/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"]
 
     if config["RSEM"]:
-        input["RSEM"] = "results/DE_RSEM/{comparison}/{biotype}/DESeq2.tsv",
+        input["RSEM"] = "results/DE_RSEM/{comparison}/{biotype}/DESeq2.tsv"
         if config["onthology"]:
             input["RSEM_go"] = [
                 "results/DE_RSEM/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
