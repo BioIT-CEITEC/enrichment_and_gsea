@@ -17,11 +17,14 @@
     ]
   },
   "general_params": [
-    "reference"
+    "sample_name"
   ],
   "requested_params": [
     "feature_count",
-    "RSEM"
+    "RSEM",
+    "reference",
+    "comparison",
+    "biotype"
   ],
   "gui_params": {
     "primary": {

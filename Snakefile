@@ -24,6 +24,11 @@ config["organism"] = [re.sub(r" \(.*\)","",organism_name).lower().replace(" ","_
 #
 reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
 
+# Samples
+#
+sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
+
+
 # setting references for enrichment
 # GO
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
@@ -72,6 +77,7 @@ else:
 
 #
 wildcard_constraints:
+    sample = "|".join(sample_tab.sample_name) + "|all_samples",
     analysis_type = "feature_count|RSEM",
     comparison = "*_vs_*"
 
@@ -80,6 +86,7 @@ wildcard_constraints:
 def input_all(wildcards):
     input = {}
     if config["feature_count"]:
+        input["feature_count"] = "results/DE_feature_count/{comparison}/{biotype}/DESeq2.tsv",
         if config["onthology"]:
             input["feature_count_go"] = ["results/DE_feature_count/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
                                       "results/DE_feature_count/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"]
@@ -94,6 +101,7 @@ def input_all(wildcards):
                                       "results/DE_feature_count/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"]
 
     if config["RSEM"]:
+        input["RSEM"] = "results/DE_RSEM/{comparison}/{biotype}/DESeq2.tsv",
         if config["onthology"]:
             input["RSEM_go"] = [
                 "results/DE_RSEM/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
