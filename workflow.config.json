@@ -22,6 +22,10 @@
   "requested_params": [
     "feature_count",
     "RSEM",
+    "onthology",
+    "kegg",
+    "reactome",
+    "wikipathways",
     "reference",
     "comparison",
     "biotype"
@@ -61,7 +65,7 @@
       "colors" : {
         "label": "Colors",
         "type": "enum",
-        "default": "red_white_blue",
+        "default": "firebrick:white:royalblue",
         "list": {
           "red_white_blue": "firebrick:white:royalblue",
           "red_yellow_green": "firebrick3:lemonchiffon:springgreen4",
@@ -72,20 +76,6 @@
           "pink_white_green": "violetred:white:olivedrab",
           "brown_white_turquoise": "sienna:white:turquoise4",
           "custom": "custom colors"
-        }
-      },
-      "custom_colors": {
-        "label": "Custom colors (color +:color 0:color -)",
-        "type": "string",
-        "default": "firebrick:white:royalblue",
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "colors": "custom"
-            }
-          }
         }
       }
     },
