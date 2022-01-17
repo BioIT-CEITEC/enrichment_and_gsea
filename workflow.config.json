@@ -17,7 +17,13 @@
     ]
   },
   "general_params": [
-    "sample_name"
+    "sample_name",
+    "organism",
+    "species",
+    "organism_go",
+    "organism_kegg",
+    "organism_reactome",
+    "organism_wp"
   ],
   "requested_params": [
     "feature_count",

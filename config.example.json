@@ -1,24 +1,24 @@
 {
-  "comparison": "INHnucl_vs_CTLnucl",
   "biotype": "all",
-  "feature_count": true,
-  "RSEM": true,
-  "reference": "GRCh38-p10",
-  "organism": "homo_sapiens",
-  "species": "Homo sapiens (human)",
+  "reference": "GRCm38.p6-93",
+  "organism": "mus_musculus",
+  "species": "Mus musculus (mouse)",
   "onthology": true,
-  "organism_go": "org.Hs.eg.db",
+  "organism_go": "org.Mm.eg.db",
   "kegg": true,
-  "organism_kegg": "hsa",
+  "organism_kegg": "mmu",
   "wikipathways": true,
-  "organism_wp": "Homo sapiens",
+  "organism_wp": "Mus musculus",
   "reactome": true,
-  "organism_reactome": "human",
-  "cutoff_log2fc": "1",
-  "cutoff_padj": "0.05",
-  "n_up": 15,
-  "n_down": 15,
-  "colors" : "firebrick:white:royalblue",
+  "organism_reactome": "mouse",
+  "cutoff_log2fc_enrich": "1",
+  "cutoff_padj_enrich": "0.05",
+  "cutoff_log2fc_gsea": "0",
+  "cutoff_padj_gsea": "1",
+  "n_up": 10,
+  "n_down": 10,
+  "colors": "firebrick:white:royalblue",
+  "custom_colors": "firebrick:white:royalblue",
   "enrich_padj": "0.1",
   "enrich_padjmethod": "BH",
   "enrich_minGSSize": "2",
@@ -29,5 +29,79 @@
   "gsea_maxGSSize": "Inf",
   "gsea_eps": "0",
   "gsea_nPermSimple": 10000,
-  "gsea_by": "fgsea"
+  "gsea_by": "fgsea",
+  "feature_count": true,
+  "RSEM": false,
+  "samples": {
+    "3335": {
+      "sample_name": "238_WT",
+      "condition": "WT",
+      "tag": "rep1"
+    },
+    "3336": {
+      "sample_name": "224_WT",
+      "condition": "WT",
+      "tag": "rep2"
+    },
+    "3337": {
+      "sample_name": "210_WT",
+      "condition": "WT",
+      "tag": "rep3"
+    },
+    "3338": {
+      "sample_name": "222_WT",
+      "condition": "WT",
+      "tag": "rep4"
+    },
+    "3339": {
+      "sample_name": "239_WT",
+      "condition": "WT",
+      "tag": "rep5"
+    },
+    "3340": {
+      "sample_name": "240_WT",
+      "condition": "WT",
+      "tag": "rep6"
+    },
+    "3341": {
+      "sample_name": "211_WT",
+      "condition": "WT",
+      "tag": "rep7"
+    },
+    "3342": {
+      "sample_name": "213_KO",
+      "condition": "KO",
+      "tag": "rep1"
+    },
+    "3343": {
+      "sample_name": "214_KO",
+      "condition": "KO",
+      "tag": "rep2"
+    },
+    "3344": {
+      "sample_name": "215_KO",
+      "condition": "KO",
+      "tag": "rep3"
+    },
+    "3345": {
+      "sample_name": "217_KO",
+      "condition": "KO",
+      "tag": "rep4"
+    },
+    "3346": {
+      "sample_name": "233_KO",
+      "condition": "KO",
+      "tag": "rep5"
+    },
+    "3347": {
+      "sample_name": "229_KO",
+      "condition": "KO",
+      "tag": "rep6"
+    },
+    "3348": {
+      "sample_name": "230_KO",
+      "condition": "KO",
+      "tag": "rep7"
+    }
+  }
 }
