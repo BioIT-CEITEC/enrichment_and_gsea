@@ -2,7 +2,7 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA",
+    "label": "Gene enrichment and GSEA 5",
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
@@ -15,7 +15,10 @@
     "reports":["results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_gsea_report.html"]
   },
   "general_params": [
+    "entity_name",
     "sample_name",
+    "condition",
+    "tag",
     "organism",
     "species",
     "organism_go",
@@ -26,12 +29,20 @@
   "requested_params": [
     "feature_count",
     "RSEM",
-    "reference",
-    "comparison",
-    "biotype"
+    "reference"
   ],
   "gui_params": {
     "primary": {
+      "conditions_to_compare": {
+        "label": "Conditions to compare",
+        "type": "string",
+        "default": "all"
+      },
+      "biotypes": {
+        "label": "Biotypes",
+        "type": "string",
+        "default": "all"
+      },
       "onthology": {
         "label": "Run Gene Onthology enrichment",
         "type": "bool",
@@ -177,6 +188,18 @@
           "fgsea": "fgsea",
           "DOSE": "DOSE"
         }
+      }
+    },
+    "samples": {
+      "condition": {
+        "label": "Condition",
+        "type": "string",
+        "default": ""
+      },
+      "tag": {
+        "label": "Tag",
+        "type": "string",
+        "default": ""
       }
     }
   }
