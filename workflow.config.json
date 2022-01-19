@@ -2,7 +2,7 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA 2",
+    "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
@@ -26,16 +26,32 @@
   "requested_params": [
     "feature_count",
     "RSEM",
-    "onthology",
-    "kegg",
-    "reactome",
-    "wikipathways",
     "reference",
     "comparison",
     "biotype"
   ],
   "gui_params": {
     "primary": {
+      "onthology": {
+        "label": "Run Gene Onthology enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "kegg": {
+        "label": "Run KEGG pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "reactome": {
+        "label": "Run EACTOME pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "wikipathways": {
+        "label": "Run WikiPathways enrichment",
+        "type": "bool",
+        "default": true
+      },
       "cutoff_log2fc_enrich": {
         "label": "Log2FC cut-off to sort DESeq2 result before enrichment",
         "type": "string",
@@ -65,6 +81,21 @@
         "label": "Number of enriched genes (down regulated for GSEA)",
         "type": "int",
         "default": 15
+      },
+      "colors" : {
+        "label": "Colors",
+        "type": "enum",
+        "default": "col1",
+        "list": {
+          "col1": "firebrick:white:royalblue",
+          "col2": "firebrick3:lemonchiffon:springgreen4",
+          "col3": "firebrick3:lemonchiffon:steelblue",
+          "col4": "red3:white:gray25",
+          "col5": "darkorange2:white:mediumpurple4",
+          "col6": "mediumorchid4:white:springgreen4",
+          "col7": "violetred:white:olivedrab",
+          "col8": "sienna:white:turquoise4"
+        }
       }
     },
     "detailed": {
