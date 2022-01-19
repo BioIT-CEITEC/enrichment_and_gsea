@@ -28,16 +28,32 @@
   "requested_params": [
     "feature_count",
     "RSEM",
-    "onthology",
-    "kegg",
-    "reactome",
-    "wikipathways",
     "reference",
     "comparison",
     "biotype"
   ],
   "gui_params": {
     "primary": {
+      "onthology": {
+        "label": "Run Gene Onthology enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "kegg": {
+        "label": "Run KEGG pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "reactome": {
+        "label": "Run EACTOME pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "wikipathways": {
+        "label": "Run WikiPathways enrichment",
+        "type": "bool",
+        "default": true
+      },
       "cutoff_log2fc_enrich": {
         "label": "Log2FC cut-off to sort DESeq2 result before enrichment",
         "type": "string",
