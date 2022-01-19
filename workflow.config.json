@@ -65,21 +65,6 @@
         "label": "Number of enriched genes (down regulated for GSEA)",
         "type": "int",
         "default": 15
-      },
-      "colors" : {
-        "label": "Colors",
-        "type": "enum",
-        "default": "firebrick:white:royalblue",
-        "list": {
-          "red_white_blue": "firebrick:white:royalblue",
-          "red_yellow_green": "firebrick3:lemonchiffon:springgreen4",
-          "red_yellow_blue": "firebrick3:lemonchiffon:steelblue",
-          "red_white_grey": "red3:white:gray25",
-          "orange_white_purple": "darkorange2:white:mediumpurple4",
-          "purple_white_green": "mediumorchid4:white:springgreen4",
-          "pink_white_green": "violetred:white:olivedrab",
-          "brown_white_turquoise": "sienna:white:turquoise4"
-        }
       }
     },
     "detailed": {
