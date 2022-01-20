@@ -18,13 +18,7 @@
     "entity_name",
     "sample_name",
     "condition",
-    "tag",
-    "organism",
-    "species",
-    "organism_go",
-    "organism_kegg",
-    "organism_reactome",
-    "organism_wp"
+    "tag"
   ],
   "requested_params": [
     "feature_count",
