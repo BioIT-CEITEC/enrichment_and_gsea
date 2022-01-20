@@ -2,7 +2,7 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA 5",
+    "label": "Gene enrichment and GSEA 6",
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
