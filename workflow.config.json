@@ -54,7 +54,7 @@
         "default": true
       },
       "reactome": {
-        "label": "Run EACTOME pathways enrichment",
+        "label": "Run REACTOME pathways enrichment",
         "type": "bool",
         "default": true
       },
