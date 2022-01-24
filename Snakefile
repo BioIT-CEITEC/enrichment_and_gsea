@@ -11,27 +11,26 @@ GLOBAL_REF_PATH = "/mnt/references/"
 #     config["ref_from_trans_assembly"] = "F"
 
 # setting organism from reference
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"),)
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"))
 reference_dict = json.load(f)
 f.close()
 
 #config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 config["species"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
-config["organism"] = [species_name.split(" (")[0].lower().replace(" ","_") for species_name in config["species"]][0]
+config["organism"] = config["species"].split(" (")[0].lower().replace(" ","_")
 
 ##### Config processing #####
 # Folders
 #
-reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
+#reference_directory = os.path.join(GLOBAL_REF_PATH,config["organism"],config["reference"])
 
 # Samples
 #
 sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 
-
 # setting references for enrichment
 # GO
-f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"),)
+f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"))
 reference_GO = json.load(f)
 f.close()
 if config["species"] in reference_GO.keys():
@@ -41,7 +40,7 @@ else:
     config["onthology"] = False
 
 # KEGG
-ff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"),)
+ff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"))
 reference_kegg = json.load(ff)
 ff.close()
 if config["species"] in reference_kegg.keys():
@@ -51,7 +50,7 @@ else:
     config["kegg"] = False
 
 # WIKIPATHWAYS
-fff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"),)
+fff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"))
 reference_wp = json.load(fff)
 fff.close()
 if config["species"] in reference_wp.keys():
@@ -61,7 +60,7 @@ else:
     config["wikipathways"] = False
 
 # REACTOME
-ffff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"),)
+ffff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"))
 reference_reactome = json.load(ffff)
 ffff.close()
 if config["species"] in reference_reactome.keys():
@@ -73,8 +72,10 @@ else:
 #
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
-    lib_name="[^\.\/]+",
-    analysis_type = "feature_count|RSEM"
+    lib_name = "[^\.\/]+",
+    condition_list = sorted(sample_tab.condition.unique()) if config['conditions_to_compare'] == "all" else config['conditions_to_compare'].split(","),
+    analysis_type = "feature_count|RSEM",
+    biotype_dir_list = config['biotypes'].split(",")
 
 ##### Target rules #####
 
