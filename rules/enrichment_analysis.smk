@@ -1,61 +1,14 @@
-def input_all(wildcards):
-    input = {}
-    if (sample_tab.condition != "").all() and (sample_tab.tag != "").all():
-        if config['conditions_to_compare'] == "all":
-            condition_list = sorted(sample_tab.condition)
-        else:
-            condition_list = config['conditions_to_compare'].split(",")
-
-        comparison_dir_list = list()
-        for condition1 in condition_list:
-            if ':' in condition1:
-                conditions = condition1.split(":")
-                comparison_dir_list.append(conditions[0] + "_vs_" + conditions[1])
-            else:
-                for condition2 in condition_list[condition_list.index(condition1):]:
-                    if ':' not in condition2 and condition2 != condition1:
-                        comparison_dir_list.append(condition2 + "_vs_" + condition1)
-
-        biotype_dir_list = config['biotypes'].split(",")
-
-        if config["feature_count"]:
-            if config["onthology"]:
-                input["feature_count_go_e"] = expand("results/DE_feature_count/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["feature_count_go_g"] = expand("results/DE_feature_count/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-            if config["kegg"]:
-                input["feature_count_kegg_e"] = expand("results/DE_feature_count/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["feature_count_kegg_g"] = expand("results/DE_feature_count/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-            if config["wikipathways"]:
-                input["feature_count_wp_e"] = expand("results/DE_feature_count/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["feature_count_wp_g"] = expand("results/DE_feature_count/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-            if config["reactome"]:
-                input["feature_count_reactome_e"] = expand("results/DE_feature_count/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["feature_count_reactome_g"] = expand("results/DE_feature_count/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-
-        if config["RSEM"]:
-            if config["onthology"]:
-                input["RSEM_go_e"] = expand("results/DE_RSEM/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["RSEM_go_g"] = expand("results/DE_RSEM/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-            if config["kegg"]:
-                input["RSEM_kegg_e"] = expand("results/DE_RSEM/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["RSEM_kegg_g"] = expand("results/DE_RSEM/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-            if config["wikipathways"]:
-                input["RSEM_wp_e"] = expand("results/DE_RSEM/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["RSEM_wp_g"] = expand("results/DE_RSEM/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-            if config["reactome"]:
-                input["RSEM_reactome_e"] = expand("results/DE_RSEM/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                input["RSEM_reactome_g"] = expand("results/DE_RSEM/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-
-    else:
-        raise ValueError("There is no conditions or tag for samples!")
-
-    return input
-
-
 rule final_report:
-    input: unpack(input_all)
+    input:  goE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
+            goG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
+            keggE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",
+            keggG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",
+            reactE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",
+            reactG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png",
+            wpE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",
+            wpG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
     output: html = "results/enrichment_GSEA_final_report.html"
-    params: config = "config.json",
+    params: config = "config.json"
     shell: "touch {output.html}"
 
 rule enrichment_GO:
