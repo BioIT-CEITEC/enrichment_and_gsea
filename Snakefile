@@ -73,7 +73,8 @@ else:
 #
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
-    analysis_type = "feature_count|RSEM",
+    lib_name="[^\.\/]+",
+    analysis_type = "feature_count|RSEM"
 
 ##### Target rules #####
 
