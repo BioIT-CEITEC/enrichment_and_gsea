@@ -2,7 +2,7 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA 6",
+    "label": "Gene enrichment and GSEA 1",
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
@@ -11,8 +11,8 @@
       "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_*/*",
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
     ],
-    "report_index": "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_gsea.html",
-    "reports":["results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_gsea_report.html"]
+    "report_index": "results/enrichment_GSEA_final_report.html",
+    "reports":["results/*"]
   },
   "general_params": [
     "entity_name",
@@ -27,16 +27,6 @@
   ],
   "gui_params": {
     "primary": {
-      "conditions_to_compare": {
-        "label": "Conditions to compare",
-        "type": "string",
-        "default": "all"
-      },
-      "biotypes": {
-        "label": "Biotypes",
-        "type": "string",
-        "default": "all"
-      },
       "onthology": {
         "label": "Run Gene Onthology enrichment",
         "type": "bool",
@@ -56,6 +46,16 @@
         "label": "Run WikiPathways enrichment",
         "type": "bool",
         "default": true
+      },
+      "conditions_to_compare": {
+        "label": "Conditions to compare",
+        "type": "string",
+        "default": "all"
+      },
+      "biotypes": {
+        "label": "Biotypes",
+        "type": "string",
+        "default": "all"
       },
       "cutoff_log2fc_enrich": {
         "label": "Log2FC cut-off to sort DESeq2 result before enrichment",
