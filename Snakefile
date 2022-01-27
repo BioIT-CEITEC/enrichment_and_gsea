@@ -98,6 +98,12 @@ f=open("enrichment_gsea/config_enrichment_gsea.json","w")
 json.dump(config,f,indent = 4)
 f.close()
 
+analysis = []
+if config["feature_count"]:
+    analysis.append("feature_count")
+if config["RSEM"]:
+    analysis.append("RSEM")
+
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
     lib_name = "[^\.\/]+",
