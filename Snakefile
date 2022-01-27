@@ -120,8 +120,8 @@ wildcard_constraints:
     lib_name = "[^\.\/]+",
     analysis_type = "feature_count|RSEM",
     condition_list = "|".join(condition_list),
-    biotype_dir_list = "|".join(biotype_dir_list),
-    comparison_dir_list = "|".join(comparison_dir_list)
+    biotype = "|".join(biotype_dir_list),
+    comparison = "|".join(comparison_dir_list)
 
 ##### Target rules #####
 
