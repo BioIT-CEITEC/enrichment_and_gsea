@@ -2,7 +2,7 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA 1",
+    "label": "Gene enrichment and GSEA 3",
     "type": "gene_enrichment",
     "inputs": "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv",
     "outputs": [
@@ -90,16 +90,16 @@
       "colors" : {
         "label": "Colors",
         "type": "enum",
-        "default": "col1",
+        "default": "firebrick:white:royalblue",
         "list": {
-          "col1": "firebrick:white:royalblue",
-          "col2": "firebrick3:lemonchiffon:springgreen4",
-          "col3": "firebrick3:lemonchiffon:steelblue",
-          "col4": "red3:white:gray25",
-          "col5": "darkorange2:white:mediumpurple4",
-          "col6": "mediumorchid4:white:springgreen4",
-          "col7": "violetred:white:olivedrab",
-          "col8": "sienna:white:turquoise4"
+          "firebrick:white:royalblue":"red:white:blue",
+          "firebrick3:lemonchiffon:springgreen4":"red:yellow:green",
+          "firebrick3:lemonchiffon:steelblue":"red:yellow:blue",
+          "red3:white:gray25":"red:white:grey",
+          "darkorange2:white:mediumpurple4":"orange:white:purple",
+          "mediumorchid4:white:springgreen4":"purple:white:green",
+          "violetred:white:olivedrab":"pink:white:green",
+          "sienna:white:turquoise4":"brown:white:turquoise"
         }
       }
     },
