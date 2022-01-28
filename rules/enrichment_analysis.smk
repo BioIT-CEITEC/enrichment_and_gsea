@@ -110,7 +110,7 @@ rule enrichment_reactome:
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME",
-            organism_kegg = config["organism_reactome"],
+            organism_reactome = config["organism_reactome"],
             cutoff_log2fc = config["cutoff_log2fc_enrich"],
             cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
@@ -129,7 +129,7 @@ rule GSEA_reactome:
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
-            organism_kegg = config["organism_reactome"],
+            organism_reactome = config["organism_reactome"],
             cutoff_log2fc = config["cutoff_log2fc_gsea"],
             cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
@@ -152,7 +152,7 @@ rule enrichment_wp:
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP",
-            organism_kegg = config["organism_wp"],
+            organism_wp = config["organism_wp"],
             cutoff_log2fc = config["cutoff_log2fc_enrich"],
             cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
@@ -171,7 +171,7 @@ rule GSEA_wp:
     output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
-            organism_kegg = config["organism_wp"],
+            organism_wp = config["organism_wp"],
             cutoff_log2fc = config["cutoff_log2fc_gsea"],
             cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
