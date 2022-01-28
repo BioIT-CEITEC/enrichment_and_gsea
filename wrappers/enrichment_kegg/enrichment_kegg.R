@@ -27,7 +27,7 @@ run_all <- function(args){
     KEYID <- "ENSEMBL"
   }
 
-  setwd(WORKDIR)
+  #setwd(WORKDIR)
 
   # read results of DE analysis
   de <- fread(input_genes,header = T)

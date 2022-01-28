@@ -14,8 +14,8 @@ f.close()
 command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_wp.R "+\
             snakemake.params.workdir + " " +\
             snakemake.input.tsv + " " +\
-            snakemake.params.outdir + " " +\
-            snakemake.params.organism_wp + " " +\
+            snakemake.params.outdir + " '" +\
+            snakemake.params.organism_wp + "' " +\
             snakemake.params.cutoff_log2fc + " " +\
             snakemake.params.cutoff_padj + " " +\
             snakemake.params.n_up + " " +\

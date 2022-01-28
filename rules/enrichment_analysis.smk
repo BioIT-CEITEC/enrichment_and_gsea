@@ -2,17 +2,17 @@ def final_input(wildcards):
     input = {}
 
     if config["onthology"]:
-        input["goE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["goG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["goE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["goG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
-        input["keggE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["keggG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["keggE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["keggG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["reactome"]:
-        input["reactE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["reactG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["reactE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["reactG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["wikipathways"]:
-        input["wpE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["wpG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["wpE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["wpG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.pdf", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
 
     return input
 
@@ -25,7 +25,7 @@ rule final_report:
 
 rule enrichment_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir= "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
             organism_go = config["organism_go"],
@@ -43,7 +43,7 @@ rule enrichment_GO:
 
 rule GSEA_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
@@ -65,7 +65,7 @@ rule GSEA_GO:
 
 rule enrichment_kegg:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
             organism_kegg = config["organism_kegg"],
@@ -84,7 +84,7 @@ rule enrichment_kegg:
 
 rule GSEA_kegg:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
             organism_kegg = config["organism_kegg"],
@@ -107,7 +107,7 @@ rule GSEA_kegg:
 
 rule enrichment_reactome:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME",
             organism_reactome = config["organism_reactome"],
@@ -126,7 +126,7 @@ rule enrichment_reactome:
 
 rule GSEA_reactome:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
             organism_reactome = config["organism_reactome"],
@@ -149,7 +149,7 @@ rule GSEA_reactome:
 
 rule enrichment_wp:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP",
             organism_wp = config["organism_wp"],
@@ -168,7 +168,7 @@ rule enrichment_wp:
 
 rule GSEA_wp:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
+    output: plot = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.pdf"
     params: workdir = "results/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
             organism_wp = config["organism_wp"],
