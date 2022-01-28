@@ -70,6 +70,12 @@ else:
     config["reactome"] = False
 
 #
+analysis = []
+if config["feature_count"]:
+    analysis.append("feature_count")
+if config["RSEM"]:
+    analysis.append("RSEM")
+
 condition_list = sorted(sample_tab.condition.unique()) if config['conditions_to_compare'] == "all" else config['conditions_to_compare'].split(",")
 biotype_dir_list = config['biotypes'].split(",")
 comparison_dir_list = list()
@@ -82,43 +88,14 @@ for condition1 in condition_list:
             if ':' not in condition2 and condition2 != condition1:
                 comparison_dir_list.append(condition2 + "_vs_" + condition1)
 
-pngfiles = []
-for comparison in comparison_dir_list:
-    for biotype in biotype_dir_list:
-        if config["feature_count"]:
-            if config["onthology"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_GO/GO_enrich_CC.png"),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_GO/GSEA_GO_CC.png")
-            if config["kegg"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_KEGG/KEGG_enrich.png"),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_KEGG/GSEA_KEGG.png")
-            if config["wikipathways"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_WP/WP_enrich.png"),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_WP/GSEA_WP.png")
-            if config["reactome"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_REACTOME/REACTOME_enrich.png"),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_REACTOME/GSEA_REACTOME.png")
-
-        if config["RSEM"]:
-            if config["onthology"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_GO/GO_enrich_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_GO/GSEA_GO_CC.png",comparison=comparison_dir_list,biotype=biotype_dir_list)
-            if config["kegg"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_KEGG/KEGG_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_KEGG/GSEA_KEGG.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-            if config["wikipathways"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_WP/WP_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_WP/GSEA_WP.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-            if config["reactome"]:
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/enrichment_REACTOME/REACTOME_enrich.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-                pngfiles.append("results/DE_feature_count/" + comparison + "/" + biotype + "/GSEA_REACTOME/GSEA_REACTOME.png",comparison=comparison_dir_list,biotype=biotype_dir_list),
-
-pngfiles.append("results/enrichment_GSEA_final_report.html")
+f=open("results/config_enrichment_gsea.json","w")
+json.dump(config,f,indent = 4)
+f.close()
 
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
     lib_name = "[^\.\/]+",
-    analysis_type = "feature_count|RSEM",
+    analysis_type = "|".join(analysis),
     condition_list = "|".join(condition_list),
     biotype = "|".join(biotype_dir_list),
     comparison = "|".join(comparison_dir_list)
@@ -126,7 +103,7 @@ wildcard_constraints:
 ##### Target rules #####
 
 rule all:
-    input:  pngfiles
+    input:  report = "results/enrichment_GSEA_final_report.html"
 
 ##### Modules #####
 

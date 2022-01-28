@@ -1,12 +1,24 @@
+def final_input(wildcards):
+    input = {}
+
+    if config["onthology"]:
+        input["goE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["goG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+    if config["kegg"]:
+        input["keggE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["keggG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+    if config["reactome"]:
+        input["reactE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["reactG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+    if config["wikipathways"]:
+        input["wpE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["wpG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+
+    return input
+
+
 rule final_report:
-    input:  goE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
-            goG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png",
-            keggE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png",
-            keggG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png",
-            reactE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png",
-            reactG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png",
-            wpE = "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png",
-            wpG = "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png"
+    input:  unpack(final_input)
     output: html = "results/enrichment_GSEA_final_report.html"
     params: config = "config.json"
     shell: "touch {output.html}"

@@ -12,7 +12,7 @@
     "cutoff_padj_gsea": "1",
     "n_up": 10,
     "n_down": 10,
-    "colors": "col1",
+    "colors": "firebrick:white:royalblue",
     "enrich_padj": "0.1",
     "enrich_padjmethod": "BH",
     "enrich_minGSSize": "2",
