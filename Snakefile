@@ -88,6 +88,10 @@ for condition1 in condition_list:
             if ':' not in condition2 and condition2 != condition1:
                 comparison_dir_list.append(condition2 + "_vs_" + condition1)
 
+config["analysis_type"] = analysis
+config["biotype_list"] = biotype_dir_list
+config["comparison"] = comparison_dir_list
+
 f=open("results/config_enrichment_gsea.json","w")
 json.dump(config,f,indent = 4)
 f.close()

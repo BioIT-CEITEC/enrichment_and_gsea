@@ -2,17 +2,17 @@ def final_input(wildcards):
     input = {}
 
     if config["onthology"]:
-        input["goE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
-        input["goG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["goE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["goG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
-        input["keggE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
-        input["keggG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["keggE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["keggG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["reactome"]:
-        input["reactE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
-        input["reactG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["reactE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["reactG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["wikipathways"]:
-        input["wpE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
-        input["wpG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png", analysis_type=analysis_type, comparison=comparison, biotype=biotype)
+        input["wpE"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["wpG"] = expand("results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.png", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
 
     return input
 
@@ -20,7 +20,7 @@ def final_input(wildcards):
 rule final_report:
     input:  unpack(final_input)
     output: html = "results/enrichment_GSEA_final_report.html"
-    params: config = "config.json"
+    params: config = "config_enrichment_gsea.json"
     shell: "touch {output.html}"
 
 rule enrichment_GO:
@@ -79,8 +79,8 @@ rule enrichment_kegg:
             enrich_maxGSSize = config["enrich_maxGSSize"],
             organism_go = config["organism_go"]
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_KEGG.log"
-    conda:  "../wrappers/enrichment_KEGG/env.yaml"
-    script: "../wrappers/enrichment_KEGG/script.py"
+    conda:  "../wrappers/enrichment_kegg/env.yaml"
+    script: "../wrappers/enrichment_kegg/script.py"
 
 rule GSEA_kegg:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
