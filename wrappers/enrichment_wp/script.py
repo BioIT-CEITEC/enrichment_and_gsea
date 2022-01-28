@@ -23,7 +23,7 @@ command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_wp
             snakemake.params.enrich_padj + " " +\
             snakemake.params.enrich_padjmethod + " " +\
             snakemake.params.enrich_minGSSize + " " +\
-            snakemake.params.enrich_maxGSSize +\ " " +\
+            snakemake.params.enrich_maxGSSize + " " +\
             snakemake.params.organism_go +\
             " >> " + log_filename + " 2>&1 "
 

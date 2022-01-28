@@ -27,7 +27,7 @@ command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_reactome
             snakemake.params.gsea_maxGSSize + " " +\
             snakemake.params.gsea_eps + " " +\
             snakemake.params.gsea_nPermSimple + " " +\
-            snakemake.params.gsea_by +\ " " +\
+            snakemake.params.gsea_by + " " +\
             snakemake.params.organism_go +\
             " >> " + log_filename + " 2>&1 "
 
