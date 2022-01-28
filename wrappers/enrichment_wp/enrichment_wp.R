@@ -105,19 +105,19 @@ run_all <- function(args){
 # run as Rscript
 args <- commandArgs(trailingOnly = T)
 
-args <- character(13)
-args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
-args[2] <- "DESeq2.tsv" # input_genes
-args[3] <- "enrichment_WP" # OUTPUT_DIR
-args[4] <- "Homo sapiens" # organism_wp
-args[5] <- "1" # cutoff_log2fc
-args[6] <- "0.05" # cutoff_padj
-args[7] <- 15 # n_up
-args[8] <- "firebrick:white:royalblue" # colors
-args[9] <- "0.1" # enrich_padj = padj from the enrich result table
-args[10] <- "BH" # enrich_padjmethod (BH,BY,fdr,holm,hochberg,hommel,bonferroni,none)
-args[11] <- "2" # enrich_minGSSize
-args[12] <- "Inf" # enrich_maxGSSize
-args[13] <- "org.Hs.eg.db" # organism_go
+# args <- character(13)
+# args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
+# args[2] <- "DESeq2.tsv" # input_genes
+# args[3] <- "enrichment_WP" # OUTPUT_DIR
+# args[4] <- "Homo sapiens" # organism_wp
+# args[5] <- "1" # cutoff_log2fc
+# args[6] <- "0.05" # cutoff_padj
+# args[7] <- 15 # n_up
+# args[8] <- "firebrick:white:royalblue" # colors
+# args[9] <- "0.1" # enrich_padj = padj from the enrich result table
+# args[10] <- "BH" # enrich_padjmethod (BH,BY,fdr,holm,hochberg,hommel,bonferroni,none)
+# args[11] <- "2" # enrich_minGSSize
+# args[12] <- "Inf" # enrich_maxGSSize
+# args[13] <- "org.Hs.eg.db" # organism_go
 
 run_all(args)
