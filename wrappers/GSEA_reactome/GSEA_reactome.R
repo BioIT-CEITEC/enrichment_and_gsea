@@ -14,7 +14,7 @@ run_all <- function(args){
   gsea_minGSSize <- as.numeric(args[12])
   gsea_maxGSSize <- as.numeric(args[13])
   gsea_eps <- as.numeric(args[14])
-  gsea_nPermSimple <- as.numeric(args[15])
+  gsea_nPermSimple <- as.integer(args[15])
   gsea_by <- args[16]
   organism_go <- args[17]
 
