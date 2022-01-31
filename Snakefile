@@ -92,7 +92,7 @@ config["analysis_type"] = analysis
 config["biotype_list"] = biotype_dir_list
 config["comparison"] = comparison_dir_list
 
-os.mkdir("enrichment_gsea")
+os.makedirs("enrichment_gsea",exist_ok=True)
 
 f=open("enrichment_gsea/config_enrichment_gsea.json","w")
 json.dump(config,f,indent = 4)
