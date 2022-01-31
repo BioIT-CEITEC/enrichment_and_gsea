@@ -160,7 +160,7 @@ run_all <- function(args){
   ggsave(GSEA_BP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_BP.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_BP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_BP.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_BP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_BP.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
@@ -173,7 +173,7 @@ run_all <- function(args){
   ggsave(GSEA_MF_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_MF.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_MF_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_MF.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_MF_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_MF.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
@@ -186,7 +186,7 @@ run_all <- function(args){
   ggsave(GSEA_CC_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_CC.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_CC_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_CC.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_CC_plot, filename = paste0(OUTPUT_DIR,"/GSEA_GO_CC.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 

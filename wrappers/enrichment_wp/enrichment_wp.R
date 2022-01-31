@@ -96,7 +96,7 @@ run_all <- function(args){
   ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 

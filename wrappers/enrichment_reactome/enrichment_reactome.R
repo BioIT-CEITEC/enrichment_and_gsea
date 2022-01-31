@@ -97,7 +97,7 @@ run_all <- function(args){
   ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 

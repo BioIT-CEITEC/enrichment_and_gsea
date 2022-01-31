@@ -97,7 +97,7 @@ run_all <- function(args){
   ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 

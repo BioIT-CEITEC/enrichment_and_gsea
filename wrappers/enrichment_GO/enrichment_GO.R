@@ -125,7 +125,7 @@ run_all <- function(args){
   ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 
@@ -137,7 +137,7 @@ run_all <- function(args){
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.png",sep=""),
        width = 10, height = 7, device = "png", bg='transparent')
 
@@ -145,13 +145,13 @@ run_all <- function(args){
                            nUp = n_up,
                            PADJ = enrich_padj,
                            mycol = COLORS,
-                           ploTitle = "GO - Cellular Componenet")
+                           ploTitle = "GO - Cellular Component")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.svg",sep=""),
-       width = 10, height = 7, device = svg, bg='transparent')
+       width = 10, height = 7, device = "svg")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.png",sep=""),
-       width = 10, height = 7, device = "png", bg='transparent')
+      width = 10, height = 7, device = "png", bg='transparent')
 
 }
 

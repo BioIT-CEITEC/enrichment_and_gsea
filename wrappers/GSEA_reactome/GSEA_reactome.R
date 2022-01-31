@@ -126,7 +126,7 @@ run_all <- function(args){
   ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_REACTOME_plot, filename = paste0(OUTPUT_DIR,"/GSEA_REACTOME.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 

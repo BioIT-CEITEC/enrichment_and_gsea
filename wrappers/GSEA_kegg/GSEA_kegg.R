@@ -126,7 +126,7 @@ run_all <- function(args){
   ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_KEGG_plot, filename = paste0(OUTPUT_DIR,"/GSEA_KEGG.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 

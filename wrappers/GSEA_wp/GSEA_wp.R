@@ -125,7 +125,7 @@ run_all <- function(args){
   ggsave(GSEA_WP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_WP.pdf",sep=""),
          width = 10, height = 7, device = "pdf")
   ggsave(GSEA_WP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_WP.svg",sep=""),
-         width = 10, height = 7, device = svg, bg='transparent')
+         width = 10, height = 7, device = "svg")
   ggsave(GSEA_WP_plot, filename = paste0(OUTPUT_DIR,"/GSEA_WP.png",sep=""),
          width = 10, height = 7, device = "png", bg='transparent')
 
