@@ -92,7 +92,7 @@ config["analysis_type"] = analysis
 config["biotype_list"] = biotype_dir_list
 config["comparison"] = comparison_dir_list
 
-f=open("results/config_enrichment_gsea.json","w")
+f=open("enrichment_gsea/config_enrichment_gsea.json","w")
 json.dump(config,f,indent = 4)
 f.close()
 
@@ -107,7 +107,7 @@ wildcard_constraints:
 ##### Target rules #####
 
 rule all:
-    input:  report = "results/enrichment_GSEA_final_report.html"
+    input:  report = "enrichment_gsea/enrichment_GSEA_final_report.html"
 
 ##### Modules #####
 
