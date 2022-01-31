@@ -2,19 +2,18 @@
   "workflow_description": {
     "name": "enrichment_and_gsea",
     "version": 1.0,
-    "label": "Gene enrichment and GSEA",
+    "label": "Gene enrichment and GSEA 2",
     "type": "gene_enrichment",
     "inputs": [
       "results/*"
     ],
     "outputs": [
-      "results/DE_{analysis_type}/{comparison}/{biotype}/enrichment_*/*",
+      "enrichment_gsea/*",
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_*.log",
-      "results/DE_{analysis_type}/{comparison}/{biotype}/GSEA_*/*",
       "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
     ],
-    "report_index": "results/enrichment_GSEA_final_report.html",
-    "reports":["results/*"]
+    "report_index": "enrichment_gsea/enrichment_GSEA_final_report.html",
+    "reports":["enrichment_gsea/*"]
   },
   "general_params": [
     "entity_name",
