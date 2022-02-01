@@ -2,8 +2,12 @@ def final_input(wildcards):
     input = {}
 
     if config["onthology"]:
-        input["goE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["goG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gomfG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["goccG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
         input["keggE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
         input["keggG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
@@ -27,9 +31,9 @@ rule final_report:
 
 rule enrichment_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.pdf",
-            #plot2 = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
-            plot3 = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg"
+    output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg",
+            plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg",
+            plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg"
     params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
             outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
             organism_go = config["organism_go"],
@@ -47,7 +51,9 @@ rule enrichment_GO:
 
 rule GSEA_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg"
+    output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg",
+            plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg",
+            plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg"
     params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
