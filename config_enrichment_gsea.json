@@ -99,5 +99,20 @@
             "condition": "KO",
             "tag": "rep7"
         }
-    }
+    },
+    "species": "Mus musculus (mouse)",
+    "organism": "mus_musculus",
+    "organism_go": "org.Mm.eg.db",
+    "organism_kegg": "mmu",
+    "organism_wp": "Mus musculus",
+    "organism_reactome": "mouse",
+    "analysis_type": [
+        "feature_count"
+    ],
+    "biotype_list": [
+        "all"
+    ],
+    "comparison": [
+        "WT_vs_KO"
+    ]
 }

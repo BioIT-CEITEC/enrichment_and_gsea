@@ -3,14 +3,36 @@ title: "R Notebook"
 output: html_document
 ---
 
+```{r load-packages, include=FALSE}
+#library(officedown)
+library(officer)
+library(flextable)
+library(dplyr)
+library(knitr)
+library(magrittr)
+library(knitr)
+library(ggplot2)
+library(data.table)
+library(RColorBrewer)
+library(jsonlite)
+library(tidyr)
+library(stringr)
+
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+set_flextable_defaults(font.family = "Arial", font.size = 10, padding.top = 3, padding.bottom = 3)
+```
+
 The [R plugin](https://www.jetbrains.com/help/pycharm/r-plugin-support.html) for IntelliJ-based IDEs provides
 handy capabilities to work with the [R Markdown](https://www.jetbrains.com/help/pycharm/r-markdown.html) files.
 To [add](https://www.jetbrains.com/help/pycharm/r-markdown.html#add-code-chunk) a new R chunk.
 
 Type any R code in the chunk, for example:
-```{r}
-mycars <- within(mtcars, { cyl <- ordered(cyl) })
-mycars
+```{r, results='asis', echo=FALSE}
+config_json = as.data.table(fromJSON(paste0(snakemake@params$config)))
+config_json[,condition := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$condition)]
+  config_json[,tag       := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$tag)]
+  config_json[,full_name := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$sample_name)]
+
 ```
 
 Now, click the **Run** button on the chunk toolbar to [execute](https://www.jetbrains.com/help/pycharm/r-markdown.html#run-r-code) the chunk code. The result should be placed under the chunk.
