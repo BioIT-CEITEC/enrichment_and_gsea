@@ -4,6 +4,13 @@
   <component name="RMarkdownSettings">
     <option name="renderProfiles">
       <map>
+        <entry key="file://$PROJECT_DIR$/wrappers/final_report/enrichment_GSEA_final_report.Rmd">
+          <value>
+            <RMarkdownRenderProfile>
+              <option name="outputDirectoryUrl" value="file://$PROJECT_DIR$/wrappers/final_report" />
+            </RMarkdownRenderProfile>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/wrappers/final_report/script.Rmd">
           <value>
             <RMarkdownRenderProfile>

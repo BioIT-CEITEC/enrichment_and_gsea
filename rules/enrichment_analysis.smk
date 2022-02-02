@@ -1,12 +1,11 @@
 def final_input(wildcards):
     input = {}
-
     if config["onthology"]:
-        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
-        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
-        input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
-        input["gomfG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg",analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.{ext}", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, ext=["pdf","svg"])
+        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gomfG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
         input["goccG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
         input["keggE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
@@ -22,12 +21,20 @@ def final_input(wildcards):
 
 
 rule final_report:
-    input:  unpack(final_input)
+    input:  jsonfile = "enrichment_gsea/config_enrichment_gsea.json"
     output: html = "enrichment_gsea/enrichment_GSEA_final_report.html"
-    params: config = "enrichment_gsea/config_enrichment_gsea.json"
+    #params: config = "enrichment_gsea/config_enrichment_gsea.json"
     conda: "../wrappers/final_report/env.yaml"
-    script: "../wrappers/final_report/script2.Rmd"
+    script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
     #shell: "touch {output.html}"
+
+rule completion:
+    input: unpack(final_input)
+    output: jsonfile = "enrichment_gsea/config_enrichment_gsea.json"
+    params: config = "./config.json"
+    #conda: "../wrappers/final_report/env.yaml"
+    #script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
+    shell: "touch {output.jsonfile}"
 
 rule enrichment_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
