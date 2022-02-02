@@ -32,7 +32,6 @@ rule completion:
     input:  unpack(final_input),
             enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
             gsea = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
-            universe = "enrichment_gsea/gene_universe.tsv"
     output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     params: config = "./config.json"
     #conda: "../wrappers/final_report/env.yaml"
@@ -43,8 +42,8 @@ rule sampling:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
     output: enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv",
             gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv",
-            universe = "enrichment_gsea/gene_universe.tsv"
-    params: organism_go = config["organism_go"],
+    params: universe = "enrichment_gsea/gene_universe.tsv",
+            organism_go = config["organism_go"],
             cutoff_log2fc_enrich = config["cutoff_log2fc_enrich"],
             cutoff_padj_enrich = config["cutoff_padj_enrich"],
             cutoff_log2fc_gsea = config["cutoff_log2fc_gsea"],

@@ -15,7 +15,7 @@ command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/sampling.R " 
             snakemake.input.tsv + " " +\
             snakemake.output.enrich + " " +\
             snakemake.output.gsea + " " +\
-            snakemake.output.universe + " " +\
+            snakemake.params.universe + " " +\
             snakemake.params.organism_go + " " +\
             snakemake.params.cutoff_log2fc_enrich + " " +\
             snakemake.params.cutoff_padj_enrich + " " +\
