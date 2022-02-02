@@ -1,15 +1,16 @@
 run_all <- function(args){
 
-  WORKDIR <- args[1]
-  input_genes <- args[2]
-  organism <- args[3]
-  cutoff_log2fc_enrich <- as.numeric(args[4])
-  cutoff_padj_enrich <- as.numeric(args[5])
-  cutoff_log2fc_gsea <- as.numeric(args[6])
-  cutoff_padj_gsea <- as.numeric(args[7])
+  input_genes <- args[1]
+  output_enrich <- args[2]
+  output_gsea <- args[3]
+  output_universe <- args[4]
+  organism <- args[5]
+  cutoff_log2fc_enrich <- as.numeric(args[6])
+  cutoff_padj_enrich <- as.numeric(args[7])
+  cutoff_log2fc_gsea <- as.numeric(args[8])
+  cutoff_padj_gsea <- as.numeric(args[9])
 
   library("data.table")
-  library("clusterProfiler")
 
   if(!require(organism, character.only = T)) {BiocManager::install(organism, update = F)}
   library(organism, character.only = T)
@@ -38,22 +39,26 @@ run_all <- function(args){
   enrich_tab <- merge(enrich_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   gsea_tab <- merge(gsea_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
 
-  fwrite(enrich_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(WORKDIR,"/gene_for_enrichment.tsv"), sep="\t")
+  fwrite(enrich_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
 
-  fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(WORKDIR,"/gene_for_gsea.tsv"), sep="\t")
+  fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
+
+  fwrite(universe, file = output_universe, sep="\t")
 
 }
 
 # run as Rscript
 args <- commandArgs(trailingOnly = T)
 
-# args <- character(16)
-# args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
-# args[2] <- "DESeq2.tsv" # input_genes
-# args[3] <- "org.Hs.eg.db" # organism
-# args[4] <- "1" # cutoff_log2fc_enrich
-# args[5] <- "0.05" # cutoff_padj_enrich
-# args[6] <- "0" # cutoff_log2fc_gsea
-# args[7] <- "1" # cutoff_padj_gsea
+# args <- character(9)
+# args[1] <- "DESeq2.tsv" # input_genes
+# args[2] <- "gene_for_enrichment.tsv" # output_enrich
+# args[3] <- "gene_for_gsea.tsv" # output_gsea
+# args[4] <- "gene_universe.tsv" # output_universe
+# args[5] <- "org.Hs.eg.db" # organism
+# args[6] <- "1" # cutoff_log2fc_enrich
+# args[7] <- "0.05" # cutoff_padj_enrich
+# args[8] <- "0" # cutoff_log2fc_gsea
+# args[9] <- "1" # cutoff_padj_gsea
 
 run_all(args)

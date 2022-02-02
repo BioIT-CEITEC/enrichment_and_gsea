@@ -8,13 +8,14 @@ log_filename = str(snakemake.log)
 
 
 f = open(log_filename, 'a+')
-f.write("\n##\n## RULE: enrichment_GO \n##\n")
+f.write("\n##\n## RULE: sampling \n##\n")
 f.close()
 
-command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GO.R " +\
-            snakemake.params.workdir + " " +\
+command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/sampling.R " +\
             snakemake.input.tsv + " " +\
-            snakemake.params.outdir + " " +\
+            snakemake.output.enrich + " " +\
+            snakemake.output.gsea + " " +\
+            snakemake.output.universe + " " +\
             snakemake.params.organism_go + " " +\
             snakemake.params.cutoff_log2fc_enrich + " " +\
             snakemake.params.cutoff_padj_enrich + " " +\
