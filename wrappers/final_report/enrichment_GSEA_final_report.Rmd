@@ -1,27 +1,8 @@
 ---
-title: "Test Report"
-author:
-    - "Your Name"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
-params:
-   rmd: "enrichment_GSEA_final_report.Rmd"
+title: Final report
 output:
   html_document:
-  highlight: tango
-  number_sections: no
-  theme: default
-  toc: yes
-  toc_depth: 3
-  toc_float:
-    collapsed: no
-    smooth_scroll: yes
+    highlight: tango
 ---
 
-## R Markdown
 
-This is an R Markdown document.
-
-Test include from snakemake `r snakemake@input`.
-
-## Source
-<a download="enrichment_GSEA_final_report.Rmd" href="`r base64enc::dataURI(file = params$rmd, mime = 'text/rmd', encoding = 'base64')`">R Markdown source file (to produce this document)</a>

@@ -19,14 +19,15 @@ def final_input(wildcards):
 
     return input
 
-
 rule final_report:
     input:  txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     output: html = "enrichment_gsea/enrichment_GSEA_final_report.html"
-    #params: config = "enrichment_gsea/config_enrichment_gsea.json"
-    conda: "../wrappers/final_report/env.yaml"
-    script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
+    #params:    config = "enrichment_gsea/config_enrichment_gsea.json"
+    conda:  "../wrappers/final_report/env.yaml"
+    log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
+    script: "../wrappers/final_report/script.py"
     #shell: "touch {output.html}"
+
 
 rule completion:
     input:  unpack(final_input),
@@ -35,8 +36,8 @@ rule completion:
     output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     params: config = "./config.json"
     #conda: "../wrappers/final_report/env.yaml"
-    #script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
-    shell: "touch {output.txtfile}"
+    #script:    "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
+    shell:  "touch {output.txtfile}"
 
 rule sampling:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
@@ -219,3 +220,4 @@ rule GSEA_wp:
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
     conda:  "../wrappers/GSEA_wp/env.yaml"
     script: "../wrappers/GSEA_wp/script.py"
+
