@@ -29,12 +29,28 @@ rule final_report:
     #shell: "touch {output.html}"
 
 rule completion:
-    input: unpack(final_input)
+    input:  unpack(final_input),
+            enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv",
+            gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
     output: jsonfile = "enrichment_gsea/config_enrichment_gsea.json"
     params: config = "./config.json"
     #conda: "../wrappers/final_report/env.yaml"
     #script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
     shell: "touch {output.jsonfile}"
+
+rule sampling:
+    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    output: enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv",
+            gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
+    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
+            organism_go = config["organism_go"],
+            cutoff_log2fc_enrich = config["cutoff_log2fc_enrich"],
+            cutoff_padj_enrich = config["cutoff_padj_enrich"],
+            cutoff_log2fc_gsea = config["cutoff_log2fc_gsea"],
+            cutoff_padj_gsea =config["cutoff_padj_gsea"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.sampling.log"
+    conda:  "../wrappers/sampling/env.yaml"
+    script: "../wrappers/sampling/script.py"
 
 rule enrichment_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
