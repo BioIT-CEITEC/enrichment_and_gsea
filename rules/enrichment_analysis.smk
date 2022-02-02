@@ -21,7 +21,7 @@ def final_input(wildcards):
 
 
 rule final_report:
-    input:  jsonfile = "enrichment_gsea/config_enrichment_gsea.json"
+    input:  txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     output: html = "enrichment_gsea/enrichment_GSEA_final_report.html"
     #params: config = "enrichment_gsea/config_enrichment_gsea.json"
     conda: "../wrappers/final_report/env.yaml"
@@ -30,13 +30,13 @@ rule final_report:
 
 rule completion:
     input:  unpack(final_input),
-            enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv",
-            gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
-    output: jsonfile = "enrichment_gsea/config_enrichment_gsea.json"
+            enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+            gsea = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+    output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     params: config = "./config.json"
     #conda: "../wrappers/final_report/env.yaml"
     #script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
-    shell: "touch {output.jsonfile}"
+    shell: "touch {output.txtfile}"
 
 rule sampling:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
