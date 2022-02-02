@@ -1,7 +1,7 @@
 def final_input(wildcards):
     input = {}
     if config["onthology"]:
-        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.{ext}", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, ext=["pdf","svg"])
+        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
         input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
         input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
         input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
@@ -53,21 +53,19 @@ rule sampling:
     script: "../wrappers/sampling/script.py"
 
 rule enrichment_GO:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
     output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg",
             plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg",
             plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
+    params: outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
             organism_go = config["organism_go"],
-            cutoff_log2fc = config["cutoff_log2fc_enrich"],
-            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
-            enrich_maxGSSize = config["enrich_maxGSSize"]
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_GO.log"
     conda:  "../wrappers/enrichment_GO/env.yaml"
     script: "../wrappers/enrichment_GO/script.py"
