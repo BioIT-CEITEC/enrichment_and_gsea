@@ -1,8 +1,48 @@
 ---
-title: Final report
+title: Gene enrichment analysis
+author:
+  - Bioinformatics Core Facility, Centre for Molecular Medicine, CEITEC Masaryk University
+  - ^1^CEITEC-Central European Institute of Technology, Masaryk University, Kamenice 5, 625 00 Brno, Czech Republic
+  - Nicolas Blavet^1^ [nicolas.blavet@ceitec.muni.cz](mailto:nicolas.blavet@ceitec.muni.cz)
+
 output:
   html_document:
     highlight: tango
+
+params:
+  config: snakemake.params.config
 ---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
 
+```{r load-packages, include=FALSE}
+library(data.table)
+library(jsonlite)
+```
+
+```{r variables, results='asis', echo=FALSE}
+DE_FC <- "DE_feature_count"
+if(dir.exists(paste0("results","/DE_RSEM"))==T){
+  var.rsem <- 1
+  DE_RSEM <- "DE_RSEM"
+}else{
+   var.rsem <- 0
+}
+
+`%!in%` <- Negate(`%in%`)
+
+```
+
+# Acknowledgement
+
+- We request co-authorship (and will assist with manuscript preparation) if we have developed novel tools, algorithms, or pipelines, participated in experiment design planning, or have contributed to a biological question addressed in a manuscript. We ask that, at a minimum, you acknowledge us in a publication to which we have contributed routine analysis without further support and discussions, data management or conversion, or data submission services.
+- Core Facility Bioinformatics of CEITEC Masaryk University is gratefully acknowledged for the obtaining of the scientific data presented in this paper.
+
+# Description
+```{r, results='asis', echo=TRUE}
+print(params$config)
+#config_json = as.data.table(fromJSON(paste0(params$config)))
+
+```
