@@ -1,0 +1,9 @@
+{
+  "Homo sapiens (human)": "human",
+  "Mus musculus (mouse)": "mouse",
+  "Rattus norvegicus (rat)": "rat",
+  "Danio rerio (zebrafish)": "zebrafish",
+  "Drosophila melanogaster (fruit fly)": "fly",
+  "Caenorhabditis elegans (nematode)": "celegans",
+  "Saccharomyces cerevisiae (budding yeast)": "yeast"
+}

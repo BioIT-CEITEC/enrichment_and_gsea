@@ -1,0 +1,201 @@
+{
+  "workflow_description": {
+    "name": "enrichment_and_gsea",
+    "version": 1.0,
+    "label": "Gene enrichment and GSEA",
+    "type": "gene_enrichment",
+    "inputs": [
+      "results/*"
+    ],
+    "outputs": [
+      "enrichment_gsea/*",
+      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_*.log",
+      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
+    ],
+    "report_index": "enrichment_gsea/enrichment_GSEA_final_report.html",
+    "reports":["enrichment_gsea/*"]
+  },
+  "general_params": [
+    "entity_name",
+    "sample_name",
+    "condition",
+    "tag"
+  ],
+  "requested_params": [
+    "feature_count",
+    "RSEM",
+    "reference"
+  ],
+  "gui_params": {
+    "primary": {
+      "onthology": {
+        "label": "Run Gene Onthology enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "kegg": {
+        "label": "Run KEGG pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "reactome": {
+        "label": "Run REACTOME pathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "wikipathways": {
+        "label": "Run WikiPathways enrichment",
+        "type": "bool",
+        "default": true
+      },
+      "conditions_to_compare": {
+        "label": "Conditions to compare",
+        "type": "string",
+        "default": "all"
+      },
+      "biotypes": {
+        "label": "Biotypes",
+        "type": "string",
+        "default": "all"
+      },
+      "cutoff_log2fc_enrich": {
+        "label": "Log2FC cut-off to sort DESeq2 result before enrichment",
+        "type": "string",
+        "default": "1"
+      },
+      "cutoff_padj_enrich": {
+        "label": "Adjusted p-value cut-off to sort DESeq2 result before enrichment",
+        "type": "string",
+        "default": "0.05"
+      },
+      "cutoff_log2fc_gsea": {
+        "label": "Log2FC cut-off to sort DESeq2 result before GSEA",
+        "type": "string",
+        "default": "0"
+      },
+      "cutoff_padj_gsea": {
+        "label": "Adjusted p-value cut-off to sort DESeq2 result before GSEA",
+        "type": "string",
+        "default": "1"
+      },
+      "n_up": {
+        "label": "Number of enriched genes",
+        "type": "string",
+        "default": "15"
+      },
+      "n_down": {
+        "label": "Number of enriched genes (down regulated for GSEA)",
+        "type": "string",
+        "default": "15"
+      },
+      "colors" : {
+        "label": "Colors",
+        "type": "enum",
+        "default": "firebrick:white:royalblue",
+        "list": {
+          "firebrick:white:royalblue":"red:white:blue",
+          "firebrick3:lemonchiffon:springgreen4":"red:yellow:green",
+          "firebrick3:lemonchiffon:steelblue":"red:yellow:blue",
+          "red3:white:gray25":"red:white:grey",
+          "darkorange2:white:mediumpurple4":"orange:white:purple",
+          "mediumorchid4:white:springgreen4":"purple:white:green",
+          "violetred:white:olivedrab":"pink:white:green",
+          "sienna:white:turquoise4":"brown:white:turquoise"
+        }
+      }
+    },
+    "detailed": {
+      "enrich_padj": {
+        "label": "Enrichment adjusted p-value cut-off",
+        "type": "string",
+        "default": "0.1"
+      },
+      "enrich_padjmethod": {
+        "label": "Enrichment adjusted p-value method",
+        "type": "enum",
+        "default": "BH",
+        "list": {
+          "BH": "BH",
+          "BY": "BY",
+          "fdr": "fdr",
+          "holm": "holm",
+          "hochberg": "hochberg",
+          "hommel": "hommel",
+          "bonferroni": "bonferroni",
+          "none": "none"
+        }
+      },
+      "enrich_minGSSize": {
+        "label": "Enrichment minimal size of genes annotated",
+        "type": "string",
+        "default": "2"
+      },
+      "enrich_maxGSSize": {
+        "label": "Enrichment maximal size of genes annotated",
+        "type": "string",
+        "default": "Inf"
+      },
+      "gsea_padj": {
+        "label": "GSEA adjusted p-value cut-off",
+        "type": "string",
+        "default": "0.1"
+      },
+      "gsea_padjmethod": {
+        "label": "GSEA adjusted p-value method",
+        "type": "enum",
+        "default": "BH",
+        "list": {
+          "BH": "BH",
+          "BY": "BY",
+          "fdr": "fdr",
+          "holm": "holm",
+          "hochberg": "hochberg",
+          "hommel": "hommel",
+          "bonferroni": "bonferroni",
+          "none": "none"
+        }
+      },
+      "gsea_minGSSize": {
+        "label": "GSEA minimal size of genes annotated",
+        "type": "string",
+        "default": "2"
+      },
+      "gsea_maxGSSize": {
+        "label": "GSEA maximal size of genes annotated",
+        "type": "string",
+        "default": "Inf"
+      },
+      "gsea_eps": {
+        "label": "GSEA boundary for p-value calculation",
+        "type": "string",
+        "default": "0"
+      },
+      "gsea_nPermSimple": {
+        "label": "GSEA Number of permutations for preliminary estimation of p-values",
+        "type": "string",
+        "default": "10000"
+      },
+      "gsea_by": {
+        "label": "GSEA Number of permutations for preliminary estimation of p-values",
+        "type": "enum",
+        "default": "fgsea",
+        "list": {
+          "fgsea": "fgsea",
+          "DOSE": "DOSE"
+        }
+      }
+    },
+    "samples": {
+      "condition": {
+        "label": "Condition",
+        "type": "string",
+        "default": ""
+      },
+      "tag": {
+        "label": "Tag",
+        "type": "string",
+        "default": ""
+      }
+    }
+  }
+}

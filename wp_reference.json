@@ -1,0 +1,19 @@
+{
+  "Homo sapiens (human)": "Homo sapiens",
+  "Mus musculus (mouse)": "Mus musculus",
+  "Rattus norvegicus (rat)": "Rattus norvegicus",
+  "Pan troglodytes (chimpanzee)": "Pan troglodytes",
+  "Canis lupus familiaris (dog)": "Canis familiaris",
+  "Bos taurus (cow)": "Bos taurus",
+  "Sus scrofa (pig)": "Sus scrofa",
+  "Equus caballus (horse)": "Equus caballus",
+  "Gallus gallus (chicken)": "Gallus gallus",
+  "Danio rerio (zebrafish)": "Danio rerio",
+  "Drosophila melanogaster (fruit fly)": "Drosophila melanogaster",
+  "Anopheles gambiae (mosquito)": "Anopheles gambiae",
+  "Caenorhabditis elegans (nematode)": "Caenorhabditis elegans",
+  "Arabidopsis thaliana (thale cress)": "Arabidopsis thaliana",
+  "Oryza sativa japonica (Japanese rice)": "Oryza sativa",
+  "Populus trichocarpa (black cottonwood)": "Populus trichocarpa",
+  "Saccharomyces cerevisiae (budding yeast)": "Saccharomyces cerevisiae"
+}

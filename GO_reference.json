@@ -1,0 +1,22 @@
+{
+  "Homo sapiens (human)": "org.Hs.eg.db",
+  "Mus musculus (mouse)": "org.Mm.eg.db",
+  "Rattus norvegicus (rat)": "org.Rn.eg.db",
+  "Pan troglodytes (chimpanzee)": "org.Pt.eg.db",
+  "Macaca mulatta (rhesus monkey)": "org.Mmu.eg.db",
+  "Canis lupus familiaris (dog)": "org.Cf.eg.db",
+  "Bos taurus (cow)": "org.Bt.eg.db",
+  "Sus scrofa (pig)": "org.Ss.eg.db",
+  "Gallus gallus (chicken)": "org.Gg.eg.db",
+  "Xenopus laevis (African clawed frog)": "org.Xl.eg.db",
+  "Danio rerio (zebrafish)": "org.Dr.eg.db",
+  "Drosophila melanogaster (fruit fly)": "org.Dm.eg.db",
+  "Anopheles gambiae (mosquito)": "org.Ag.eg.db",
+  "Caenorhabditis elegans (nematode)": "org.Ce.eg.db",
+  "Arabidopsis thaliana (thale cress)": "org.At.tair.db",
+  "Saccharomyces cerevisiae (budding yeast)": "org.Sc.sgd.db",
+  "Escherichia coli K-12": "org.EcK12.eg.db",
+  "Escherichia coli Sakai": "org.EcSakai.eg.db",
+  "Myxococcus xanthus DK 1622": "org.Mxanthus.db",
+  "Plasmodium falciparum (malaria)": "org.Pf.plasmo.db"
+}
