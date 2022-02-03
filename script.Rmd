@@ -3,7 +3,7 @@ title: Gene enrichment analysis
 author:
   - Bioinformatics Core Facility, Centre for Molecular Medicine, CEITEC Masaryk University
   - ^1^CEITEC-Central European Institute of Technology, Masaryk University, Kamenice 5, 625 00 Brno, Czech Republic
-  - Nicolas Blavet^1^ ![nicolas.blavet@ceitec.muni.cz](mailto:nicolas.blavet@ceitec.muni.cz)
+  - Nicolas Blavet^1^ [nicolas.blavet@ceitec.muni.cz](mailto:nicolas.blavet@ceitec.muni.cz)
 
 output:
     bookdown::word_document2:
