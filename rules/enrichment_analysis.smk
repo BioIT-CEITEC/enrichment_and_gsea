@@ -1,9 +1,12 @@
 def final_input(wildcards):
     input = {}
-
     if config["onthology"]:
-        input["goE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["goG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gomfG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["goccG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
         input["keggE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
         input["keggG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
@@ -16,38 +19,63 @@ def final_input(wildcards):
 
     return input
 
-
 rule final_report:
-    input:  unpack(final_input)
+    input:  txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     output: html = "enrichment_gsea/enrichment_GSEA_final_report.html"
     params: config = "enrichment_gsea/config_enrichment_gsea.json"
-    conda: "../wrappers/final_report/env.yaml"
-    script: "../wrappers/final_report/script2.Rmd"
+    conda:  "../wrappers/final_report/env.yaml"
+    log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
+    script: "../wrappers/final_report/script.py"
     #shell: "touch {output.html}"
 
-rule enrichment_GO:
+
+rule completion:
+    input:  unpack(final_input),
+            enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+            gsea = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+    output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
+    params: config = "./config.json"
+    #conda: "../wrappers/final_report/env.yaml"
+    #script:    "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
+    shell:  "touch {output.txtfile}"
+
+rule sampling:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.pdf",
-            #plot2 = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.png",
-            plot3 = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
+    output: enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv",
+            gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv",
+    params: universe = "enrichment_gsea/gene_universe.tsv",
             organism_go = config["organism_go"],
-            cutoff_log2fc = config["cutoff_log2fc_enrich"],
-            cutoff_padj = config["cutoff_padj_enrich"],
+            cutoff_log2fc_enrich = config["cutoff_log2fc_enrich"],
+            cutoff_padj_enrich = config["cutoff_padj_enrich"],
+            cutoff_log2fc_gsea = config["cutoff_log2fc_gsea"],
+            cutoff_padj_gsea =config["cutoff_padj_gsea"]
+    log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.sampling.log"
+    conda:  "../wrappers/sampling/env.yaml"
+    script: "../wrappers/sampling/script.py"
+
+rule enrichment_GO:
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
+    output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_BP.svg",
+            plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_MF.svg",
+            plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO/GO_enrich_CC.svg"
+    params: outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_GO",
+            organism_go = config["organism_go"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
-            enrich_maxGSSize = config["enrich_maxGSSize"]
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_GO.log"
     conda:  "../wrappers/enrichment_GO/env.yaml"
     script: "../wrappers/enrichment_GO/script.py"
 
 rule GSEA_GO:
     input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
-    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg"
+    output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg",
+            plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg",
+            plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg"
     params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
             outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
@@ -192,3 +220,4 @@ rule GSEA_wp:
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
     conda:  "../wrappers/GSEA_wp/env.yaml"
     script: "../wrappers/GSEA_wp/script.py"
+

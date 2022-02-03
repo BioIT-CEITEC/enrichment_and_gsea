@@ -1,17 +1,15 @@
 run_all <- function(args){
 
-  WORKDIR <- args[1]
-  input_genes <- args[2]
-  OUTPUT_DIR <- args[3]
-  organism_go <- args[4]
-  cutoff_log2fc <- as.numeric(args[5])
-  cutoff_padj <- as.numeric(args[6])
-  n_up <- as.integer(args[7])
-  COLORS <- unlist(strsplit(args[8],split=":"))[1]
-  enrich_padj <- as.numeric(args[9])
-  enrich_padjmethod <- args[10]
-  enrich_minGSSize <- as.numeric(args[11])
-  enrich_maxGSSize <- as.numeric(args[12])
+  input_genes <- args[1]
+  OUTPUT_DIR <- args[2]
+  organism_go <- args[3]
+  n_up <- as.integer(args[4])
+  COLORS <- unlist(strsplit(args[5],split=":"))[1]
+  enrich_padj <- as.numeric(args[6])
+  enrich_padjmethod <- args[7]
+  enrich_minGSSize <- as.numeric(args[8])
+  enrich_maxGSSize <- as.numeric(args[9])
+  input_universe <- args[10]
 
   library("data.table")
   library("clusterProfiler")
@@ -26,31 +24,31 @@ run_all <- function(args){
     KEYID <- "ENSEMBL"
   }
 
-  #setwd(WORKDIR)
-
-  # read results of DE analysis
-  de <- fread(input_genes,header = T)
-  colnames(de)[colnames(de) == 'V1'] <- 'Geneid' # In case we need to rename
-  ## filter genes
-  deseq_cutoff <- function(deseq = deseq2_tab, LOG2FC = 1, PADJ = 0.05){
-    x <- deseq[is.na(padj) == F & is.na(pvalue) == F,]
-    x <- x[abs(log2FoldChange) >= LOG2FC & padj <= PADJ,]
-    return(x)
-  }
-  deseq2_tab <- deseq_cutoff(de, cutoff_log2fc, cutoff_padj)
+  # # read results of DE analysis
+  # de <- fread(input_genes,header = T)
+  # colnames(de)[colnames(de) == 'V1'] <- 'Geneid' # In case we need to rename
+  # ## filter genes
+  # deseq_cutoff <- function(deseq = deseq2_tab, LOG2FC = 1, PADJ = 0.05){
+  #   x <- deseq[is.na(padj) == F & is.na(pvalue) == F,]
+  #   x <- x[abs(log2FoldChange) >= LOG2FC & padj <= PADJ,]
+  #   return(x)
+  # }
+  # deseq2_tab <- deseq_cutoff(de, cutoff_log2fc, cutoff_padj)
+  deseq2_tab <- fread(input_genes)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
   ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
+  #universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
+  universe <- fread(input_universe)
 
-  deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
-  fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
+  #deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
+  #fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
   egoBP <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,KEYID],
+                    universe      = universe[,get(KEYID)],
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
@@ -64,7 +62,7 @@ run_all <- function(args){
   fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
 
   egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,KEYID],
+                    universe      = universe[,get(KEYID)],
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
@@ -78,7 +76,7 @@ run_all <- function(args){
   fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/GO_enrich_MF.tsv"), sep="\t")
 
   egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,KEYID],
+                    universe      = universe[,get(KEYID)],
                     OrgDb         = database,
                     keyType       = KEYID,
                     ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
@@ -158,18 +156,16 @@ run_all <- function(args){
 # run as Rscript
 args <- commandArgs(trailingOnly = T)
 
-# args <- character(12)
-# args[1] <- "E:/OneDrive - MUNI/TF_Daniel" # WORKDIR
-# args[2] <- "DESeq2.tsv" # input_genes
-# args[3] <- "enrichment_GO" # OUTPUT_DIR
-# args[4] <- "org.Hs.eg.db" # organism_go
-# args[5] <- "1" # cutoff_log2fc
-# args[6] <- "0.05" # cutoff_padj
-# args[7] <- 10 # n_up
-# args[8] <- "firebrick:white:royalblue" # colors
-# args[9] <- "0.1" # enrich_padj = padj from the enrich result table
-# args[10] <- "BH" # enrich_padjmethod (BH,BY,fdr,holm,hochberg,hommel,bonferroni,none)
-# args[11] <- "2" # enrich_minGSSize
-# args[12] <- "Inf" # enrich_maxGSSize
+# args <- character(10)
+# args[1] <- "gene_for_enrichment.tsv" # input_genes
+# args[2] <- "enrichment_GO" # OUTPUT_DIR
+# args[3] <- "org.Hs.eg.db" # organism_go
+# args[4] <- 10 # n_up
+# args[5] <- "firebrick:white:royalblue" # colors
+# args[6] <- "0.1" # enrich_padj = padj from the enrich result table
+# args[7] <- "BH" # enrich_padjmethod (BH,BY,fdr,holm,hochberg,hommel,bonferroni,none)
+# args[8] <- "2" # enrich_minGSSize
+# args[9] <- "Inf" # enrich_maxGSSize
+# args[10] <- "gene_universe.tsv" # input_universe
 
 run_all(args)
