@@ -96,20 +96,17 @@ rule GSEA_GO:
     script: "../wrappers/GSEA_GO/script.py"
 
 rule enrichment_kegg:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG/KEGG_enrich.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_KEGG",
             organism_kegg = config["organism_kegg"],
-            cutoff_log2fc = config["cutoff_log2fc_enrich"],
-            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
             enrich_maxGSSize = config["enrich_maxGSSize"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_KEGG.log"
     conda:  "../wrappers/enrichment_kegg/env.yaml"
     script: "../wrappers/enrichment_kegg/script.py"
@@ -138,20 +135,17 @@ rule GSEA_kegg:
     script: "../wrappers/GSEA_kegg/script.py"
 
 rule enrichment_reactome:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME/REACTOME_enrich.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_REACTOME",
             organism_reactome = config["organism_reactome"],
-            cutoff_log2fc = config["cutoff_log2fc_enrich"],
-            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
             enrich_maxGSSize = config["enrich_maxGSSize"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_REACTOME.log"
     conda:  "../wrappers/enrichment_reactome/env.yaml"
     script: "../wrappers/enrichment_reactome/script.py"
@@ -180,20 +174,17 @@ rule GSEA_reactome:
     script: "../wrappers/GSEA_reactome/script.py"
 
 rule enrichment_wp:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP/WP_enrich.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/enrichment_WP",
             organism_wp = config["organism_wp"],
-            cutoff_log2fc = config["cutoff_log2fc_enrich"],
-            cutoff_padj = config["cutoff_padj_enrich"],
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],
             enrich_padjmethod = config["enrich_padjmethod"],
             enrich_minGSSize = config["enrich_minGSSize"],
             enrich_maxGSSize = config["enrich_maxGSSize"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_WP.log"
     conda:  "../wrappers/enrichment_wp/env.yaml"
     script: "../wrappers/enrichment_wp/script.py"
