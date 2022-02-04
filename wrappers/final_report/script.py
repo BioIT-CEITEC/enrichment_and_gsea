@@ -13,8 +13,6 @@ f.close()
 
 command = " cp '"+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GSEA_final_report.Rmd' enrichment_gsea/"
 
-f = open(log_filename, 'a+')
-f.write("## COMMAND: "+command+"\n")
 shell(command)
 
 command = """ Rscript -e "rmarkdown::render('enrichment_gsea/enrichment_GSEA_final_report.Rmd', params=list(config = '""" + snakemake.params.config + """' ))" """ +\
@@ -28,4 +26,8 @@ command = " ls " + snakemake.output.html
 
 f = open(log_filename, 'a+')
 f.write("## COMMAND: "+command+"\n")
+shell(command)
+
+command = " rm enrichment_gsea/enrichment_GSEA_final_report.Rmd"
+
 shell(command)

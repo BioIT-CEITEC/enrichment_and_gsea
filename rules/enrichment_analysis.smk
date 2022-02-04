@@ -22,7 +22,7 @@ def final_input(wildcards):
 rule final_report:
     input:  txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     output: html = "enrichment_gsea/enrichment_GSEA_final_report.html"
-    params: config = "enrichment_gsea/config_enrichment_gsea.json"
+    params: config = "config_enrichment_gsea.json"
     conda:  "../wrappers/final_report/env.yaml"
     log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
     script: "../wrappers/final_report/script.py"

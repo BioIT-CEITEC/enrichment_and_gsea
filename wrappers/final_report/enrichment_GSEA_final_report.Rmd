@@ -6,8 +6,9 @@ author:
   - Nicolas Blavet^1^ [nicolas.blavet@ceitec.muni.cz](mailto:nicolas.blavet@ceitec.muni.cz)
 
 output:
-  html_document:
+  bookdown::html_document2:
     highlight: tango
+    number_sections: no
 
 params:
   config: snakemake.params.config
@@ -20,11 +21,16 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
 ```{r load-packages, include=FALSE}
 library(data.table)
 library(jsonlite)
+library(flextable)
+library(stringr)
+
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+set_flextable_defaults(font.family = "Arial", font.size = 12, padding.top = 3, padding.bottom = 3)
 ```
 
 ```{r variables, results='asis', echo=FALSE}
 DE_FC <- "DE_feature_count"
-if(dir.exists(paste0("results","/DE_RSEM"))==T){
+if(dir.exists("DE_RSEM") == TRUE){
   var.rsem <- 1
   DE_RSEM <- "DE_RSEM"
 }else{
@@ -32,7 +38,6 @@ if(dir.exists(paste0("results","/DE_RSEM"))==T){
 }
 
 `%!in%` <- Negate(`%in%`)
-
 ```
 
 # Acknowledgement
@@ -41,8 +46,454 @@ if(dir.exists(paste0("results","/DE_RSEM"))==T){
 - Core Facility Bioinformatics of CEITEC Masaryk University is gratefully acknowledged for the obtaining of the scientific data presented in this paper.
 
 # Description
-```{r, results='asis', echo=TRUE}
-print(params$config)
-#config_json = as.data.table(fromJSON(paste0(params$config)))
+```{r, results='asis', echo=FALSE}
+config_json <- as.data.table(fromJSON(txt = params$config))
+config_json[,condition := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$condition)]
+  config_json[,tag       := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$tag)]
+  config_json[,full_name := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$sample_name)]
+
+comparison <- unique(config_json$comparison)
+biotype <- unique(config_json$biotype_list)
+
+DE <- ifelse(var.rsem == 1,c("DE_feature_count","DE_RSEM"),c("DE_feature_count"))
+
+comparison_dt <- data.table()
+for (d in DE){
+  for(f in comparison){
+    for(b in biotype){
+      de <- fread(paste0("../results/",d,"/",f,"/",b,"/","DESeq2.tsv"),header = T)
+      colnames(de)[colnames(de) == 'V1'] <- 'Geneid' # In case we need to rename
+      ## filter genes
+      deseq_cutoff <- function(deseq = de, LOG2FC = 0, PADJ = 1){
+        x <- deseq[is.na(padj) == F & is.na(pvalue) == F,]
+        x <- x[abs(log2FoldChange) >= LOG2FC & padj <= PADJ,]
+        return(x)
+      }
+      deseq2_enrich <- deseq_cutoff(de, as.numeric(config_json$cutoff_log2fc_enrich[1]), as.numeric(config_json$cutoff_padj_enrich[1]))
+      deseq2_gsea <- deseq_cutoff(de, as.numeric(config_json$cutoff_log2fc_gsea[1]), as.numeric(config_json$cutoff_padj_gsea[1]))
+
+      # theComparison <- str_split(f,"/",simplify = T)[3]
+      # theAnalysis <- str_split(f,"/",simplify = T)[2]
+
+      dt <- data.table(Analysis = d, Conditions = f, "Genes considered for Enrichment" = length(deseq2_enrich$Geneid), "Genes considered for GSEA" = length(deseq2_gsea$Geneid), "Total number of genes" = length(de$Geneid))
+      comparison_dt <- rbind(comparison_dt, dt)
+    }
+  }
+}
+
+species <- gsub("\\)","",gsub(".*\\(","",config_json$species[1]))
+```
+
+- The main goal of the experiment is to perform Gene Enrichment analysis.
+- We have used as input the results from Differential Expression analysis generated from DESeq2 (DESeq2.tsv).
+In general, we have `r length(config_json[,full_name])` `r species` samples. We have `r length(config_json[,unique(condition)])` conditions (`r config_json[,unique(condition)]`), those conditions are sequenced in `r round(length(config_json[,full_name])/length(config_json[,unique(condition)]))` replicates, which is sufficient to obtain statistical significance.
+- Conditions to compare are:
+`r border_remove(theme_booktabs(delete_part(qflextable(data = as.data.frame(comparison)),part = "header")))`
+
+- For each condition we consider the Differential Expression analysis results obtained from
+DESeq2 (DESeq2.tsv).
+
+Reminder: **cond1_vs_cond2** compares cond1 to cond2. In the DE results then - positive
+log2FC signalizes more expression in cond1 (or less in cond2) and negative log2FC signalizes
+less expression in cond2 (or more in cond1).
+
+## Agreed task(s)
+Gene Enrichment and Gene Set Enrichment Analysis (GSEA):
+
+`r if(config_json$onthology[1]==TRUE) paste0(" - Gene Onthology (GO)")`
+`r if(config_json$kegg[1]==TRUE) paste0(" - KEGG pathways")`
+`r if(config_json$reactome[1]==TRUE) paste0(" - REACTOME pathways")`
+`r if(config_json$wikipathways[1]==TRUE) paste0(" - WikiPathways (WP)")`
+
+## Conditions
+- Brief condition description and number of genes are summarized in Table \@ref(tab:tablcond).
+```{r tab.id="tablcond", tab.cap=paste0("Condition description - number of genes considered for Gene Enrichment and GSEA"), echo=FALSE, results="asis", ft.split=F}
+fit_to_width(qflextable(data = comparison_dt), max_width = 9.1)
 
 ```
+
+## Analysis
+- Gene Enrichment is based only on the genes for the DESeq2 result table, that are considered Differentially Expressed so that their **log2FoldChange is +/- `r config_json$cutoff_log2fc_enrich[1]`** and their **adjusted p-value is ≤ `r config_json$cutoff_padj_enrich[1]`**. Gene Enrichment will look if some feature (onthologies or pathways) are enriched among those DE genes.
+- GSEA takes in consideration all the genes from the DESeq2 result table for which both pvalue and adjusted p-value exist (not NA). Then those genes are sorted according to their log2FoldChange. The enrichment is then performed and can detect features that are common for gene that were influenced similarly by the treatment condition.
+- Both Enrichment and GSEA are performed using the R package **clusterProfiler**.
+- Gene Onthology annotations are provided by the package **`r config_json$organism_go[1]`**.
+- **KEGG**, **REACTOME** and **WikiPathways** annotations come from their respective databases (R package **ReactomePA** is needed to analyze REACTOME pathways)
+- Complete settings, used commands, tool versions and methodology part for a publication can be provided upon request.
+
+## Results
+- For each analysis, a result table is generated containing the list of enriched features, an adjusted p-value and the list of the genes sharing those features. We used an adjusted p-value cutt-off of `r config_json$enrich_padj[1]` on the results.
+- For Gene Enrichment we look for the `r config_json$n_up[1]` most enriched features.
+- For GSEA we look for the `r config_json$n_up[1]` most enriched features among the up-regulated genes and the `r config_json$n_down[1]` most enriched features among the down-regulated genes.
+
+`r if(config_json$onthology[1]==TRUE) paste0('### Gene Onthology')`
+`r if(config_json$onthology[1]==TRUE) paste0('#### Biological Process')`
+```{r enrich-BP, fig.cap = paste0("Enrichment GO Biological Process: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  BP.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "BP.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "BP.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(BP.files$plotpath)>1){
+    for(i in 2:length(BP.files$plotpath)){
+      dt <- fread(BP.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",BP.files$de[i]," - ",BP.files$comp[i]," GO Biological Process was found."))
+      }else{
+        cat("![",paste0(BP.files$de[i]," - ",BP.files$comp[i]," - Enrichment GO Biological Process: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",BP.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(BP.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",BP.files$de[1]," - ",BP.files$comp[1]," GO Biological Process was found."))
+  }else{
+    cat("![",paste0(BP.files$de[1]," - ",BP.files$comp[1]," - Enrichment GO Biological Process: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",BP.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-BP, fig.cap = paste0("GSEA GO Biological Process: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  BPg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "BP.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "BP.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(BPg.files$plotpath)>1){
+    for(i in 2:length(BPg.files$plotpath)){
+      dt <- fread(BPg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",BPg.files$de[i]," - ",BPg.files$comp[i]," GO Biological Process was found."))
+      }else{
+        cat("![",paste0(BPg.files$de[i]," - ",BPg.files$comp[i]," - GSEA GO Biological Process: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",BPg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(BPg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",BPg.files$de[1]," - ",BPg.files$comp[1]," GO Biological Process was found."))
+  }else{
+    cat("![",paste0(BPg.files$de[1]," - ",BPg.files$comp[1]," - GSEA GO Biological Process: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",BPg.files$plotpath[1],")")
+  }
+}
+```
+
+`r if(config_json$onthology[1]==TRUE) paste0('#### Molecular Function')`
+```{r enrich-MF, fig.cap = paste0("Enrichment GO Molecular Function: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  MF.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "MF.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "MF.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(MF.files$plotpath)>1){
+    for(i in 2:length(MF.files$plotpath)){
+      dt <- fread(MF.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",MF.files$de[i]," - ",MF.files$comp[i]," GO Molecular Function was found."))
+      }else{
+        cat("![",paste0(MF.files$de[i]," - ",MF.files$comp[i]," - Enrichment GO Molecular Function: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",MF.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(MF.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",MF.files$de[1]," - ",MF.files$comp[1]," GO Molecular Function was found."))
+  }else{
+    cat("![",paste0(MF.files$de[1]," - ",MF.files$comp[1]," - Enrichment GO Molecular Function: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",MF.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-MF, fig.cap = paste0("GSEA GO Molecular Function: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  MFg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "MF.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "MF.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(MFg.files$plotpath)>1){
+    for(i in 2:length(MFg.files$plotpath)){
+      dt <- fread(MFg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",MFg.files$de[i]," - ",MFg.files$comp[i]," GO Molecular Function was found."))
+      }else{
+        cat("![",paste0(MFg.files$de[i]," - ",MFg.files$comp[i]," - GSEA GO Molecular Function: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",MFg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(MFg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",MFg.files$de[1]," - ",MFg.files$comp[1]," GO Molecular Function was found."))
+  }else{
+    cat("![",paste0(MFg.files$de[1]," - ",MFg.files$comp[1]," - GSEA GO Molecular Function: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",MFg.files$plotpath[1],")")
+  }
+}
+```
+
+`r if(config_json$onthology[1]==TRUE) paste0('#### Cellular Component')`
+```{r enrich-CC, fig.cap = paste0("Enrichment GO Cellular Component: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  CC.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "CC.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_GO"), pattern = "CC.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(CC.files$plotpath)>1){
+    for(i in 2:length(CC.files$plotpath)){
+      dt <- fread(CC.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",CC.files$de[i]," - ",CC.files$comp[i]," GO Cellular Component was found."))
+      }else{
+        cat("![",paste0(CC.files$de[i]," - ",CC.files$comp[i]," - Enrichment GO Cellular Component: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",CC.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(CC.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",CC.files$de[1]," - ",CC.files$comp[1]," GO Cellular Component was found."))
+  }else{
+    cat("![",paste0(CC.files$de[1]," - ",CC.files$comp[1]," - Enrichment GO Cellular Component: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."),"](",CC.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-CC, fig.cap = paste0("GSEA GO Cellular Component: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$onthology[1]==TRUE){
+  CCg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "CC.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_GO"), pattern = "CC.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(CCg.files$plotpath)>1){
+    for(i in 2:length(CCg.files$plotpath)){
+      dt <- fread(CCg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",CCg.files$de[i]," - ",CCg.files$comp[i]," GO Cellular Component was found."))
+      }else{
+        cat("![",paste0(CCg.files$de[i]," - ",CCg.files$comp[i]," - GSEA GO Cellular Component: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",CCg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(CCg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",CCg.files$de[1]," - ",CCg.files$comp[1]," GO Cellular Component was found."))
+  }else{
+    cat("![",paste0(CCg.files$de[1]," - ",CCg.files$comp[1]," - GSEA GO Cellular Component: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",CCg.files$plotpath[1],")")
+  }
+}
+```
+
+`r if(config_json$kegg[1]==TRUE) paste0('### KEGG pathways')`
+```{r enrich-kegg, fig.cap = paste0("Enrichment KEGG pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$kegg[1]==TRUE){
+  ke.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_KEGG"), pattern = "enrich.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_KEGG"), pattern = "enrich.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(ke.files$plotpath)>1){
+    for(i in 2:length(ke.files$plotpath)){
+      dt <- fread(ke.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",ke.files$de[i]," - ",ke.files$comp[i]," KEGG pathways was found."))
+      }else{
+        cat("![",paste0(ke.files$de[i]," - ",ke.files$comp[i]," - Enrichment KEGG pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",ke.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(ke.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",ke.files$de[1]," - ",ke.files$comp[1]," KEGG pathways was found."))
+  }else{
+    cat("![",paste0(ke.files$de[1]," - ",ke.files$comp[1]," - Enrichment KEGG pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",ke.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-kegg, fig.cap = paste0("GSEA KEGG pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$kegg[1]==TRUE){
+  keg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_KEGG"), pattern = "KEGG.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_KEGG"), pattern = "KEGG.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(keg.files$plotpath)>1){
+    for(i in 2:length(keg.files$plotpath)){
+      dt <- fread(keg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",keg.files$de[i]," - ",keg.files$comp[i]," KEGG pathways was found."))
+      }else{
+        cat("![",paste0(keg.files$de[i]," - ",keg.files$comp[i]," - GSEA KEGG pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",keg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(keg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",keg.files$de[1]," - ",keg.files$comp[1]," KEGG pathways was found."))
+  }else{
+    cat("![",paste0(keg.files$de[1]," - ",keg.files$comp[1]," - GSEA KEGG pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",keg.files$plotpath[1],")")
+  }
+}
+```
+
+`r if(config_json$reactome[1]==TRUE) paste0('### REACTOME pathways')`
+```{r enrich-reactome, fig.cap = paste0("Enrichment REACTOME pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$reactome[1]==TRUE){
+  re.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_REACTOME"), pattern = "enrich.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_REACTOME"), pattern = "enrich.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(re.files$plotpath)>1){
+    for(i in 2:length(re.files$plotpath)){
+      dt <- fread(re.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",re.files$de[i]," - ",re.files$comp[i]," REACTOME pathways was found."))
+      }else{
+        cat("![",paste0(re.files$de[i]," - ",re.files$comp[i]," - Enrichment REACTOME pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",re.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(re.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",re.files$de[1]," - ",re.files$comp[1]," REACTOME pathways was found."))
+  }else{
+    cat("![",paste0(re.files$de[1]," - ",re.files$comp[1]," - Enrichment REACTOME pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",re.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-reactome, fig.cap = paste0("GSEA REACTOME pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$reactome[1]==TRUE){
+  reg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_REACTOME"), pattern = "REACTOME.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_REACTOME"), pattern = "REACTOME.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(reg.files$plotpath)>1){
+    for(i in 2:length(reg.files$plotpath)){
+      dt <- fread(reg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",reg.files$de[i]," - ",reg.files$comp[i]," REACTOME pathways was found."))
+      }else{
+        cat("![",paste0(reg.files$de[i]," - ",reg.files$comp[i]," - GSEA REACTOME pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",reg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(reg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",reg.files$de[1]," - ",reg.files$comp[1]," REACTOME pathways was found."))
+  }else{
+    cat("![",paste0(reg.files$de[1]," - ",reg.files$comp[1]," - GSEA REACTOME pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",reg.files$plotpath[1],")")
+  }
+}
+```
+
+`r if(config_json$wikipathways[1]==TRUE) paste0('### WikiPathways')`
+```{r enrich-wp, fig.cap = paste0("Enrichment WikiPathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$wikipathways[1]==TRUE){
+  wp.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_WP"), pattern = "enrich.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/enrichment_WP"), pattern = "enrich.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(wp.files$plotpath)>1){
+    for(i in 2:length(wp.files$plotpath)){
+      dt <- fread(wp.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No enrichment in ",wp.files$de[i]," - ",wp.files$comp[i]," WikiPathways was found."))
+      }else{
+        cat("![",paste0(wp.files$de[i]," - ",wp.files$comp[i]," - Enrichment WikiPathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",wp.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(wp.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No enrichment in ",wp.files$de[1]," - ",wp.files$comp[1]," WikiPathways was found."))
+  }else{
+    cat("![",paste0(wp.files$de[1]," - ",wp.files$comp[1]," - Enrichment WikiPathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."),"](",wp.files$plotpath[1],")")
+  }
+}
+```
+
+```{r gsea-wp, fig.cap = paste0("GSEA WikiPathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
+if(config_json$wikipathways[1]==TRUE){
+  wpg.files <- data.table(plotpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_WP"), pattern = "WP.svg", full.names = TRUE), tablpath = list.files(path=paste0(DE,"/",comparison,"/",biotype,"/GSEA_WP"), pattern = "WP.tsv", full.names = TRUE), de = DE, comp = comparison)
+
+  if(length(wpg.files$plotpath)>1){
+    for(i in 2:length(wpg.files$plotpath)){
+      dt <- fread(wpg.files$tablpath[i])
+      if(length(dt$ID) == 0){
+        cat(paste0("No gene set enrichment in ",wpg.files$de[i]," - ",wpg.files$comp[i]," WikiPathways was found."))
+      }else{
+        cat("![",paste0(wpg.files$de[i]," - ",wpg.files$comp[i]," - GSEA WikiPathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",wpg.files$plotpath[i],")")
+      }
+      cat('\n\n')
+    }
+  }
+
+  dt <- fread(wpg.files$tablpath[1])
+  if(length(dt$ID) == 0){
+    cat(paste0("No gene set enrichment in ",wpg.files$de[1]," - ",wpg.files$comp[1]," WikiPathways was found."))
+  }else{
+    cat("![",paste0(wpg.files$de[1]," - ",wpg.files$comp[1]," - GSEA WikiPathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."),"](",wpg.files$plotpath[1],")")
+  }
+}
+```
+
+## Output files
+- Results are organized by compared conditions
+  - The compared conditions are always stated in the name of the folder
+  - All the results in the corresponding folder are based on the currently compared conditions.
+
+- Main output files are **xxx_enrich.tsv**, **GSEA_xxx.tsv** where xxx correspond to the source of annotations. Plots to display the results are provided in pdf and svg formats.
+
+- Enrichment results table contain several columns:
+  - **ID** - feature ID (onthology or pathway)
+  - **Description** - feature description.
+  - **GeneRatio** - in the form **K/L** where **K** is the number of genes from the input set (DE genes) that have this annotation and **L** is the number of genes from the input set that have any annotation.
+  - **BgRatio** - in the form **M/N** where **M** is the number of all the genes that have this annotation in the full database and **N** is the number of all the genes in the database.
+  - **pvalue** - a raw p-value of the enrichment.
+  - **p.adjust** - multiple testing correction (Benjamini-Hochberg correction) p-value of the enrichment. It is the preferred value to evaluate the statistical significance of the enrichment.
+  - **qvalue** - The q-value of a test measures the proportion of false positives incurred (called the false discovery rate) when that particular test is called significant.
+  - **geneID** - list of geneID which were counted in the enrichment. Depending of the analysis it is the ENSEMBL ID or the ENTREZ ID.
+  - **Count** - number of genes sharing the feature.
+
+- GSEA results table contain several columns:
+  - **ID** - feature ID (onthology or pathway)
+  - **Description** - feature description.
+  - **setSize** - number of genes in the set.
+  - **enrichmentScore** – score that represents the degree to which this gene set is overrepresented at the top or bottom of the ranked list of genes in the expression dataset.
+  - **NES** - the normalized enrichment score indicates the shift of genes belonging to a certain pathway toward either end of the ranked list and represents pathway activation or suppression.
+  - **pvalue** - a raw p-value of the enrichment.
+  - **p.adjust** - multiple testing correction (Benjamini-Hochberg correction) p-value of the enrichment. It is the preferred value to evaluate the statistical significance of the enrichment.
+  - **qvalues** - The q-value of a test measures the proportion of false positives incurred (called the false discovery rate) when that particular test is called significant.
+  - **rank** - The position in the ranked list at which the maximum enrichment score occurred. The more interesting gene sets achieve the maximum enrichment score near the top or bottom of the ranked list; that is, the rank at max is either very small or very large.
+  - **leading_edge** - the leading-edge subset in a gene set are those genes that appear in the ranked list at or before the point at which the running sum reaches its maximum deviation from zero. The leading-edge subset can be interpreted as the core that accounts for the gene set’s enrichment signal. “Tags” indicates the percentage of genes contributing to the enrichment score, “List” indicates where in the list the enrichment score is attained and “Signal” for enrichment signal strength.
+  - **core_enrichment** - list of geneID which were counted in the enrichment. Depending of the analysis it is the ENSEMBL ID or the ENTREZ ID.
+
+- Additional visualizations and/or a different combination of visualization is available upon request after discussion
+
+## General/common outputs
+
+The result folders are organized as "Analysis/Comparison/Biotype/*" and contain the following folders and files:
+
+- **gene_for_enrichment.tsv**: TAB separated table with extracted genes that are counted as Differentialy Expressed, with their ENSEMBL geneID (Geneid), common name (gene_name), ENTREZ id (ENTREZID), log2FoldChange and adjusted p-value (padj).
+- **gene_for_gsea.tsv**: TAB separated table with extracted genes for which both p-value and adjusted p-value exist, with their ENSEMBL geneID (Geneid), common name (gene_name), ENTREZ id (ENTREZID), log2FoldChange and adjusted p-value (padj).
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_BP.tsv**: TAB separated enrichment results table for Gene Onthology - Biological Process.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_BP.pdf/.svg**: Plots for enrichment results for Gene Onthology - Biological Process.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_MF.tsv**: TAB separated enrichment results table for Gene Onthology - Molecular Function.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_MF.pdf/.svg**: Plots for enrichment results for Gene Onthology - Molecular Function.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_CC.tsv**: TAB separated enrichment results table for Gene Onthology - Cellular Component.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **enrichment_GO/GO_enrich_CC.pdf/.svg**: Plots for enrichment results for Gene Onthology - Cellular Component.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_BP.tsv**: TAB separated GSEA results table for Gene Onthology - Biological Process.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_BP.pdf/.svg**: Plots for GSEA results for Gene Onthology - Biological Process.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_MF.tsv**: TAB separated GSEA results table for Gene Onthology - Molecular Function.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_MF.pdf/.svg**: Plots for GSEA results for Gene Onthology - Molecular Function.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_CC.tsv**: TAB separated GSEA results table for Gene Onthology - Cellular Component.")`
+`r if(config_json$onthology[1]==TRUE) paste0("- **GSEA_GO/GSEA_GO_CC.pdf/.svg**: Plots for GSEA results for Gene Onthology - Cellular Component.")`
+`r if(config_json$kegg[1]==TRUE) paste0("- **enrichment_KEGG/KEGG_enrich.tsv**: TAB separated enrichment results table for KEGG pathways.")`
+`r if(config_json$kegg[1]==TRUE) paste0("- **enrichment_KEGG/KEGG_enrich.pdf/.svg**: Plots for enrichment results for KEGG pathways.")`
+`r if(config_json$kegg[1]==TRUE) paste0("- **GSEA_KEGG/GSEA_KEGG.tsv**: TAB separated GSEA results table for KEGG pathways.")`
+`r if(config_json$kegg[1]==TRUE) paste0("- **GSEA_KEGG/GSEA_KEGG.pdf/.svg**: Plots for GSEA results for KEGG pathways.")`
+`r if(config_json$reactome[1]==TRUE) paste0("- **enrichment_REACTOME/REACTOME_enrich.tsv**: TAB separated enrichment results table for REACTOME pathways.")`
+`r if(config_json$reactome[1]==TRUE) paste0("- **enrichment_REACTOME/REACTOME_enrich.pdf/.svg**: Plots for enrichment results for REACTOME pathways.")`
+`r if(config_json$reactome[1]==TRUE) paste0("- **GSEA_REACTOME/GSEA_REACTOME.tsv**: TAB separated GSEA results table for REACTOME pathways.")`
+`r if(config_json$reactome[1]==TRUE) paste0("- **GSEA_REACTOME/GSEA_REACTOME.pdf/.svg**: Plots for GSEA results for REACTOME pathways.")`
+`r if(config_json$wikipathways[1]==TRUE) paste0("- **enrichment_WP/WP_enrich.tsv**: TAB separated enrichment results table for WikiPathways.")`
+`r if(config_json$wikipathways[1]==TRUE) paste0("- **enrichment_WP/WP_enrich.pdf/.svg**: Plots for enrichment results for WikiPathways.")`
+`r if(config_json$wikipathways[1]==TRUE) paste0("- **GSEA_WP/GSEA_WP.tsv**: TAB separated GSEA results table for WikiPathways.")`
+`r if(config_json$wikipathways[1]==TRUE) paste0("- **GSEA_WP/GSEA_WP.pdf/.svg**: Plots for GSEA results for WikiPathways.")`
+
+While all the files listed above are created during the analysis, it might append, if no enrichment was found, that a table and the associated plot are empty.
