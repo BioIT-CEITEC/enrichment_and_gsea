@@ -25,7 +25,8 @@ rule final_report:
     params: config = "config_enrichment_gsea.json"
     conda:  "../wrappers/final_report/env.yaml"
     log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
-    script: "../wrappers/final_report/script.py"
+    #script: "../wrappers/final_report/script_enrich.py"
+    script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
     #shell: "touch {output.html}"
 
 
@@ -51,7 +52,7 @@ rule sampling:
             cutoff_padj_gsea =config["cutoff_padj_gsea"]
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.sampling.log"
     conda:  "../wrappers/sampling/env.yaml"
-    script: "../wrappers/sampling/script.py"
+    script: "../wrappers/sampling/script_enrich.py"
 
 rule enrichment_GO:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
@@ -69,7 +70,7 @@ rule enrichment_GO:
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_GO.log"
     conda:  "../wrappers/enrichment_GO/env.yaml"
-    script: "../wrappers/enrichment_GO/script.py"
+    script: "../wrappers/enrichment_GO/script_enrich.py"
 
 rule GSEA_GO:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
@@ -90,8 +91,8 @@ rule GSEA_GO:
             gsea_by = config["gsea_by"],
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_GO.log"
-    conda:  "../wrappers/GSEA_GO/env.yaml"
-    script: "../wrappers/GSEA_GO/script.py"
+    conda:  "../wrappers/enrichment_GO/env.yaml"
+    script: "../wrappers/enrichment_GO/script_gsea.py"
 
 rule enrichment_kegg:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
@@ -107,7 +108,7 @@ rule enrichment_kegg:
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_KEGG.log"
     conda:  "../wrappers/enrichment_kegg/env.yaml"
-    script: "../wrappers/enrichment_kegg/script.py"
+    script: "../wrappers/enrichment_kegg/script_enrich.py"
 
 rule GSEA_kegg:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
@@ -126,8 +127,8 @@ rule GSEA_kegg:
             gsea_by = config["gsea_by"],
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_KEGG.log"
-    conda:  "../wrappers/GSEA_kegg/env.yaml"
-    script: "../wrappers/GSEA_kegg/script.py"
+    conda:  "../wrappers/enrichment_kegg/env.yaml"
+    script: "../wrappers/enrichment_kegg/script_gsea.py"
 
 rule enrichment_reactome:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
@@ -143,7 +144,7 @@ rule enrichment_reactome:
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_REACTOME.log"
     conda:  "../wrappers/enrichment_reactome/env.yaml"
-    script: "../wrappers/enrichment_reactome/script.py"
+    script: "../wrappers/enrichment_reactome/script_enrich.py"
 
 rule GSEA_reactome:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
@@ -162,8 +163,8 @@ rule GSEA_reactome:
             gsea_by = config["gsea_by"],
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_REACTOME.log"
-    conda:  "../wrappers/GSEA_reactome/env.yaml"
-    script: "../wrappers/GSEA_reactome/script.py"
+    conda:  "../wrappers/enrichment_reactome/env.yaml"
+    script: "../wrappers/enrichment_reactome/script_gsea.py"
 
 rule enrichment_wp:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
@@ -179,7 +180,7 @@ rule enrichment_wp:
             universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_WP.log"
     conda:  "../wrappers/enrichment_wp/env.yaml"
-    script: "../wrappers/enrichment_wp/script.py"
+    script: "../wrappers/enrichment_wp/script_enrich.py"
 
 rule GSEA_wp:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
@@ -198,6 +199,6 @@ rule GSEA_wp:
             gsea_by=config["gsea_by"],
             universe="enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
-    conda:  "../wrappers/GSEA_wp/env.yaml"
-    script: "../wrappers/GSEA_wp/script.py"
+    conda:  "../wrappers/enrichment_wp/env.yaml"
+    script: "../wrappers/enrichment_wp/script_gsea.py"
 

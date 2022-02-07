@@ -86,7 +86,7 @@ species <- gsub("\\)","",gsub(".*\\(","",config_json$species[1]))
 
 - The main goal of the experiment is to perform Gene Enrichment analysis.
 - We have used as input the results from Differential Expression analysis generated from DESeq2 (DESeq2.tsv).
-In general, we have `r length(config_json[,full_name])` `r species` samples. We have `r length(config_json[,unique(condition)])` conditions (`r config_json[,unique(condition)]`), those conditions are sequenced in `r round(length(config_json[,full_name])/length(config_json[,unique(condition)]))` replicates, which is sufficient to obtain statistical significance.
+In general, we have `r length(config_json[,full_name])` `r species` samples. We have `r length(config_json[,unique(condition)])` conditions (`r config_json[,unique(condition)]`), those conditions are sequenced in `r round(length(config_json[,full_name])/length(config_json[,unique(condition)]))` replicates.
 - Conditions to compare are:
 `r border_remove(theme_booktabs(delete_part(qflextable(data = as.data.frame(comparison)),part = "header")))`
 
