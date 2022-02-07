@@ -25,7 +25,7 @@ rule final_report:
     params: config = "config_enrichment_gsea.json"
     conda:  "../wrappers/final_report/env.yaml"
     log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
-    script: "../wrappers/final_report/script_enrich.py"
+    script: "../wrappers/final_report/script.py"
 
 rule completion:
     input:  unpack(final_input),
@@ -49,7 +49,7 @@ rule sampling:
             cutoff_padj_gsea =config["cutoff_padj_gsea"]
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.sampling.log"
     conda:  "../wrappers/sampling/env.yaml"
-    script: "../wrappers/sampling/script_enrich.py"
+    script: "../wrappers/sampling/script.py"
 
 rule enrichment_GO:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_enrichment.tsv"
