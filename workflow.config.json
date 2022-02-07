@@ -9,8 +9,7 @@
     ],
     "outputs": [
       "enrichment_gsea/*",
-      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.enrichment_*.log",
-      "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_*.log"
+      "logs/*"
     ],
     "report_index": "enrichment_gsea/enrichment_GSEA_final_report.html",
     "reports":["enrichment_gsea/*"]
