@@ -17,6 +17,7 @@ run_all <- function(args){
   library("ggplot2")
 
   deseq2_tab <- fread(input_genes)
+  deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)

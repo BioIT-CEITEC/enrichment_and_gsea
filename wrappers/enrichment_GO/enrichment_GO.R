@@ -35,6 +35,7 @@ run_all <- function(args){
   # }
   # deseq2_tab <- deseq_cutoff(de, cutoff_log2fc, cutoff_padj)
   deseq2_tab <- fread(input_genes)
+  deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
@@ -43,6 +44,7 @@ run_all <- function(args){
   ## lookup gene symbol and unigene ID for the 1st 6 keys
   #universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
   universe <- fread(input_universe)
+  universe$ENTREZID <- as.character(universe$ENTREZID)
 
   #deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   #fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")

@@ -72,15 +72,12 @@ rule enrichment_GO:
     script: "../wrappers/enrichment_GO/script.py"
 
 rule GSEA_GO:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
     output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_BP.svg",
             plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_MF.svg",
             plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO/GSEA_GO_CC.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_GO",
             organism_go = config["organism_go"],
-            cutoff_log2fc = config["cutoff_log2fc_gsea"],
-            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -90,7 +87,8 @@ rule GSEA_GO:
             gsea_maxGSSize = config["gsea_maxGSSize"],
             gsea_eps = config["gsea_eps"],
             gsea_nPermSimple = config["gsea_nPermSimple"],
-            gsea_by = config["gsea_by"]
+            gsea_by = config["gsea_by"],
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_GO.log"
     conda:  "../wrappers/GSEA_GO/env.yaml"
     script: "../wrappers/GSEA_GO/script.py"
@@ -112,13 +110,10 @@ rule enrichment_kegg:
     script: "../wrappers/enrichment_kegg/script.py"
 
 rule GSEA_kegg:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG/GSEA_KEGG.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_KEGG",
             organism_kegg = config["organism_kegg"],
-            cutoff_log2fc = config["cutoff_log2fc_gsea"],
-            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -129,7 +124,7 @@ rule GSEA_kegg:
             gsea_eps = config["gsea_eps"],
             gsea_nPermSimple = config["gsea_nPermSimple"],
             gsea_by = config["gsea_by"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_KEGG.log"
     conda:  "../wrappers/GSEA_kegg/env.yaml"
     script: "../wrappers/GSEA_kegg/script.py"
@@ -151,13 +146,10 @@ rule enrichment_reactome:
     script: "../wrappers/enrichment_reactome/script.py"
 
 rule GSEA_reactome:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME/GSEA_REACTOME.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_REACTOME",
             organism_reactome = config["organism_reactome"],
-            cutoff_log2fc = config["cutoff_log2fc_gsea"],
-            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -168,7 +160,7 @@ rule GSEA_reactome:
             gsea_eps = config["gsea_eps"],
             gsea_nPermSimple = config["gsea_nPermSimple"],
             gsea_by = config["gsea_by"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_REACTOME.log"
     conda:  "../wrappers/GSEA_reactome/env.yaml"
     script: "../wrappers/GSEA_reactome/script.py"
@@ -190,13 +182,10 @@ rule enrichment_wp:
     script: "../wrappers/enrichment_wp/script.py"
 
 rule GSEA_wp:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/{biotype}/DESeq2.tsv"
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/gene_for_gsea.tsv"
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP/GSEA_WP.svg"
-    params: workdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}",
-            outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
+    params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
             organism_wp = config["organism_wp"],
-            cutoff_log2fc = config["cutoff_log2fc_gsea"],
-            cutoff_padj = config["cutoff_padj_gsea"],
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
@@ -207,7 +196,7 @@ rule GSEA_wp:
             gsea_eps = config["gsea_eps"],
             gsea_nPermSimple = config["gsea_nPermSimple"],
             gsea_by = config["gsea_by"],
-            organism_go = config["organism_go"]
+            universe = "enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
     conda:  "../wrappers/GSEA_wp/env.yaml"
     script: "../wrappers/GSEA_wp/script.py"
