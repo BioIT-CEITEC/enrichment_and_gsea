@@ -12,7 +12,9 @@
       "logs/*"
     ],
     "report_index": "enrichment_gsea/enrichment_GSEA_final_report.html",
-    "reports":["enrichment_gsea/*"]
+    "reports":[
+      "enrichment_gsea/enrichment_GSEA_final_report.html"
+    ]
   },
   "general_params": [
     "entity_name",

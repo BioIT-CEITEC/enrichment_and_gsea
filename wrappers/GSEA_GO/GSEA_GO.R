@@ -117,6 +117,15 @@ run_all <- function(args){
     filtRes <- rbind(head(fgsea.table, n = nUp),
                      tail(fgsea.table, n = nDown ))
 
+    if(length(filtRes$ID) == 1){
+      if(filtRes$NES > 0){
+        gradient[2] = gradient[1]
+      }
+      if(filtRes$NES < 0){
+        gradient[2] = gradient[3]
+      }
+    }
+
     g <- ggplot(filtRes, aes(reorder(Description, NES), NES)) +
       geom_col( aes(fill = NES )) +
       coord_flip() +
