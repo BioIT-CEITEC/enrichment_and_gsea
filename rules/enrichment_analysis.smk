@@ -25,10 +25,7 @@ rule final_report:
     params: config = "config_enrichment_gsea.json"
     conda:  "../wrappers/final_report/env.yaml"
     log:    "enrichment_gsea/enrichment_GSEA_final_report.log"
-    #script: "../wrappers/final_report/script_enrich.py"
-    script: "../wrappers/final_report/enrichment_GSEA_final_report.Rmd"
-    #shell: "touch {output.html}"
-
+    script: "../wrappers/final_report/script_enrich.py"
 
 rule completion:
     input:  unpack(final_input),
