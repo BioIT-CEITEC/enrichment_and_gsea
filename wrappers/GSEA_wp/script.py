@@ -13,8 +13,8 @@ f.close()
 
 command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_wp.R " +\
           snakemake.input.tsv + " " +\
-          snakemake.params.outdir + " " +\
-          snakemake.params.organism_wp + " " +\
+          snakemake.params.outdir + " '" +\
+          snakemake.params.organism_wp + "' " +\
           snakemake.params.n_up + " " +\
           snakemake.params.n_down + " " +\
           snakemake.params.colors + " " +\
