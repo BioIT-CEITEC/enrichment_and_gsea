@@ -126,8 +126,8 @@ run_all <- function(args){
        width = 10, height = 7, device = "pdf")
   ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.png",sep=""),
-       width = 10, height = 7, device = "png", bg='transparent')
+  # ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.png",sep=""),
+  #      width = 10, height = 7, device = "png", bg='transparent')
 
   GO_MF_plot <- myEnrichPlot(dtegoMF,
                            nUp = n_up,
@@ -138,8 +138,8 @@ run_all <- function(args){
        width = 10, height = 7, device = "pdf")
   ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.png",sep=""),
-       width = 10, height = 7, device = "png", bg='transparent')
+  # ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.png",sep=""),
+  #      width = 10, height = 7, device = "png", bg='transparent')
 
   GO_CC_plot <- myEnrichPlot(dtegoCC,
                            nUp = n_up,
@@ -150,8 +150,8 @@ run_all <- function(args){
        width = 10, height = 7, device = "pdf")
   ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.png",sep=""),
-      width = 10, height = 7, device = "png", bg='transparent')
+  # ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.png",sep=""),
+  #     width = 10, height = 7, device = "png", bg='transparent')
 
 }
 

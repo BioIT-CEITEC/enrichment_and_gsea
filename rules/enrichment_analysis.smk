@@ -187,16 +187,16 @@ rule GSEA_wp:
     params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/{biotype}/GSEA_WP",
             organism_wp = config["organism_wp"],
             n_up = config["n_up"],
-            n_down= config["n_down"],
-            colors = config["colors"],
-            gsea_padj = config["gsea_padj"],
-            gsea_padjmethod = config["gsea_padjmethod"],
-            gsea_minGSSize = config["gsea_minGSSize"],
-            gsea_maxGSSize = config["gsea_maxGSSize"],
-            gsea_eps = config["gsea_eps"],
-            gsea_nPermSimple = config["gsea_nPermSimple"],
-            gsea_by = config["gsea_by"],
-            universe = "enrichment_gsea/gene_universe.tsv"
+            n_down=config["n_down"],
+            colors=config["colors"],
+            gsea_padj=config["gsea_padj"],
+            gsea_padjmethod=config["gsea_padjmethod"],
+            gsea_minGSSize=config["gsea_minGSSize"],
+            gsea_maxGSSize=config["gsea_maxGSSize"],
+            gsea_eps=config["gsea_eps"],
+            gsea_nPermSimple=config["gsea_nPermSimple"],
+            gsea_by=config["gsea_by"],
+            universe="enrichment_gsea/gene_universe.tsv"
     log:    "logs/all_samples/{comparison}.{biotype}.DE_{analysis_type}.GSEA_WP.log"
     conda:  "../wrappers/GSEA_wp/env.yaml"
     script: "../wrappers/GSEA_wp/script.py"
