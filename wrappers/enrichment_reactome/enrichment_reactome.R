@@ -13,8 +13,9 @@ run_all <- function(args){
 
   library("data.table")
   library("clusterProfiler")
-  library("ReactomePA")
   library("ggplot2")
+  library("stringr")
+  library("ReactomePA")
 
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
@@ -23,19 +24,25 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
-  ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- fread(input_universe)
-  universe$ENTREZID <- as.character(universe$ENTREZID)
+  if(length(deseq2_tab$ENTREZID) == 0){
+    # create an empty table
+    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+    dtereact<-emptytable
+  }else{
+    ## lookup gene symbol and unigene ID for the 1st 6 keys
+    universe <- fread(input_universe)
+    universe$ENTREZID <- as.character(universe$ENTREZID)
 
-  ereact <- enrichPathway(gene        = deseq2_tab$ENTREZID,
-                        universe      = universe$ENTREZID,
-                        organism      = organism_reactome,
-                        pAdjustMethod = enrich_padjmethod,
-                        pvalueCutoff  = enrich_padj,
-                        minGSSize     = enrich_minGSSize,
-                        maxGSSize     = enrich_maxGSSize)
+    ereact <- enrichPathway(gene        = deseq2_tab$ENTREZID,
+                            universe      = universe$ENTREZID,
+                            organism      = organism_reactome,
+                            pAdjustMethod = enrich_padjmethod,
+                            pvalueCutoff  = enrich_padj,
+                            minGSSize     = enrich_minGSSize,
+                            maxGSSize     = enrich_maxGSSize)
 
-  dtereact <- as.data.table(ereact)
+    dtereact <- as.data.table(ereact)
+  }
   fwrite(dtereact, file = paste0(OUTPUT_DIR,"/REACTOME_enrich.tsv"), sep="\t")
 
   # Plot enrichment plot
@@ -53,7 +60,13 @@ run_all <- function(args){
 
     filtRes <- head(go.table, n = nUp)
 
-    g <- ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
+    if(length(filtRes$Description)>0){
+      filtRes$nDescription <- str_wrap(filtRes$Description, width = 100)
+    }else{
+      filtRes[, nDescription := Description]
+    }
+
+    g <- ggplot(filtRes, aes(reorder(nDescription, -p.adjust), Count)) +
       geom_col(fill = mycol) +
       coord_flip() +
       labs(x="", y="Count",
