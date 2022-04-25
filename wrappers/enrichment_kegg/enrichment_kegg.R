@@ -14,6 +14,7 @@ run_all <- function(args){
   library("data.table")
   library("clusterProfiler")
   library("ggplot2")
+  library("stringr")
 
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
@@ -22,20 +23,26 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
-  ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- fread(input_universe)
-  universe$ENTREZID <- as.character(universe$ENTREZID)
+  if(length(deseq2_tab$ENTREZID) == 0){
+    # create an empty table
+    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+    dtekegg<-emptytable
+  }else{
+    ## lookup gene symbol and unigene ID for the 1st 6 keys
+    universe <- fread(input_universe)
+    universe$ENTREZID <- as.character(universe$ENTREZID)
 
-  ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
-                    universe      = universe$ENTREZID,
-                    organism      = organism_kegg,
-                    keyType       = "kegg",
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
+    ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+                        universe      = universe$ENTREZID,
+                        organism      = organism_kegg,
+                        keyType       = "kegg",
+                        pAdjustMethod = enrich_padjmethod,
+                        pvalueCutoff  = enrich_padj,
+                        minGSSize     = enrich_minGSSize,
+                        maxGSSize     = enrich_maxGSSize)
 
-  dtekegg <- as.data.table(ekegg)
+    dtekegg <- as.data.table(ekegg)
+  }
   fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
 
   # Plot enrichment plot
@@ -53,7 +60,13 @@ run_all <- function(args){
 
     filtRes <- head(go.table, n = nUp)
 
-    g <- ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
+    if(length(filtRes$Description)>0){
+      filtRes$nDescription <- str_wrap(filtRes$Description, width = 100)
+    }else{
+      filtRes[, nDescription := Description]
+    }
+
+    g <- ggplot(filtRes, aes(reorder(nDescription, -p.adjust), Count)) +
       geom_col(fill = mycol) +
       coord_flip() +
       labs(x="", y="Count",
