@@ -117,14 +117,20 @@ run_all <- function(args){
 
     if(length(filtRes$ID) == 1){
       if(filtRes$NES > 0){
-        gradient[2] = gradient[1]
+        gradient[2] <- gradient[1]
       }
       if(filtRes$NES < 0){
-        gradient[2] = gradient[3]
+        gradient[2] <- gradient[3]
       }
     }
 
-    g <- ggplot(filtRes, aes(reorder(Description, NES), NES)) +
+    if(length(filtRes$Description)>0){
+      filtRes$nDescription <- str_wrap(filtRes$Description, width = 100)
+    }else{
+      filtRes[, nDescription := Description]
+    }
+
+    g <- ggplot(filtRes, aes(reorder(nDescription, NES), NES)) +
       geom_col( aes(fill = NES )) +
       coord_flip() +
       labs(x="", y="Normalized Enrichment Score",

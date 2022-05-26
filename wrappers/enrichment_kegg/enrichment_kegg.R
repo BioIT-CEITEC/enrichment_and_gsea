@@ -14,6 +14,7 @@ run_all <- function(args){
   library("data.table")
   library("clusterProfiler")
   library("ggplot2")
+  library("stringr")
 
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
@@ -22,58 +23,66 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
-  ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- fread(input_universe)
-  universe$ENTREZID <- as.character(universe$ENTREZID)
+  if(length(deseq2_tab$ENTREZID) == 0){
+    # create an empty table
+    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+    dtekegg<-emptytable
+  }else{
+    ## lookup gene symbol and unigene ID for the 1st 6 keys
+    universe <- fread(input_universe)
+    universe$ENTREZID <- as.character(universe$ENTREZID)
 
-  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
-    if (is.gsea == FALSE){
-      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
-                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
-      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+    convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+      if (is.gsea == FALSE){
+        tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                            by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+        ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
 
-      if (is.entrez == FALSE){
-        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+        if (is.entrez == FALSE){
+          tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENSEMBL", all.x=T)
+        }
+        else{
+          tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENTREZID", all.x=T)
+        }
+        tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+        setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
       else{
-        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
-      }
-      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
-      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
-    }
-    else{
-      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+        tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                            by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+        ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
 
-      if (is.entrez == FALSE){
-        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+        if (is.entrez == FALSE){
+          tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENSEMBL", all.x=T)
+        }
+        else{
+          tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENTREZID", all.x=T)
+        }
+        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+        setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
-      else{
-        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
-      }
-      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
-      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+      return(tabl)
     }
-    return(tabl)
+
+    ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+                        universe      = universe$ENTREZID,
+                        organism      = organism_kegg,
+                        keyType       = "kegg",
+                        pAdjustMethod = enrich_padjmethod,
+                        pvalueCutoff  = enrich_padj,
+                        minGSSize     = enrich_minGSSize,
+                        maxGSSize     = enrich_maxGSSize)
+
+    dtekegg <- as.data.table(ekegg)
+    if(length(dtekegg$ID) > 0){
+      dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
+      fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+    }
   }
-
-  ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
-                    universe      = universe$ENTREZID,
-                    organism      = organism_kegg,
-                    keyType       = "kegg",
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
-
-  dtekegg <- as.data.table(ekegg)
-  dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
-  fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
   fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
 
   # Plot enrichment plot
@@ -91,7 +100,13 @@ run_all <- function(args){
 
     filtRes <- head(go.table, n = nUp)
 
-    g <- ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
+    if(length(filtRes$Description)>0){
+      filtRes$nDescription <- str_wrap(filtRes$Description, width = 100)
+    }else{
+      filtRes[, nDescription := Description]
+    }
+
+    g <- ggplot(filtRes, aes(reorder(nDescription, -p.adjust), Count)) +
       geom_col(fill = mycol) +
       coord_flip() +
       labs(x="", y="Count",

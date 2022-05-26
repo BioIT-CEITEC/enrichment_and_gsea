@@ -14,6 +14,7 @@ run_all <- function(args){
   library("data.table")
   library("clusterProfiler")
   library("ggplot2")
+  library("stringr")
 
   if(!require(organism_go, character.only = T)) {BiocManager::install(organism_go, update = F)}
   library(organism_go, character.only = T)
@@ -41,95 +42,109 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
-  ## lookup gene symbol and unigene ID for the 1st 6 keys
-  #universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
-  universe <- fread(input_universe)
-  universe$ENTREZID <- as.character(universe$ENTREZID)
+  if(length(deseq2_tab$ENTREZID) == 0){
+    # create an empty table
+    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+    dtegoBP<-emptytable
+    dtegoMF<-emptytable
+    dtegoCC<-emptytable
+  }else{
+    ## lookup gene symbol and unigene ID for the 1st 6 keys
+    #universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
+    universe <- fread(input_universe)
+    universe$ENTREZID <- as.character(universe$ENTREZID)
 
-  #deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
-  #fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
+    #deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
+    #fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
-  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
-    if (is.gsea == FALSE){
-      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
-                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
-      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+    convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+      if (is.gsea == FALSE){
+        tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                            by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+        ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
 
-      if (is.entrez == FALSE){
-        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+        if (is.entrez == FALSE){
+          tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENSEMBL", all.x=T)
+        }
+        else{
+          tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENTREZID", all.x=T)
+        }
+        tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+        setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
       else{
-        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
-      }
-      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
-      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
-    }
-    else{
-      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+        tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                            by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+        ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
 
-      if (is.entrez == FALSE){
-        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+        if (is.entrez == FALSE){
+          tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENSEMBL", all.x=T)
+        }
+        else{
+          tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                        by="ENTREZID", all.x=T)
+        }
+        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+        setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
-      else{
-        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
-      }
-      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
-      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+      return(tabl)
     }
-    return(tabl)
+    egoBP <- enrichGO(gene          = deseq2_tab$Geneid,
+                      universe      = universe[,get(KEYID)],
+                      OrgDb         = database,
+                      keyType       = KEYID,
+                      ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
+                      pAdjustMethod = enrich_padjmethod,
+                      pvalueCutoff  = enrich_padj,
+                      readable      = FALSE,
+                      minGSSize     = enrich_minGSSize,
+                      maxGSSize     = enrich_maxGSSize)
+
+    dtegoBP <- as.data.table(egoBP)
+    if(length(dtegoBP$ID) > 0){
+      dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
+      fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/GO_enrich_BP_extended.tsv"), sep="\t")
+    }
+
+    egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
+                      universe      = universe[,get(KEYID)],
+                      OrgDb         = database,
+                      keyType       = KEYID,
+                      ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
+                      pAdjustMethod = enrich_padjmethod,
+                      pvalueCutoff  = enrich_padj,
+                      readable      = FALSE,
+                      minGSSize     = enrich_minGSSize,
+                      maxGSSize     = enrich_maxGSSize)
+
+    dtegoMF <- as.data.table(egoMF)
+    if(length(dtegoMF$ID) > 0){
+      dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
+      fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/GO_enrich_MF_extended.tsv"), sep="\t")
+    }
+
+    egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
+                      universe      = universe[,get(KEYID)],
+                      OrgDb         = database,
+                      keyType       = KEYID,
+                      ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
+                      pAdjustMethod = enrich_padjmethod,
+                      pvalueCutoff  = enrich_padj,
+                      readable      = FALSE,
+                      minGSSize     = enrich_minGSSize,
+                      maxGSSize     = enrich_maxGSSize)
+
+    dtegoCC <- as.data.table(egoCC)
+    if(length(dtegoCC$ID) > 0){
+      dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
+      fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/GO_enrich_CC_extended.tsv"), sep="\t")
+    }
   }
-  egoBP <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,get(KEYID)],
-                    OrgDb         = database,
-                    keyType       = KEYID,
-                    ont           = "BP", # "MF", "BP", and "CC", "ALL" (?)
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    readable      = FALSE,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
-
-  dtegoBP <- as.data.table(egoBP)
-  dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
-  fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/GO_enrich_BP_extended.tsv"), sep="\t")
   fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
-
-  egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,get(KEYID)],
-                    OrgDb         = database,
-                    keyType       = KEYID,
-                    ont           = "MF", # "MF", "BP", and "CC", "ALL" (?)
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    readable      = FALSE,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
-
-  dtegoMF <- as.data.table(egoMF)
-  dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
-  fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/GO_enrich_MF_extended.tsv"), sep="\t")
   fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/GO_enrich_MF.tsv"), sep="\t")
-
-  egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
-                    universe      = universe[,get(KEYID)],
-                    OrgDb         = database,
-                    keyType       = KEYID,
-                    ont           = "CC", # "MF", "BP", and "CC", "ALL" (?)
-                    pAdjustMethod = enrich_padjmethod,
-                    pvalueCutoff  = enrich_padj,
-                    readable      = FALSE,
-                    minGSSize     = enrich_minGSSize,
-                    maxGSSize     = enrich_maxGSSize)
-
-  dtegoCC <- as.data.table(egoCC)
-  dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
-  fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/GO_enrich_CC_extended.tsv"), sep="\t")
   fwrite(dtegoCC, file = paste0(OUTPUT_DIR,"/GO_enrich_CC.tsv"), sep="\t")
 
   # Plot enrichment plot
@@ -147,7 +162,13 @@ run_all <- function(args){
 
     filtRes <- head(go.table, n = nUp)
 
-    g <- ggplot(filtRes, aes(reorder(Description, -p.adjust), Count)) +
+    if(length(filtRes$Description)>0){
+      filtRes$nDescription <- str_wrap(filtRes$Description, width = 100)
+    }else{
+      filtRes[, nDescription := Description]
+    }
+
+    g <- ggplot(filtRes, aes(reorder(nDescription, -p.adjust), Count)) +
       geom_col(fill = mycol) +
       coord_flip() +
       labs(x="", y="Count",

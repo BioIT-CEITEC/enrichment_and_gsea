@@ -4,6 +4,7 @@ import json
 from snakemake.utils import min_version
 
 min_version("5.18.0")
+configfile: "config.json"
 
 GLOBAL_REF_PATH = "/mnt/references/"
 
@@ -18,6 +19,8 @@ f.close()
 #config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 config["species"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
 config["organism"] = config["species"].split(" (")[0].lower().replace(" ","_")
+print(config["species"])
+print(config["organism"])
 
 ##### Config processing #####
 # Folders
