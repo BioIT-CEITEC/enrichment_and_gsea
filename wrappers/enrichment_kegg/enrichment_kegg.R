@@ -26,6 +26,42 @@ run_all <- function(args){
   universe <- fread(input_universe)
   universe$ENTREZID <- as.character(universe$ENTREZID)
 
+  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+    if (is.gsea == FALSE){
+      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    else{
+      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    return(tabl)
+  }
+
   ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
                     universe      = universe$ENTREZID,
                     organism      = organism_kegg,
@@ -36,6 +72,8 @@ run_all <- function(args){
                     maxGSSize     = enrich_maxGSSize)
 
   dtekegg <- as.data.table(ekegg)
+  dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
+  fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
   fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
 
   # Plot enrichment plot

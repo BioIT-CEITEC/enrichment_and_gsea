@@ -35,6 +35,42 @@ run_all <- function(args){
   universe <- fread(input_universe)
   universe$ENTREZID <- as.character(universe$ENTREZID)
 
+  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+    if (is.gsea == FALSE){
+      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    else{
+      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    return(tabl)
+  }
+
   ## select just entrez id and stat/logFC
   genes <- deseq2_tab[,.(Geneid, logFC = log2FoldChange)]
   ## remove NA values
@@ -63,6 +99,8 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOBP <- as.data.table(gseaGOBP)
+  dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
+  fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
   fwrite(dtgseaGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
 
   gseaGOMF <- gseGO(gene          = rankGenes,
@@ -78,6 +116,8 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOMF <- as.data.table(gseaGOMF)
+  dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
+  fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
   fwrite(dtgseaGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
 
   gseaGOCC <- gseGO(gene          = rankGenes,
@@ -93,6 +133,8 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOCC <- as.data.table(gseaGOCC)
+  dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
+  fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")
   fwrite(dtgseaGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
 
   # Plot enrichment plot

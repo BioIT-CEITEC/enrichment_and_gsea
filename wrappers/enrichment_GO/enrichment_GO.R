@@ -49,6 +49,41 @@ run_all <- function(args){
   #deseq2_tab <- merge(deseq2_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   #fwrite(deseq2_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = paste0(OUTPUT_DIR,"/Gene_ID.tsv"), sep="\t")
 
+  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+    if (is.gsea == FALSE){
+      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    else{
+      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    return(tabl)
+  }
   egoBP <- enrichGO(gene          = deseq2_tab$Geneid,
                     universe      = universe[,get(KEYID)],
                     OrgDb         = database,
@@ -61,6 +96,8 @@ run_all <- function(args){
                     maxGSSize     = enrich_maxGSSize)
 
   dtegoBP <- as.data.table(egoBP)
+  dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
+  fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/GO_enrich_BP_extended.tsv"), sep="\t")
   fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
 
   egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
@@ -75,6 +112,8 @@ run_all <- function(args){
                     maxGSSize     = enrich_maxGSSize)
 
   dtegoMF <- as.data.table(egoMF)
+  dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
+  fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/GO_enrich_MF_extended.tsv"), sep="\t")
   fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/GO_enrich_MF.tsv"), sep="\t")
 
   egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
@@ -89,6 +128,8 @@ run_all <- function(args){
                     maxGSSize     = enrich_maxGSSize)
 
   dtegoCC <- as.data.table(egoCC)
+  dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
+  fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/GO_enrich_CC_extended.tsv"), sep="\t")
   fwrite(dtegoCC, file = paste0(OUTPUT_DIR,"/GO_enrich_CC.tsv"), sep="\t")
 
   # Plot enrichment plot
