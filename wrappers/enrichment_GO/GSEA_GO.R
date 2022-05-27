@@ -100,8 +100,10 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOBP <- as.data.table(gseaGOBP)
-  dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
-  fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
+  if(length(dtgseaGOBP$ID) > 0){
+    dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
+    fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
+  }
   fwrite(dtgseaGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
 
   gseaGOMF <- gseGO(gene          = rankGenes,
@@ -117,8 +119,10 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOMF <- as.data.table(gseaGOMF)
-  dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
-  fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
+  if(length(dtgseaGOMF$ID) > 0){
+    dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
+    fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
+  }
   fwrite(dtgseaGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
 
   gseaGOCC <- gseGO(gene          = rankGenes,
@@ -134,8 +138,10 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOCC <- as.data.table(gseaGOCC)
-  dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
-  fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")
+  if(length(dtgseaGOCC$ID) > 0){
+    dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
+    fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")
+  }
   fwrite(dtgseaGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
 
   # Plot enrichment plot

@@ -90,8 +90,10 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaKEGG <- as.data.table(gseaKEGG)
-  dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = T)
-  fwrite(dtgseaKEGGex, file = paste0(OUTPUT_DIR,"/GSEA_KEGG_extended.tsv"), sep="\t")
+  if(length(dtgseaKEGG$ID) > 0){
+    dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = T)
+    fwrite(dtgseaKEGGex, file = paste0(OUTPUT_DIR,"/GSEA_KEGG_extended.tsv"), sep="\t")
+  }
   fwrite(dtgseaKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
 
   # Plot enrichment plot
