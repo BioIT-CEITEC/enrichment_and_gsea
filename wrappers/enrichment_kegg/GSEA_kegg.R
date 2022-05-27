@@ -18,6 +18,7 @@ run_all <- function(args){
   library("data.table")
   library("clusterProfiler")
   library("ggplot2")
+  library("stringr")
 
   deseq2_tab <- fread(input_genes,header = T)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
