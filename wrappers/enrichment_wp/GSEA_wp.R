@@ -27,6 +27,42 @@ run_all <- function(args){
   universe <- fread(input_universe)
   universe$ENTREZID <- as.character(universe$ENTREZID)
 
+  convert_geneid <- function(dt, deseq_tab = deseq2_tab, is.gsea = FALSE, is.entrez = FALSE){
+    if (is.gsea == FALSE){
+      tabl <- setDT(dt)[, strsplit(as.character(geneID), "/", fixed=TRUE),
+                          by = .(ID, Description, pvalue, p.adjust, qvalue, geneID)
+      ][,.(ID, Description, pvalue, p.adjust, qvalue, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    else{
+      tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+
+      if (is.entrez == FALSE){
+        tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENSEMBL", all.x=T)
+      }
+      else{
+        tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
+                      by="ENTREZID", all.x=T)
+      }
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
+    }
+    return(tabl)
+  }
+
   ## select just entrez id and stat/logFC
   genes <- deseq2_tab[,.(ENTREZID, logFC = log2FoldChange)]
   ## remove NA values
@@ -53,6 +89,10 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaWP <- as.data.table(gseaWP)
+  if(length(dtgseaWP$ID) > 0){
+    dtgseaWPex <- convert_geneid(dtgseaWP, deseq2_tab, is.gsea = T, is.entrez = T)
+    fwrite(dtgseaWPex, file = paste0(OUTPUT_DIR,"/GSEA_WP_extended.tsv"), sep="\t")
+  }
   fwrite(dtgseaWP, file = paste0(OUTPUT_DIR,"/GSEA_WP.tsv"), sep="\t")
 
   # Plot enrichment plot
