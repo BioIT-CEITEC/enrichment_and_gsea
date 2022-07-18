@@ -36,41 +36,57 @@ sample_tab = pd.DataFrame.from_dict(config["samples"],orient="index")
 f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"))
 reference_GO = json.load(f)
 f.close()
-if config["species"] in reference_GO.keys():
-    config["organism_go"] = reference_GO[config["species"]]
+if config["onthology"]:
+    if config["species"] in reference_GO.keys():
+        config["organism_go"] = reference_GO[config["species"]]
+    else:
+        raise ValueError("There is no "+config["species"]+" in GO references!")
+        config["onthology"] = False
+        config["organism_go"] = ""
 else:
-    raise ValueError("There is no "+config["species"]+" in GO references!")
-    config["onthology"] = False
+    config["organism_go"] = ""
 
 # KEGG
 ff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"))
 reference_kegg = json.load(ff)
 ff.close()
-if config["species"] in reference_kegg.keys():
-    config["organism_kegg"] = reference_kegg[config["species"]]
+if config["kegg"]:
+    if config["species"] in reference_kegg.keys():
+        config["organism_kegg"] = reference_kegg[config["species"]]
+    else:
+        raise ValueError("There is no "+config["species"]+" in KEGG references!")
+        config["kegg"] = False
+        config["organism_kegg"] = ""
 else:
-    raise ValueError("There is no "+config["species"]+" in KEGG references!")
-    config["kegg"] = False
+    config["organism_kegg"] = ""
 
-# WIKIPATHWAYS
+    # WIKIPATHWAYS
 fff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"))
 reference_wp = json.load(fff)
 fff.close()
-if config["species"] in reference_wp.keys():
-    config["organism_wp"] = reference_wp[config["species"]]
+if config["wikipathways"]:
+    if config["species"] in reference_wp.keys():
+        config["organism_wp"] = reference_wp[config["species"]]
+    else:
+        raise ValueError("There is no "+config["species"]+" in WikiPathways references!")
+        config["wikipathways"] = False
+        config["organism_wp"] = ""
 else:
-    raise ValueError("There is no "+config["species"]+" in WikiPathways references!")
-    config["wikipathways"] = False
+    config["organism_wp"] = ""
 
-# REACTOME
+    # REACTOME
 ffff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.json"))
 reference_reactome = json.load(ffff)
 ffff.close()
-if config["species"] in reference_reactome.keys():
-    config["organism_reactome"] = reference_reactome[config["species"]]
+if config["reactome"]:
+    if config["species"] in reference_reactome.keys():
+        config["organism_reactome"] = reference_reactome[config["species"]]
+    else:
+        raise ValueError("There is no "+config["species"]+" in REACTOME references!")
+        config["reactome"] = False
+        config["organism_reactome"] = ""
 else:
-    raise ValueError("There is no "+config["species"]+" in REACTOME references!")
-    config["reactome"] = False
+    config["organism_reactome"] = ""
 
 #
 analysis = []
