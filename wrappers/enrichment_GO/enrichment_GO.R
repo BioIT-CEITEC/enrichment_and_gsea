@@ -37,6 +37,7 @@ run_all <- function(args){
   # deseq2_tab <- deseq_cutoff(de, cutoff_log2fc, cutoff_padj)
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
+  deseq2_tab <- unique(deseq2_tab)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
@@ -66,15 +67,13 @@ run_all <- function(args){
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                         by="ENSEMBL", all.x=T)
-        }
-        else{
+        }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                         by="ENTREZID", all.x=T)
         }
         tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
-      }
-      else{
+      }else{
         tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
                             by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
         ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
@@ -82,8 +81,7 @@ run_all <- function(args){
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                         by="ENSEMBL", all.x=T)
-        }
-        else{
+        }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                         by="ENTREZID", all.x=T)
         }

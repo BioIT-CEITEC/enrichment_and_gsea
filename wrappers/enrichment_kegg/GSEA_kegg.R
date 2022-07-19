@@ -22,6 +22,7 @@ run_all <- function(args){
 
   deseq2_tab <- fread(input_genes,header = T)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
+  deseq2_tab <- unique(deseq2_tab)
 
   ## lookup gene symbol and unigene ID for the 1st 6 keys
   universe <- fread(input_universe)
@@ -36,15 +37,13 @@ run_all <- function(args){
       if (is.entrez == FALSE){
         tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                       by="ENSEMBL", all.x=T)
-      }
-      else{
+      }else{
         tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                       by="ENTREZID", all.x=T)
       }
       tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
       setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
-    }
-    else{
+    }else{
       tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
                           by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
       ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
@@ -52,8 +51,7 @@ run_all <- function(args){
       if (is.entrez == FALSE){
         tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                       by="ENSEMBL", all.x=T)
-      }
-      else{
+      }else{
         tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                       by="ENTREZID", all.x=T)
       }
@@ -64,15 +62,23 @@ run_all <- function(args){
   }
 
   ## select just entrez id and stat/logFC
-  genes <- deseq2_tab[,.(ENTREZID, logFC = log2FoldChange)]
+  if(organism_kegg != "ath"){
+    genes <- deseq2_tab[,.(ENTREZID, logFC = log2FoldChange)]
+  }else{
+    genes <- deseq2_tab[,.(Geneid, logFC = log2FoldChange)]
+  }
   ## remove NA values
-  genes <- na.omit(genes)
+  genes <- na.omit(unique(genes))
   ## order by decreasing logFC
   setorder(genes, -logFC)
 
   ## change into named vector
   rankGenes <- genes$logFC
-  names(rankGenes) <- genes$ENTREZID
+  if(organism_kegg != "ath"){
+    names(rankGenes) <- genes$ENTREZID
+  }else{
+    names(rankGenes) <- genes$Geneid
+  }
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
@@ -91,7 +97,11 @@ run_all <- function(args){
 
   dtgseaKEGG <- as.data.table(gseaKEGG)
   if(length(dtgseaKEGG$ID) > 0){
-    dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = T)
+    if(organism_kegg != "ath"){
+      dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = T)
+    }else{
+      dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = F)
+    }
     fwrite(dtgseaKEGGex, file = paste0(OUTPUT_DIR,"/GSEA_KEGG_extended.tsv"), sep="\t")
   }
   fwrite(dtgseaKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
@@ -168,7 +178,7 @@ args <- commandArgs(trailingOnly = T)
 
 # args <- character(14)
 # args[1] <- "gene_for_enrichment.tsv" # input_genes
-# args[2] <- "GSEA_GO" # OUTPUT_DIR
+# args[2] <- "GSEA_KEGG" # OUTPUT_DIR
 # args[3] <- "mmu" # organism_kegg
 # args[4] <- 10 # n_up
 # args[5] <- 10 # n_down
