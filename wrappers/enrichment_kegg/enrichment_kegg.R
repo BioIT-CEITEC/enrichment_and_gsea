@@ -68,7 +68,8 @@ run_all <- function(args){
       return(tabl)
     }
 
-    ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+    if(organism_kegg != "ath"){
+      ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
                         universe      = universe$ENTREZID,
                         organism      = organism_kegg,
                         keyType       = "kegg",
@@ -76,11 +77,28 @@ run_all <- function(args){
                         pvalueCutoff  = enrich_padj,
                         minGSSize     = enrich_minGSSize,
                         maxGSSize     = enrich_maxGSSize)
+    }
+    else{
+      ekegg <- enrichKEGG(gene        = deseq2_tab$Geneid,
+                        universe      = universe$TAIR,
+                        organism      = organism_kegg,
+                        keyType       = "kegg",
+                        pAdjustMethod = enrich_padjmethod,
+                        pvalueCutoff  = enrich_padj,
+                        minGSSize     = enrich_minGSSize,
+                        maxGSSize     = enrich_maxGSSize)
+    }
 
     dtekegg <- as.data.table(ekegg)
     if(length(dtekegg$ID) > 0){
-      dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
-      fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+      if(organism_kegg != "ath"){
+        dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+      }
+      else{
+        dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = F)
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+      }
     }
   }
   fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
