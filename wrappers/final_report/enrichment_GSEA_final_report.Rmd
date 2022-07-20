@@ -8,7 +8,12 @@ author:
 output:
   bookdown::html_document2:
     highlight: tango
-    number_sections: no
+    number_sections: false
+    global_numbering: true
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
 
 params:
   config: snakemake.params.config
