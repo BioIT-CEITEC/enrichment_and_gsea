@@ -34,14 +34,6 @@ set_flextable_defaults(font.family = "Arial", font.size = 12, padding.top = 3, p
 ```
 
 ```{r variables, results='asis', echo=FALSE}
-DE_FC <- "DE_feature_count"
-if(dir.exists("DE_RSEM") == TRUE){
-  var.rsem <- 1
-  DE_RSEM <- "DE_RSEM"
-}else{
-   var.rsem <- 0
-}
-
 `%!in%` <- Negate(`%in%`)
 ```
 
@@ -60,7 +52,9 @@ config_json[,condition := sapply(1:length(config_json$samples),function(x) confi
 comparison <- unique(config_json$comparison)
 biotype <- unique(config_json$biotype_list)
 
-DE <- ifelse(var.rsem == 1,c("DE_feature_count","DE_RSEM"),c("DE_feature_count"))
+DE <- NULL
+if(config_json$feature_count[1]==T){DE <- c(DE, "DE_feature_count")}
+if(config_json$RSEM[1]==T){DE <- c(DE, "DE_RSEM")}
 
 comparison_dt <- data.table()
 for (d in DE){
