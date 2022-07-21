@@ -129,8 +129,8 @@ fit_to_width(qflextable(data = comparison_dt), max_width = 9.1)
 ```{r enrich-BP, fig.cap = paste0("Enrichment GO Biological Process: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   BP.files <- data.table(tablpath = list.files(path = DE, pattern = "enrich_BP.tsv", full.names = T, recursive = T))
-  BP.files <- BP.files[, plotpath := gsub(".tsv",".svg",plotpath)]
-  BP.files <- BP.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  BP.files <- BP.files[, plotpath := gsub(".tsv",".svg",tablpath)]
+  BP.files <- BP.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(BP.files$plotpath)>1){
     for(i in 2:length(BP.files$plotpath)){
