@@ -156,8 +156,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r gsea-BP, fig.cap = paste0("GSEA GO Biological Process: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   BPg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_GO_BP.tsv", full.names = TRUE, recursive = TRUE))
-  BPg.files <- BPg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  BPg.files <- BPg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  BPg.files <- BPg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  BPg.files <- BPg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(BPg.files$plotpath)>1){
     for(i in 2:length(BPg.files$plotpath)){
@@ -184,8 +184,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r enrich-MF, fig.cap = paste0("Enrichment GO Molecular Function: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   MF.files <- data.table(tablpath = list.files(path = DE, pattern = "enrich_MF.tsv", full.names = T, recursive = T))
-  MF.files <- MF.files[, plotpath := gsub(".tsv",".svg",plotpath)]
-  MF.files <- MF.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  MF.files <- MF.files[, plotpath := gsub(".tsv",".svg",tablpath)]
+  MF.files <- MF.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(MF.files$plotpath)>1){
     for(i in 2:length(MF.files$plotpath)){
@@ -211,8 +211,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r gsea-MF, fig.cap = paste0("GSEA GO Molecular Function: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   MFg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_GO_MF.tsv", full.names = TRUE, recursive = TRUE))
-  MFg.files <- MFg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  MFg.files <- MFg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  MFg.files <- MFg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  MFg.files <- MFg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(MFg.files$plotpath)>1){
     for(i in 2:length(MFg.files$plotpath)){
@@ -239,8 +239,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r enrich-CC, fig.cap = paste0("Enrichment GO Cellular Component: onthologies are sorted by adjusted p-value with the onthology on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   CC.files <- data.table(tablpath = list.files(path = DE, pattern = "enrich_CC.tsv", full.names = T, recursive = T))
-  CC.files <- CC.files[, plotpath := gsub(".tsv",".svg",plotpath)]
-  CC.files <- CC.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  CC.files <- CC.files[, plotpath := gsub(".tsv",".svg",tablpath)]
+  CC.files <- CC.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(CC.files$plotpath)>1){
     for(i in 2:length(CC.files$plotpath)){
@@ -266,8 +266,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r gsea-CC, fig.cap = paste0("GSEA GO Cellular Component: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$onthology[1]==TRUE){
   CCg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_GO_CC.tsv", full.names = TRUE, recursive = TRUE))
-  CCg.files <- CCg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  CCg.files <- CCg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  CCg.files <- CCg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  CCg.files <- CCg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(CCg.files$plotpath)>1){
     for(i in 2:length(CCg.files$plotpath)){
@@ -294,8 +294,8 @@ if(config_json$onthology[1]==TRUE){
 ```{r enrich-kegg, fig.cap = paste0("Enrichment KEGG pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$kegg[1]==TRUE){
   ke.files <- data.table(tablpath = list.files(path = DE, pattern = "KEGG_enrich.tsv", full.names = TRUE, recursive = TRUE))
-  ke.files <- ke.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  ke.files <- ke.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  ke.files <- ke.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  ke.files <- ke.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(ke.files$plotpath)>1){
     for(i in 2:length(ke.files$plotpath)){
@@ -321,8 +321,8 @@ if(config_json$kegg[1]==TRUE){
 ```{r gsea-kegg, fig.cap = paste0("GSEA KEGG pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$kegg[1]==TRUE){
   keg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_KEGG.tsv", full.names = TRUE, recursive = TRUE))
-  keg.files <- keg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  keg.files <- keg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  keg.files <- keg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  keg.files <- keg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(keg.files$plotpath)>1){
     for(i in 2:length(keg.files$plotpath)){
@@ -349,8 +349,8 @@ if(config_json$kegg[1]==TRUE){
 ```{r enrich-reactome, fig.cap = paste0("Enrichment REACTOME pathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$reactome[1]==TRUE){
   re.files <- data.table(tablpath = list.files(path = DE, pattern = "REACTOME_enrich.tsv", full.names = TRUE, recursive = TRUE))
-  re.files <- re.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  re.files <- re.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  re.files <- re.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  re.files <- re.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(re.files$plotpath)>1){
     for(i in 2:length(re.files$plotpath)){
@@ -376,8 +376,8 @@ if(config_json$reactome[1]==TRUE){
 ```{r gsea-reactome, fig.cap = paste0("GSEA REACTOME pathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$reactome[1]==TRUE){
   reg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_REACTOME.tsv", full.names = TRUE, recursive = TRUE))
-  reg.files <- reg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  reg.files <- reg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  reg.files <- reg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  reg.files <- reg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(reg.files$plotpath)>1){
     for(i in 2:length(reg.files$plotpath)){
@@ -404,8 +404,8 @@ if(config_json$reactome[1]==TRUE){
 ```{r enrich-wp, fig.cap = paste0("Enrichment WikiPathways: features are sorted by adjusted p-value with the feature on the top of the graph having the smallest p-value."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$wikipathways[1]==TRUE){
   wp.files <- data.table(tablpath = list.files(path = DE, pattern = "WP_enrich.tsv", full.names = TRUE, recursive = TRUE))
-  wp.files <- wp.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  wp.files <- wp.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  wp.files <- wp.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  wp.files <- wp.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(wp.files$plotpath)>1){
     for(i in 2:length(wp.files$plotpath)){
@@ -431,8 +431,8 @@ if(config_json$wikipathways[1]==TRUE){
 ```{r gsea-wp, fig.cap = paste0("GSEA WikiPathways: onthologies that pass the adjusted p-value cut-off are sorted by Normalized Enrichment Score (NES)."), echo=FALSE, out.width="80%", fig.align="center", results="asis", fig.show="hold", dev="svg"}
 if(config_json$wikipathways[1]==TRUE){
   wpg.files <- data.table(tablpath = list.files(path = DE, pattern = "GSEA_WP.tsv", full.names = TRUE, recursive = TRUE))
-  wpg.files <- wpg.files[, plotpath := gsub(".tsv", ".svg", plotpath)]
-  wpg.files <- wpg.files[, `:=` (de = unlist(strsplit(plotpath, "/"))[1], comp = unlist(strsplit(plotpath, "/"))[2]), by = .(plotpath)]
+  wpg.files <- wpg.files[, plotpath := gsub(".tsv", ".svg", tablpath)]
+  wpg.files <- wpg.files[, `:=` (de = unlist(strsplit(tablpath, "/"))[1], comp = unlist(strsplit(tablpath, "/"))[2]), by = .(tablpath)]
 
   if(length(wpg.files$plotpath)>1){
     for(i in 2:length(wpg.files$plotpath)){
