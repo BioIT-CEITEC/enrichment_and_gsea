@@ -24,9 +24,10 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
+  emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+
   if(length(deseq2_tab$ENTREZID) == 0){
     # create an empty table
-    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
     dtekegg<-emptytable
   }else{
     ## lookup gene symbol and unigene ID for the 1st 6 keys
@@ -95,6 +96,8 @@ run_all <- function(args){
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = F)
         fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
       }
+    }else{
+        dtekegg<-emptytable
     }
   }
   fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")

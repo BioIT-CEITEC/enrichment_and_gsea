@@ -25,9 +25,10 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
+  emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+
   if(length(deseq2_tab$ENTREZID) == 0){
     # create an empty table
-    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
     dtereact<-emptytable
   }else{
     ## lookup gene symbol and unigene ID for the 1st 6 keys
@@ -79,6 +80,8 @@ run_all <- function(args){
     if(length(dtereact$ID) > 0){
       dtereactex <- convert_geneid(dtereact, deseq2_tab, is.gsea = F, is.entrez = T)
       fwrite(dtereactex, file = paste0(OUTPUT_DIR,"/REACTOME_enrich_extended.tsv"), sep="\t")
+    }else{
+        dtereact<-emptytable
     }
   }
   fwrite(dtereact, file = paste0(OUTPUT_DIR,"/REACTOME_enrich.tsv"), sep="\t")

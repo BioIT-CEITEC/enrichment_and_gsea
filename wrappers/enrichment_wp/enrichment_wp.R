@@ -24,9 +24,10 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
+  emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+
   if(length(deseq2_tab$ENTREZID) == 0){
     # create an empty table
-    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
     dtewp<-emptytable
   }else{
     ## lookup gene symbol and unigene ID for the 1st 6 keys
@@ -78,6 +79,8 @@ run_all <- function(args){
     if(length(dtewp$ID) > 0){
       dtewpex <- convert_geneid(dtewp, deseq2_tab, is.gsea = F, is.entrez = T)
       fwrite(dtewpex, file = paste0(OUTPUT_DIR,"/WP_enrich_extended.tsv"), sep="\t")
+    }else{
+        dtewp<-emptytable
     }
   }
   fwrite(dtewp, file = paste0(OUTPUT_DIR,"/WP_enrich.tsv"), sep="\t")

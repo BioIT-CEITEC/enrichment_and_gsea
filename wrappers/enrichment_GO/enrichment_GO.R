@@ -43,9 +43,10 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
+  emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
+
   if(length(deseq2_tab$ENTREZID) == 0){
     # create an empty table
-    emptytable<-data.table(ID=character(),Description=character(),GeneRatio=character(),BgRatio=character(),pvalue=numeric(),p.adjust=numeric(),qvalue=numeric(),geneID=character(),Count=integer())
     dtegoBP<-emptytable
     dtegoMF<-emptytable
     dtegoCC<-emptytable
@@ -105,6 +106,8 @@ run_all <- function(args){
     if(length(dtegoBP$ID) > 0){
       dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
       fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/GO_enrich_BP_extended.tsv"), sep="\t")
+    }else{
+        dtegoBP<-emptytable
     }
 
     egoMF <- enrichGO(gene          = deseq2_tab$Geneid,
@@ -122,6 +125,8 @@ run_all <- function(args){
     if(length(dtegoMF$ID) > 0){
       dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
       fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/GO_enrich_MF_extended.tsv"), sep="\t")
+    }else{
+        dtegoMF<-emptytable
     }
 
     egoCC <- enrichGO(gene          = deseq2_tab$Geneid,
@@ -139,6 +144,8 @@ run_all <- function(args){
     if(length(dtegoCC$ID) > 0){
       dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
       fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/GO_enrich_CC_extended.tsv"), sep="\t")
+    }else{
+        dtegoCC<-emptytable
     }
   }
   fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
