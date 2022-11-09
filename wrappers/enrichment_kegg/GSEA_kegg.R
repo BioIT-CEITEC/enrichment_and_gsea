@@ -20,6 +20,9 @@ run_all <- function(args){
   library("ggplot2")
   library("stringr")
 
+  ## We had to manually set "wget" value, as in taskrunner docker neither default value ("libcurl") nor "auto" value didn't work, for more info look at: https://github.com/YuLab-SMU/clusterProfiler/issues/305
+  options("clusterProfiler.download.method" = "wget")
+
   deseq2_tab <- fread(input_genes,header = T)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
   deseq2_tab <- unique(deseq2_tab)
