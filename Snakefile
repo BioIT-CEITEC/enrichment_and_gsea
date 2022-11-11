@@ -16,10 +16,11 @@ f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reference2.json"))
 reference_dict = json.load(f)
 f.close()
 
-config["species_name"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
-config["organism"] = config["species_name"].split(" (")[0].lower().replace(" ","_")
-if len(config["species_name"].split(" (")) > 1:
-    config["species"] = config["species_name"].split(" (")[1].replace(")","")
+#config["organism"] = [organism_name.lower().replace(" ","_") for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+config["species"] = [organism_name for organism_name in reference_dict.keys() if isinstance(reference_dict[organism_name],dict) and config["reference"] in reference_dict[organism_name].keys()][0]
+config["organism"] = config["species"].split(" (")[0].lower().replace(" ","_")
+print(config["species"])
+print(config["organism"])
 
 ##### Config processing #####
 # Folders
@@ -36,10 +37,10 @@ f = open(os.path.join(GLOBAL_REF_PATH,"reference_info","GO_reference.json"))
 reference_GO = json.load(f)
 f.close()
 if config["onthology"]:
-    if config["species_name"] in reference_GO.keys():
-        config["organism_go"] = reference_GO[config["species_name"]]
+    if config["species"] in reference_GO.keys():
+        config["organism_go"] = reference_GO[config["species"]]
     else:
-        raise ValueError("There is no "+config["species_name"]+" in GO references!")
+        raise ValueError("There is no "+config["species"]+" in GO references!")
         config["onthology"] = False
         config["organism_go"] = ""
 else:
@@ -50,10 +51,10 @@ ff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","kegg_reference.json"))
 reference_kegg = json.load(ff)
 ff.close()
 if config["kegg"]:
-    if config["species_name"] in reference_kegg.keys():
-        config["organism_kegg"] = reference_kegg[config["species_name"]]
+    if config["species"] in reference_kegg.keys():
+        config["organism_kegg"] = reference_kegg[config["species"]]
     else:
-        raise ValueError("There is no "+config["species_name"]+" in KEGG references!")
+        raise ValueError("There is no "+config["species"]+" in KEGG references!")
         config["kegg"] = False
         config["organism_kegg"] = ""
 else:
@@ -64,10 +65,10 @@ fff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","wp_reference.json"))
 reference_wp = json.load(fff)
 fff.close()
 if config["wikipathways"]:
-    if config["species_name"] in reference_wp.keys():
-        config["organism_wp"] = reference_wp[config["species_name"]]
+    if config["species"] in reference_wp.keys():
+        config["organism_wp"] = reference_wp[config["species"]]
     else:
-        raise ValueError("There is no "+config["species_name"]+" in WikiPathways references!")
+        raise ValueError("There is no "+config["species"]+" in WikiPathways references!")
         config["wikipathways"] = False
         config["organism_wp"] = ""
 else:
@@ -78,10 +79,10 @@ ffff = open(os.path.join(GLOBAL_REF_PATH,"reference_info","reactome_reference.js
 reference_reactome = json.load(ffff)
 ffff.close()
 if config["reactome"]:
-    if config["species_name"] in reference_reactome.keys():
-        config["organism_reactome"] = reference_reactome[config["species_name"]]
+    if config["species"] in reference_reactome.keys():
+        config["organism_reactome"] = reference_reactome[config["species"]]
     else:
-        raise ValueError("There is no "+config["species_name"]+" in REACTOME references!")
+        raise ValueError("There is no "+config["species"]+" in REACTOME references!")
         config["reactome"] = False
         config["organism_reactome"] = ""
 else:
