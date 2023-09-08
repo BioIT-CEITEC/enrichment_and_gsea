@@ -1,11 +1,20 @@
 {
   "workflow_description": {
     "name": "enrichment_and_gsea",
-    "version": 1.0,
+    "version": 1.4,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
-    "inputs": [
-      "results/*"
+    "inputs": [],
+    "inputs_optional":[
+      "DE_RSEM",
+      "DE_featureCount_exon",
+      "DE_featureCount_gene",
+      "DE_featureCount_transcript",
+      "DE_featureCount_3pUTR",
+      "DE_featureCount_5pUTR",
+      "DE_salmon_map",
+      "DE_salmon_align",
+      "DE_kallisto"
     ],
     "outputs": [
       "enrichment_gsea/*",
@@ -23,7 +32,8 @@
     "replicate"
   ],
   "requested_params": [
-    "feature_count",
+    "featureCount",
+    "count_over",
     "RSEM",
     "reference"
   ],
