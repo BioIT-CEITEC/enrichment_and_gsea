@@ -35,14 +35,20 @@ run_all <- function(args){
   gsea_tab <- deseq_cutoff(de, cutoff_log2fc_gsea, cutoff_padj_gsea)
 
   ## lookup gene symbol and unigene ID for the 1st 6 keys
-  universe <- select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL'))
+  universe <- as.data.table(select(database, keys=keys(database), columns = c(KEYID,'ENTREZID','SYMBOL')))
 
   enrich_tab <- merge(enrich_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   gsea_tab <- merge(gsea_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
 
-  fwrite(enrich_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
+  if("gene_name" %in% names(de)){
+    fwrite(enrich_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
 
-  fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
+    fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
+  }else{
+    fwrite(enrich_tab[,.(Geneid, Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
+
+    fwrite(gsea_tab[,.(Geneid, Feature_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
+  }
 
   fwrite(universe, file = output_universe, sep="\t")
 
