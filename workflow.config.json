@@ -32,10 +32,13 @@
     "replicate"
   ],
   "requested_params": [
+    "reference",
     "featureCount",
     "count_over",
     "RSEM",
-    "reference"
+    "salmon_map",
+    "salmon_align",
+    "kallisto"
   ],
   "gui_params": {
     "primary": {
