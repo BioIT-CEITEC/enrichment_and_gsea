@@ -23,7 +23,8 @@ run_all <- function(args){
 
   # read results of DE analysis
   de <- fread(input_genes,header = T)
-  colnames(de)[colnames(de) == 'V1'] <- 'Geneid' # In case we need to rename
+  if(names(de)[1]!="Geneid"){names(de)[1]<-"Geneid"} # In case we need to rename
+
   ## filter genes
   deseq_cutoff <- function(deseq = deseq2_tab, LOG2FC = 0, PADJ = 1){
     x <- deseq[is.na(padj) == F & is.na(pvalue) == F,]
