@@ -38,7 +38,7 @@ rule completion:
     shell:  "touch {output.txtfile}"
 
 rule sampling:
-    input:  tsv = "results/DE_{analysis_type}/{comparison}/DESeq2.tsv"
+    input:  tsv = "DE_{analysis_type}/{comparison}/DESeq2.tsv"
     output: enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment.tsv",
             gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_gsea.tsv",
     params: universe = "enrichment_gsea/gene_universe.tsv",
