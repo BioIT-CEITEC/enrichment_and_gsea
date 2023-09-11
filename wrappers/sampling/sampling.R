@@ -45,9 +45,9 @@ run_all <- function(args){
 
     fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
   }else{
-    fwrite(enrich_tab[,.(Geneid, Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
+    fwrite(enrich_tab[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
 
-    fwrite(gsea_tab[,.(Geneid, Feature_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
+    fwrite(gsea_tab[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
   }
 
   fwrite(universe, file = output_universe, sep="\t")
