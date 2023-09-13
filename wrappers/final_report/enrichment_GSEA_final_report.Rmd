@@ -53,15 +53,18 @@ comparison <- unique(config_json$comparison)
 biotype <- unique(config_json$biotype_list)
 
 DE <- NULL
-if(config_json$feature_count[1]==T){DE <- c(DE, "DE_feature_count")}
+if(config_json$featureCount_exon[1]==T){DE <- c(DE, "DE_featureCount_exon")}
+if(config_json$featureCount_gene[1]==T){DE <- c(DE, "DE_featureCount_gene")}
+if(config_json$featureCount_transcript[1]==T){DE <- c(DE, "DE_featureCount_transcript")}
+if(config_json$featureCount_3pUTR[1]==T){DE <- c(DE, "DE_featureCount_3pUTR")}
+if(config_json$featureCount_5pUTR[1]==T){DE <- c(DE, "DE_featureCount_5pUTR")}
 if(config_json$RSEM[1]==T){DE <- c(DE, "DE_RSEM")}
 
 comparison_dt <- data.table()
 for (d in DE){
   for(f in comparison){
-    for(b in biotype){
-      de <- fread(paste0("../results/",d,"/",f,"/",b,"/","DESeq2.tsv"),header = T)
-      colnames(de)[colnames(de) == 'V1'] <- 'Geneid' # In case we need to rename
+      de <- fread(paste0("../",d,"/",f,"/","DESeq2.tsv"),header = T)
+      names(de)[1] <- 'Geneid' # In case we need to rename
       ## filter genes
       deseq_cutoff <- function(deseq = de, LOG2FC = 0, PADJ = 1){
         x <- deseq[is.na(padj) == F & is.na(pvalue) == F,]
@@ -76,7 +79,6 @@ for (d in DE){
 
       dt <- data.table(Analysis = d, Conditions = f, "Genes considered for Enrichment" = length(deseq2_enrich$Geneid), "Genes considered for GSEA" = length(deseq2_gsea$Geneid), "Total number of genes" = length(de$Geneid))
       comparison_dt <- rbind(comparison_dt, dt)
-    }
   }
 }
 
@@ -490,7 +492,7 @@ if(config_json$wikipathways[1]==TRUE){
 
 ## General/common outputs
 
-The result folders are organized as "Analysis/Comparison/Biotype/*" and contain the following folders and files:
+The result folders are organized as "Analysis/Comparison/*" and contain the following folders and files:
 
 - **gene_for_enrichment.tsv**: TAB separated table with extracted genes that are counted as Differentialy Expressed, with their ENSEMBL geneID (Geneid), common name (gene_name), ENTREZ id (ENTREZID), log2FoldChange and adjusted p-value (padj).
 - **gene_for_gsea.tsv**: TAB separated table with extracted genes for which both p-value and adjusted p-value exist, with their ENSEMBL geneID (Geneid), common name (gene_name), ENTREZ id (ENTREZID), log2FoldChange and adjusted p-value (padj).
