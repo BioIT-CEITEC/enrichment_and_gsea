@@ -51,14 +51,16 @@ config_json[,condition := sapply(1:length(config_json$samples),function(x) confi
 
 comparison <- unique(config_json$comparison)
 biotype <- unique(config_json$biotype_list)
+analysis_type <- unique(config_json$analysis_type)
+analysis <- unlist(strsplit(analysis_type,split="|",fixed=TRUE))
 
-DE <- NULL
-if(config_json$featureCount_exon[1]==T){DE <- c(DE, "DE_featureCount_exon")}
-if(config_json$featureCount_gene[1]==T){DE <- c(DE, "DE_featureCount_gene")}
-if(config_json$featureCount_transcript[1]==T){DE <- c(DE, "DE_featureCount_transcript")}
-if(config_json$featureCount_3pUTR[1]==T){DE <- c(DE, "DE_featureCount_3pUTR")}
-if(config_json$featureCount_5pUTR[1]==T){DE <- c(DE, "DE_featureCount_5pUTR")}
-if(config_json$RSEM[1]==T){DE <- c(DE, "DE_RSEM")}
+DE <- paste0("DE_",analysis)
+# if(config_json$featureCount_exon[1]==T){DE <- c(DE, "DE_featureCount_exon")}
+# if(config_json$featureCount_gene[1]==T){DE <- c(DE, "DE_featureCount_gene")}
+# if(config_json$featureCount_transcript[1]==T){DE <- c(DE, "DE_featureCount_transcript")}
+# if(config_json$featureCount_3pUTR[1]==T){DE <- c(DE, "DE_featureCount_3pUTR")}
+# if(config_json$featureCount_5pUTR[1]==T){DE <- c(DE, "DE_featureCount_5pUTR")}
+# if(config_json$RSEM[1]==T){DE <- c(DE, "DE_RSEM")}
 
 comparison_dt <- data.table()
 for (d in DE){
