@@ -145,8 +145,8 @@ if config['conditions_to_compare'] == "all":
 else:
     comparison_dir_list = get_comparison_dir_list(config['conditions_to_compare'].split(","))
     condition_list = set(config['conditions_to_compare'].replace(':',',').split(","))
-    if not config['keep_not_compared_samples_for_normalization']:
-        sample_tab = sample_tab[sample_tab['condition'].isin(condition_list)]
+    # if not config['keep_not_compared_samples_for_normalization']:
+    #     sample_tab = sample_tab[sample_tab['condition'].isin(condition_list)]
 
 biotype_dir_list = config['biotypes'].split(",")
 
