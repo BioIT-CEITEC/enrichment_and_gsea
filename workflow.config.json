@@ -43,7 +43,7 @@
   "gui_params": {
     "primary": {
       "enumParamFilter": {
-        "label": "Label 1",
+        "label": "Truc 1",
         "type": "enum",
         "list": {
           "Aaa group": {
