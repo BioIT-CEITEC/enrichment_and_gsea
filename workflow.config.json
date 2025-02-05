@@ -51,104 +51,20 @@
         "type": "bool",
         "default": true
       },
-      "organism_go": {
-        "label": "GO reference",
-        "type": "enum",
-        "dynamicEnumName": "ref_GO",
-        "filters": {
-          "group": {
-            "param": "organism",
-            "type": "value",
-            "showGroupLabel": false
-          }
-        },
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "onthology": true
-            }
-          }
-        }
-      },
       "kegg": {
         "label": "Run KEGG pathways enrichment",
         "type": "bool",
         "default": true
-      },
-      "organism_kegg": {
-        "label": "KEGG reference",
-        "type": "enum",
-        "dynamicEnumName": "ref_KEGG",
-        "filters": {
-          "group": {
-            "param": "organism",
-            "type": "value",
-            "showGroupLabel": false
-          }
-        },
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "kegg": true
-            }
-          }
-        }
       },
       "reactome": {
         "label": "Run REACTOME pathways enrichment",
         "type": "bool",
         "default": true
       },
-      "organism_reactome": {
-        "label": "REACTOME reference",
-        "type": "enum",
-        "dynamicEnumName": "ref_REACTOME",
-        "filters": {
-          "group": {
-            "param": "organism",
-            "type": "value",
-            "showGroupLabel": false
-          }
-        },
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "reactome": true
-            }
-          }
-        }
-      },
       "wikipathways": {
         "label": "Run WikiPathways enrichment",
         "type": "bool",
         "default": true
-      },
-      "organism_wp": {
-        "label": "WP reference",
-        "type": "enum",
-        "dynamicEnumName": "ref_WIKIPATHWAYS",
-        "filters": {
-          "group": {
-            "param": "organism",
-            "type": "value",
-            "showGroupLabel": false
-          }
-        },
-        "conditions": {
-          "relevance": {
-            "operand": "equal",
-            "negation": false,
-            "values": {
-              "wikipathways": true
-            }
-          }
-        }
       },
       "conditions_to_compare": {
         "label": "Conditions to compare",
@@ -207,6 +123,90 @@
       }
     },
     "detailed": {
+      "organism_go": {
+        "label": "GO reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_GO",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "onthology": true
+            }
+          }
+        }
+      },
+      "organism_kegg": {
+        "label": "KEGG reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_KEGG",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "kegg": true
+            }
+          }
+        }
+      },
+      "organism_reactome": {
+        "label": "REACTOME reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_REACTOME",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "reactome": true
+            }
+          }
+        }
+      },
+      "organism_wp": {
+        "label": "WP reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_WIKIPATHWAYS",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "wikipathways": true
+            }
+          }
+        }
+      },
       "enrich_padj": {
         "label": "Enrichment adjusted p-value cut-off",
         "type": "string",
