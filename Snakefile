@@ -22,7 +22,7 @@ use rule * from BR as other_*
 
 sample_tab = BR.load_sample()
 
-config = BR.load_organism()
+# config = BR.load_organism()
 
 # setting references for enrichment
 # GO
