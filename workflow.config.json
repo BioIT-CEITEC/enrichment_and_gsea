@@ -32,7 +32,6 @@
     "replicate"
   ],
   "requested_params": [
-    "organism",
     "featureCount",
     "count_over",
     "RSEM",
@@ -42,6 +41,11 @@
   ],
   "gui_params": {
     "primary": {
+      "organism": {
+          "label": "Organism",
+          "type": "enum",
+          "dynamicEnumName": "organism"
+        },
       "onthology": {
         "label": "Run Gene Onthology enrichment",
         "type": "bool",
