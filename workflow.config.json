@@ -1,7 +1,7 @@
 {
   "workflow_description": {
     "name": "enrichment_and_gsea",
-    "version": 1.4,
+    "version": 2.0,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
     "inputs": [],
@@ -32,7 +32,7 @@
     "replicate"
   ],
   "requested_params": [
-    "reference",
+    "organism",
     "featureCount",
     "count_over",
     "RSEM",
@@ -42,85 +42,109 @@
   ],
   "gui_params": {
     "primary": {
-      "enumParamFilter": {
-        "label": "Truc 1",
-        "type": "enum",
-        "list": {
-          "Aaa group": {
-            "aaa1": "Aaa 1"
-          },
-          "Bbb group": {
-            "bbb1": "Bbb 1",
-            "bbb2": "Bbb 2"
-          }
-        }
-      },
-      "enumParam1": {
-        "label": "Label 2",
-        "type": "enum",
-        "list": {
-          "Aaa 1": {
-            "value1": "Value label 1"
-          },
-          "Bbb 1": {
-            "value2": "Value label 2",
-            "value3": "Value label 3"
-          },
-          "Bbb 2": {
-            "value4": "Value label 4"
-          },
-          "value5": "Value label 5"
-        },
-        "filters": {
-          "group": {
-            "param": "enumParamFilter",
-            "type": "label",
-            "showGroupLabel": true
-          }
-        }
-      },
-      "enumParam2": {
-        "label": "Label 3",
-        "type": "enum",
-        "list": {
-          "aaa1": {
-            "value1": "Value label 1"
-          },
-          "bbb1": {
-            "value2": "Value label 2",
-            "value3": "Value label 3"
-          },
-          "bbb2": {
-            "value4": "Value label 4"
-          },
-          "value5": "Value label 5"
-        },
-        "filters": {
-          "group": {
-            "param": "enumParamFilter",
-            "type": "value"
-          }
-        }
-      },
       "onthology": {
         "label": "Run Gene Onthology enrichment",
         "type": "bool",
         "default": true
+      },
+      "organism_go": {
+        "label": "GO reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_GO",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "onthology": true
+            }
+          }
+        }
       },
       "kegg": {
         "label": "Run KEGG pathways enrichment",
         "type": "bool",
         "default": true
       },
+      "organism_kegg": {
+        "label": "KEGG reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_KEGG",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "kegg": true
+            }
+          }
+        }
+      },
       "reactome": {
         "label": "Run REACTOME pathways enrichment",
         "type": "bool",
         "default": true
       },
+      "organism_reactome": {
+        "label": "REACTOME reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_REACTOME",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "reactome": true
+            }
+          }
+        }
+      },
       "wikipathways": {
         "label": "Run WikiPathways enrichment",
         "type": "bool",
         "default": true
+      },
+      "organism_wp": {
+        "label": "WP reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_WIKIPATHWAYS",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "wikipathways": true
+            }
+          }
+        }
       },
       "conditions_to_compare": {
         "label": "Conditions to compare",
