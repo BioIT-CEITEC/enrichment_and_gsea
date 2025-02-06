@@ -48,8 +48,8 @@ run_all <- function(args){
       setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
     }else{
       tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalue, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalue, geneID = V1)]
 
       if (is.entrez == FALSE){
         tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
@@ -58,20 +58,19 @@ run_all <- function(args){
         tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
                       by="ENTREZID", all.x=T)
       }
-      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
       setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
     }
     return(tabl)
   }
 
-  ## select just entrez id and stat/logFC
+  ## select just entrez id and stat/logFC and remove NA values and duplicates
   if(organism_kegg != "ath"){
-    genes <- deseq2_tab[,.(ENTREZID, logFC = log2FoldChange)]
+    genes <- deseq2_tab[!is.na(ENTREZID) & !duplicated(ENTREZID),.(ENTREZID, logFC = log2FoldChange)]
   }else{
-    genes <- deseq2_tab[,.(Geneid, logFC = log2FoldChange)]
+    genes <- deseq2_tab[!is.na(Geneid) & !duplicated(Geneid),.(Geneid, logFC = log2FoldChange)]
   }
-  ## remove NA values
-  genes <- na.omit(unique(genes))
+
   ## order by decreasing logFC
   setorder(genes, -logFC)
 
