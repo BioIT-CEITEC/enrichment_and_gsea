@@ -1,7 +1,7 @@
 {
   "workflow_description": {
     "name": "enrichment_and_gsea",
-    "version": 2.0,
+    "version": 3.0,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
     "inputs": [],
