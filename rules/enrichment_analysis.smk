@@ -1,21 +1,24 @@
 def final_input(wildcards):
     input = {}
     if config["onthology"]:
-        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
-        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_CC.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
+        input["gobpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO_{enrich}/GO_enrich_BP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list,enrich=enrich)
+        input["gomfE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO_{enrich}/GO_enrich_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list,enrich=enrich)
+        input["goccE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO_{enrich}/GO_enrich_CC.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list,enrich=enrich)
         input["gobpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_GO/GSEA_GO_BP.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
         input["gomfG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_GO/GSEA_GO_MF.svg", analysis_type=analysis,comparison=comparison_dir_list,biotype=biotype_dir_list)
         input["goccG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_GO/GSEA_GO_CC.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["kegg"]:
-        input["keggE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_KEGG/KEGG_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["keggE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_KEGG_{enrich}/KEGG_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list,enrich=enrich)
         input["keggG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_KEGG/GSEA_KEGG.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["reactome"]:
-        input["reactE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_REACTOME/REACTOME_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["reactE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_REACTOME_{enrich}/REACTOME_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list,enrich=enrich)
         input["reactG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_REACTOME/GSEA_REACTOME.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
     if config["wikipathways"]:
-        input["wpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_WP/WP_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+        input["wpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_WP_{enrich}/WP_enrich.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list,enrich=enrich)
         input["wpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_WP/GSEA_WP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
+    if config["gseapy"]:
+        input["gseapy_enrichr"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/{enrichr_db}.{enrichr_org}.enrichr.reports.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, enrichr_db=enrichr_db, enrich=enrich,enrichr_org=enrichr_org)
+        
 
     return input
 
@@ -30,6 +33,8 @@ rule final_report:
 rule completion:
     input:  unpack(final_input),
             enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+            enrich_up = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_up.tsv",analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+            enrich_down = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_down.tsv",analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
             gsea = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_gsea.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
     output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     params: config = "./config.json"
@@ -40,6 +45,8 @@ rule completion:
 rule sampling:
     input:  tsv = "DE_{analysis_type}/{comparison}/DESeq2.tsv"
     output: enrich = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment.tsv",
+            enrich_up = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_up.tsv",
+            enrich_down = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_down.tsv",
             gsea = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_gsea.tsv",
     params: universe = "enrichment_gsea/gene_universe.tsv",
             organism_go = config["organism_go"],
@@ -199,3 +206,20 @@ rule GSEA_wp:
     conda:  "../wrappers/enrichment_wp/env.yaml"
     script: "../wrappers/enrichment_wp/script_gsea.py"
 
+rule gseapy_enrichr:
+    input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_{enrich}.tsv",
+    output: plotBP = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_BP.svg",
+            plotMF = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_MF.svg",
+            plotCC = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO/GO_enrich_CC.svg"
+    params: outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_GO",
+            organism_go = config["organism_go"],
+            n_up = config["n_up"],
+            colors = config["colors"],
+            enrich_padj = config["enrich_padj"],
+            enrich_padjmethod = config["enrich_padjmethod"],
+            enrich_minGSSize = config["enrich_minGSSize"],
+            enrich_maxGSSize = config["enrich_maxGSSize"],
+            universe = "enrichment_gsea/gene_universe.tsv"
+    log:    "logs/all_samples/{comparison}.DE_{analysis_type}.enrichment_GO.log"
+    conda:  "../wrappers/enrichment_GO/env.yaml"
+    script: "../wrappers/enrichment_GO/script_enrich.py"
