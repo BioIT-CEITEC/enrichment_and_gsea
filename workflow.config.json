@@ -1,7 +1,7 @@
 {
   "workflow_description": {
     "name": "enrichment_and_gsea",
-    "version": 2.0,
+    "version": 3.0,
     "label": "Gene enrichment and GSEA",
     "type": "gene_enrichment",
     "inputs": [],
@@ -12,6 +12,11 @@
       "DE_featureCount_transcript",
       "DE_featureCount_3pUTR",
       "DE_featureCount_5pUTR",
+      "DE_HTSeqCount_exon",
+      "DE_HTSeqCount_gene",
+      "DE_HTSeqCount_transcript",
+      "DE_HTSeqCount_3pUTR",
+      "DE_HTSeqCount_5pUTR",
       "DE_salmon_map",
       "DE_salmon_align",
       "DE_kallisto"
@@ -33,6 +38,7 @@
   ],
   "requested_params": [
     "featureCount",
+    "HTSeqCount",
     "count_over",
     "RSEM",
     "salmon_map",
@@ -65,6 +71,32 @@
         "label": "Run WikiPathways enrichment",
         "type": "bool",
         "default": true
+      },
+      "gseapy_enrichr": {
+        "label": "Run enrichR",
+        "type": "bool",
+        "default": true
+      },
+      "enrichR_DB": {
+        "label": "enrichR DB reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_enrichR_DB",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "gseapy_enrichr": true
+            }
+          }
+        }
       },
       "conditions_to_compare": {
         "label": "Conditions to compare",
@@ -203,6 +235,27 @@
             "negation": false,
             "values": {
               "wikipathways": true
+            }
+          }
+        }
+      },
+      "organism_enrichR": {
+        "label": "enrichR reference",
+        "type": "enum",
+        "dynamicEnumName": "ref_enrichR",
+        "filters": {
+          "group": {
+            "param": "organism",
+            "type": "value",
+            "showGroupLabel": false
+          }
+        },
+        "conditions": {
+          "relevance": {
+            "operand": "equal",
+            "negation": false,
+            "values": {
+              "gseapy_enrichr": true
             }
           }
         }

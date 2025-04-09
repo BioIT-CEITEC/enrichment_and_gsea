@@ -101,6 +101,24 @@ if config["featureCount"]:
         config["featureCount_5pUTR"] = True
         analysis.append("featureCount_5pUTR")
 
+if config["HTSeqCount"]:
+    count_over_list = config['count_over'].split(",")
+    if ("exon" in count_over_list):
+        config["HTSeqCount_exon"] = True
+        analysis.append("HTSeqCount_exon")
+    if ("gene" in count_over_list):
+        config["HTSeqCount_gene"] = True
+        analysis.append("HTSeqCount_gene")
+    if ("transcript" in count_over_list):
+        config["HTSeqCount_transcript"] = True
+        analysis.append("HTSeqCount_transcript")
+    if ("three_prime_UTR" in count_over_list):
+        config["HTSeqCount_3pUTR"] = True
+        analysis.append("HTSeqCount_3pUTR")
+    if ("five_prime_UTR" in count_over_list):
+        config["HTSeqCount_5pUTR"] = True
+        analysis.append("HTSeqCount_5pUTR")
+
 if config["RSEM"]:
     analysis.append("RSEM")
 if config["salmon_align"]:
@@ -146,6 +164,9 @@ biotype_dir_list = config['biotypes'].split(",")
 config["analysis_type"] = "|".join(analysis)
 config["biotype_list"] = "|".join(biotype_dir_list)
 config["comparison"] = "|".join(comparison_dir_list)
+enrich = ["all","up","down"]
+enrichr_db = config["enrichR_DB"]
+enrichr_org = config["organism_enrichR"]
 
 os.makedirs("enrichment_gsea",exist_ok=True)
 
@@ -156,10 +177,11 @@ f.close()
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
     lib_name = "[^\.\/]+",
-    analysis_type= "featureCount_exon|featureCount_gene|featureCount_transcript|featureCount_3pUTRn|featureCount_5pUTR|RSEM|salmon_map|salmon_align|kallisto",
+    analysis_type= "featureCount_exon|featureCount_gene|featureCount_transcript|featureCount_3pUTRn|featureCount_5pUTR|HTSeqCount_exon|HTSeqCount_gene|HTSeqCount_transcript|HTSeqCount_3pUTRn|HTSeqCount_5pUTR|RSEM|salmon_map|salmon_align|kallisto",
     condition_list = "|".join(condition_list),
     biotype = "|".join(biotype_dir_list),
     comparison = "|".join(comparison_dir_list)
+    enrich = "all|up|down"
 
 ##### Target rules #####
 

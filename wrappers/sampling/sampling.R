@@ -10,6 +10,9 @@ run_all <- function(args){
   cutoff_log2fc_gsea <- as.numeric(args[8])
   cutoff_padj_gsea <- as.numeric(args[9])
 
+  output_enrich_up <- paste0(sub(".tsv", "", output_enrich), "_up.tsv")
+  output_enrich_down <- paste0(sub(".tsv", "", output_enrich), "_down.tsv")
+
   library("data.table")
 
   if(!require(organism, character.only = T)) {BiocManager::install(organism, update = F)}
@@ -40,12 +43,19 @@ run_all <- function(args){
   enrich_tab <- merge(enrich_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
   gsea_tab <- merge(gsea_tab, universe, by.x = "Geneid", by.y = KEYID, all.x=T)
 
+  enrich_tab_up <- enrich_tab[log2FoldChange > 0,]
+  enrich_tab_down <- enrich_tab[log2FoldChange < 0,]
+
   if("gene_name" %in% names(de)){
     fwrite(enrich_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
+    fwrite(enrich_tab_up[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich_up, sep="\t")
+    fwrite(enrich_tab_down[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_enrich_down, sep="\t")
 
     fwrite(gsea_tab[,.(Geneid, gene_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
   }else{
     fwrite(enrich_tab[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich, sep="\t")
+    fwrite(enrich_tab_up[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich_up, sep="\t")
+    fwrite(enrich_tab_down[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_enrich_down, sep="\t")
 
     fwrite(gsea_tab[,.(Geneid, gene_name=Feature_name, ENTREZID, log2FoldChange, padj)], file = output_gsea, sep="\t")
   }
