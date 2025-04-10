@@ -17,7 +17,7 @@ f.write("## COMMAND: " + command + "\n")
 shell(command)
 
 # Generate gene list
-command = "cut -f 2 " + snakemake.input.tsv + " > " + snakemake.params.gene_list
+command = "cut -f 2 " + snakemake.input.tsv + " | tail -n +2 > " + snakemake.params.gene_list
 f = open(log_filename, 'a+')
 f.write("## COMMAND: " + command + "\n")
 shell(command)
