@@ -23,5 +23,5 @@ f = open(log_filename, 'a+')
 f.write("## COMMAND: "+command+"\n")
 shell(command)
 
-command = " cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log " + snakemake.log + " > " + snakemake.log
+command = " cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log  >> " + snakemake.log
 shell(command)
