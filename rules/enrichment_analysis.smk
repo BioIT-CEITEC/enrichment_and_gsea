@@ -16,8 +16,8 @@ def final_input(wildcards):
     if config["wikipathways"]:
         input["wpE"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_WP_{enrich}/enrich_WP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list,enrich=enrich)
         input["wpG"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_WP/GSEA_WP.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list)
-    if config["gseapy"]:
-        input["gseapy_enrichr"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/{enrichr_db}.{enrichr_org}.enrichr.reports.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, enrichr_db=enrichr_db, enrich=enrich,enrichr_org=enrichr_org)
+    if config["gseapy_enrichr"]:
+        input["gseapy_enrichr"] = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/"+enrichr_db+"."+enrichr_org+".enrichr.reports.svg", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, enrich=enrich)
         
 
     return input
@@ -32,9 +32,7 @@ rule final_report:
 
 rule completion:
     input:  unpack(final_input),
-            enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
-            enrich_up = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_up.tsv",analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
-            enrich_down = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_down.tsv",analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
+            enrich = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_{enrich}.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list, enrich=enrich),
             gsea = expand("enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_gsea.tsv", analysis_type=analysis, comparison=comparison_dir_list, biotype=biotype_dir_list),
     output: txtfile = "enrichment_gsea/config_enrichment_gsea.txt"
     params: config = "./config.json"
@@ -208,13 +206,13 @@ rule GSEA_wp:
 
 rule gseapy_enrichr:
     input:  tsv = "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_{enrich}.tsv",
-    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/{enrichr_db}.{enrichr_org}.enrichr.reports.svg"
+    output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/"+enrichr_db+"."+enrichr_org+".enrichr.reports.svg"
     params: outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}",
             enrichr_org = enrichr_org,
             enrichr_db = enrichr_db,
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"]
-    log:    "logs/all_samples/{comparison}.DE_{analysis_type}.enrichment_GO.log"
-    conda:  "../wrappers/enrichment_GO/env.yaml"
-    script: "../wrappers/enrichment_GO/script_enrich.py"
+    log:    "logs/all_samples/{comparison}.DE_{analysis_type}.enrichr_"+enrichr_db+"."+enrichr_org+"_{enrich}.log"
+    conda:  "../wrappers/enrichment_GSEAPY/env.yaml"
+    script: "../wrappers/enrichment_GSEAPY/script_enrich.py"

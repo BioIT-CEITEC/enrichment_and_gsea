@@ -10,8 +10,8 @@ run_all <- function(args){
   cutoff_log2fc_gsea <- as.numeric(args[8])
   cutoff_padj_gsea <- as.numeric(args[9])
 
-  output_enrich_up <- paste0(sub(".tsv", "", output_enrich), "_up.tsv")
-  output_enrich_down <- paste0(sub(".tsv", "", output_enrich), "_down.tsv")
+  output_enrich_up <- gsub("_all.tsv", "_up.tsv", output_enrich)
+  output_enrich_down <- gsub("_all.tsv", "_down.tsv", output_enrich)
 
   library("data.table")
 

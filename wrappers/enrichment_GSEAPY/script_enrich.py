@@ -16,8 +16,8 @@ command = " gseapy enrichr -f svg" +\
             " -o " + snakemake.params.outdir +\
             " --org " + snakemake.params.enrichr_org +\
             " -g " + snakemake.params.enrichr_db +\
-            " -t " snakemake.params.n_up + " " +\
-            " --cut " snakemake.params.enrich_padj
+            " -t " + snakemake.params.n_up + " " +\
+            " --cut " + snakemake.params.enrich_padj
 
 f = open(log_filename, 'a+')
 f.write("## COMMAND: "+command+"\n")
