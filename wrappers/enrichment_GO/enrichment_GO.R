@@ -105,7 +105,7 @@ run_all <- function(args){
     dtegoBP <- as.data.table(egoBP)
     if(length(dtegoBP$ID) > 0){
       dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
-      fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/GO_enrich_BP_extended.tsv"), sep="\t")
+      fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/enrich_GO_BP_extended.tsv"), sep="\t")
     }else{
         dtegoBP<-emptytable
     }
@@ -124,7 +124,7 @@ run_all <- function(args){
     dtegoMF <- as.data.table(egoMF)
     if(length(dtegoMF$ID) > 0){
       dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
-      fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/GO_enrich_MF_extended.tsv"), sep="\t")
+      fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/enrich_GO_MF_extended.tsv"), sep="\t")
     }else{
         dtegoMF<-emptytable
     }
@@ -143,14 +143,14 @@ run_all <- function(args){
     dtegoCC <- as.data.table(egoCC)
     if(length(dtegoCC$ID) > 0){
       dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
-      fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/GO_enrich_CC_extended.tsv"), sep="\t")
+      fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/enrich_GO_CC_extended.tsv"), sep="\t")
     }else{
         dtegoCC<-emptytable
     }
   }
-  fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/GO_enrich_BP.tsv"), sep="\t")
-  fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/GO_enrich_MF.tsv"), sep="\t")
-  fwrite(dtegoCC, file = paste0(OUTPUT_DIR,"/GO_enrich_CC.tsv"), sep="\t")
+  fwrite(dtegoBP, file = paste0(OUTPUT_DIR,"/enrich_GO_BP.tsv"), sep="\t")
+  fwrite(dtegoMF, file = paste0(OUTPUT_DIR,"/enrich_GO_MF.tsv"), sep="\t")
+  fwrite(dtegoCC, file = paste0(OUTPUT_DIR,"/enrich_GO_CC.tsv"), sep="\t")
 
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtegoBP,
@@ -189,9 +189,9 @@ run_all <- function(args){
                              PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "GO - Biological Process")
-  ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.pdf",sep=""),
+  ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_BP.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.svg",sep=""),
+  ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_BP.svg",sep=""),
        width = 10, height = 7, device = "svg")
   # ggsave(GO_BP_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_BP.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
@@ -201,9 +201,9 @@ run_all <- function(args){
                            PADJ = enrich_padj,
                            mycol = COLORS,
                            ploTitle = "GO - Molecular Function")
-  ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.pdf",sep=""),
+  ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_MF.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.svg",sep=""),
+  ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_MF.svg",sep=""),
        width = 10, height = 7, device = "svg")
   # ggsave(GO_MF_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_MF.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
@@ -213,9 +213,9 @@ run_all <- function(args){
                            PADJ = enrich_padj,
                            mycol = COLORS,
                            ploTitle = "GO - Cellular Component")
-  ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.pdf",sep=""),
+  ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_CC.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.svg",sep=""),
+  ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/enrich_GO_CC.svg",sep=""),
        width = 10, height = 7, device = "svg")
   # ggsave(GO_CC_plot, filename = paste0(OUTPUT_DIR,"/GO_enrich_CC.png",sep=""),
   #     width = 10, height = 7, device = "png", bg='transparent')

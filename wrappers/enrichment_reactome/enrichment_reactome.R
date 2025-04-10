@@ -79,12 +79,12 @@ run_all <- function(args){
     dtereact <- as.data.table(ereact)
     if(length(dtereact$ID) > 0){
       dtereactex <- convert_geneid(dtereact, deseq2_tab, is.gsea = F, is.entrez = T)
-      fwrite(dtereactex, file = paste0(OUTPUT_DIR,"/REACTOME_enrich_extended.tsv"), sep="\t")
+      fwrite(dtereactex, file = paste0(OUTPUT_DIR,"/enrich_REACTOME_extended.tsv"), sep="\t")
     }else{
         dtereact<-emptytable
     }
   }
-  fwrite(dtereact, file = paste0(OUTPUT_DIR,"/REACTOME_enrich.tsv"), sep="\t")
+  fwrite(dtereact, file = paste0(OUTPUT_DIR,"/enrich_REACTOME.tsv"), sep="\t")
 
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtereact,
@@ -123,11 +123,11 @@ run_all <- function(args){
                              PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "REACTOME pathways")
-  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.pdf",sep=""),
+  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/enrich_REACTOME.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.svg",sep=""),
+  ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/enrich_REACTOME.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  # ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/REACTOME_enrich.png",sep=""),
+  # ggsave(REACTOME_plot, filename = paste0(OUTPUT_DIR,"/enrich_REACTOME.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
 
 }

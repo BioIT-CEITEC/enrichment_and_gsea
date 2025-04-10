@@ -94,16 +94,16 @@ run_all <- function(args){
     if(length(dtekegg$ID) > 0){
       if(organism_kegg != "ath"){
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
-        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/enrich_KEGG_extended.tsv"), sep="\t")
       }else{
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = F)
-        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/enrich_KEGG_extended.tsv"), sep="\t")
       }
     }else{
         dtekegg<-emptytable
     }
   }
-  fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
+  fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/enrich_KEGG.tsv"), sep="\t")
 
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtekegg,
@@ -142,11 +142,11 @@ run_all <- function(args){
                              PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "KEGG pathways")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.pdf",sep=""),
+  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.svg",sep=""),
+  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  # ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.png",sep=""),
+  # ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
 
 }
