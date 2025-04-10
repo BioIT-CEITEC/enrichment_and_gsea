@@ -182,7 +182,7 @@ wildcard_constraints:
     analysis_type= "featureCount_exon|featureCount_gene|featureCount_transcript|featureCount_3pUTRn|featureCount_5pUTR|HTSeqCount_exon|HTSeqCount_gene|HTSeqCount_transcript|HTSeqCount_3pUTRn|HTSeqCount_5pUTR|RSEM|salmon_map|salmon_align|kallisto",
     condition_list = "|".join(condition_list),
     biotype = "|".join(biotype_dir_list),
-    comparison = "|".join(comparison_dir_list)
+    comparison = "|".join(comparison_dir_list),
     enrich = "all|up|down"
 
 ##### Target rules #####
