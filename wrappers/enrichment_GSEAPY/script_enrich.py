@@ -48,3 +48,12 @@ else:
     f = open(log_filename, 'a+')
     f.write("## COMMAND: " + command + "\n")
     shell(command)
+
+    # Create an empty TAB-delimited output file with the specified header
+    header = "Gene_set\tTerm\tOverlap\tP-value\tAdjusted P-value\tOld P-value\tOld Adjusted P-value\tOdds Ratio\tCombined Score\tGenes\n"
+    with open(snakemake.output.table, 'w') as f:
+        f.write(header)
+
+    f = open(log_filename, 'a+')
+    f.write("## Created empty TAB-delimited output file with header: " + header)
+    f.close()
