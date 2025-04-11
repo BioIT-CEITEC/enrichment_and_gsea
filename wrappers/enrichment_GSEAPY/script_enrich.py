@@ -37,7 +37,7 @@ if os.path.getsize(snakemake.params.gene_list) > 0:
     shell(command)
 
     # Append logs and clean up
-    command = "cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log >> " + snakemake.log
+    command = "cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log >> " + log_filename
     shell(command)
 
     command = "rm " + snakemake.params.outdir + "/gseapy.enrichr.*.log"
