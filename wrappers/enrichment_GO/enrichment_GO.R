@@ -4,6 +4,7 @@ run_all <- function(args){
   OUTPUT_DIR <- args[2]
   organism_go <- args[3]
   n_up <- as.integer(args[4])
+  # input_genes contains "_down" 
   COLORS <- unlist(strsplit(args[5],split=":"))[1]
   enrich_padj <- as.numeric(args[6])
   enrich_padjmethod <- args[7]
