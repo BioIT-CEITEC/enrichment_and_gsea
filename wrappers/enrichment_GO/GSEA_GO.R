@@ -71,7 +71,7 @@ run_all <- function(args){
   }
 
   ## select just entrez id and stat/logFC
-  genes <- deseq2_tab[,.(Geneid, logFC = log2FoldChange)]
+  genes <- deseq2_tab[!is.na(Geneid) & !duplicated(Geneid),.(Geneid, logFC = log2FoldChange)]
   ## remove NA values
   genes <- na.omit(genes)
   ## order by decreasing logFC
