@@ -90,6 +90,7 @@ run_all <- function(args){
   if(length(dtgseaWP$ID) > 0){
     dtgseaWPex <- convert_geneid(dtgseaWP, deseq2_tab, is.gsea = T, is.entrez = T)
     fwrite(dtgseaWPex, file = paste0(OUTPUT_DIR,"/GSEA_WP_extended.tsv"), sep="\t")
+    saveRDS(gseaWP, file = paste0(OUTPUT_DIR, "/GSEA_WP.rds"))
   }
   fwrite(dtgseaWP, file = paste0(OUTPUT_DIR,"/GSEA_WP.tsv"), sep="\t")
 

@@ -92,6 +92,7 @@ run_all <- function(args){
 
     dtekegg <- as.data.table(ekegg)
     if(length(dtekegg$ID) > 0){
+      saveRDS(ekegg, file = paste0(OUTPUT_DIR, "/enrich_KEGG.rds"))
       if(organism_kegg != "ath"){
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
         fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/enrich_KEGG_extended.tsv"), sep="\t")

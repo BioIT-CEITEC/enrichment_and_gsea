@@ -79,6 +79,7 @@ run_all <- function(args){
     if(length(dtewp$ID) > 0){
       dtewpex <- convert_geneid(dtewp, deseq2_tab, is.gsea = F, is.entrez = T)
       fwrite(dtewpex, file = paste0(OUTPUT_DIR,"/enrich_WP_extended.tsv"), sep="\t")
+      saveRDS(ewp, file = paste0(OUTPUT_DIR, "/enrich_WP.rds"))
     }else{
         dtewp<-emptytable
     }

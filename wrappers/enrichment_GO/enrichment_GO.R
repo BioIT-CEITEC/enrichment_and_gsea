@@ -107,6 +107,7 @@ run_all <- function(args){
     if(length(dtegoBP$ID) > 0){
       dtegoBPex <- convert_geneid(dtegoBP, deseq2_tab, F, F)
       fwrite(dtegoBPex, file = paste0(OUTPUT_DIR,"/enrich_GO_BP_extended.tsv"), sep="\t")
+      saveRDS(egoBP, file = paste0(OUTPUT_DIR, "/enrich_GO_BP.rds"))
     }else{
         dtegoBP<-emptytable
     }
@@ -126,6 +127,7 @@ run_all <- function(args){
     if(length(dtegoMF$ID) > 0){
       dtegoMFex <- convert_geneid(dtegoMF, deseq2_tab, F, F)
       fwrite(dtegoMFex, file = paste0(OUTPUT_DIR,"/enrich_GO_MF_extended.tsv"), sep="\t")
+      saveRDS(egoMF, file = paste0(OUTPUT_DIR, "/enrich_GO_MF.rds"))
     }else{
         dtegoMF<-emptytable
     }
@@ -145,6 +147,7 @@ run_all <- function(args){
     if(length(dtegoCC$ID) > 0){
       dtegoCCex <- convert_geneid(dtegoCC, deseq2_tab, F, F)
       fwrite(dtegoCCex, file = paste0(OUTPUT_DIR,"/enrich_GO_CC_extended.tsv"), sep="\t")
+      saveRDS(egoCC, file = paste0(OUTPUT_DIR, "/enrich_GO_CC.rds"))
     }else{
         dtegoCC<-emptytable
     }

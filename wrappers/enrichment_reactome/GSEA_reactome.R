@@ -91,6 +91,7 @@ run_all <- function(args){
   if(length(dtgseaREACTOME$ID) > 0){
     dtgseaREACTOMEex <- convert_geneid(dtgseaREACTOME, deseq2_tab, is.gsea = T, is.entrez = T)
     fwrite(dtgseaREACTOMEex, file = paste0(OUTPUT_DIR,"/GSEA_REACTOME_extended.tsv"), sep="\t")
+    saveRDS(gseaREACTOME, file = paste0(OUTPUT_DIR, "/GSEA_REACTOME.rds"))
   }
   fwrite(dtgseaREACTOME, file = paste0(OUTPUT_DIR,"/GSEA_REACTOME.tsv"), sep="\t")
 

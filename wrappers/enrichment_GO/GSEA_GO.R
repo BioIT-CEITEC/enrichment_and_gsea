@@ -101,6 +101,7 @@ run_all <- function(args){
   if(length(dtgseaGOBP$ID) > 0){
     dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
+    saveRDS(gseaGOBP, file = paste0(OUTPUT_DIR, "/GSEA_GO_BP.rds"))
   }
   fwrite(dtgseaGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
 
@@ -120,6 +121,7 @@ run_all <- function(args){
   if(length(dtgseaGOMF$ID) > 0){
     dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
+    saveRDS(gseaGOMF, file = paste0(OUTPUT_DIR, "/GSEA_GO_MF.rds"))
   }
   fwrite(dtgseaGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
 
@@ -139,6 +141,7 @@ run_all <- function(args){
   if(length(dtgseaGOCC$ID) > 0){
     dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")
+    saveRDS(gseaGOCC, file = paste0(OUTPUT_DIR, "/GSEA_GO_CC.rds"))
   }
   fwrite(dtgseaGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
 

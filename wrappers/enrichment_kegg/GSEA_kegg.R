@@ -105,6 +105,7 @@ run_all <- function(args){
       dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = F)
     }
     fwrite(dtgseaKEGGex, file = paste0(OUTPUT_DIR,"/GSEA_KEGG_extended.tsv"), sep="\t")
+    saveRDS(gseaKEGG, file = paste0(OUTPUT_DIR, "/GSEA_KEGG.rds"))
   }
   fwrite(dtgseaKEGG, file = paste0(OUTPUT_DIR,"/GSEA_KEGG.tsv"), sep="\t")
 

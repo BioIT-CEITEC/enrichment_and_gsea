@@ -80,6 +80,7 @@ run_all <- function(args){
     if(length(dtereact$ID) > 0){
       dtereactex <- convert_geneid(dtereact, deseq2_tab, is.gsea = F, is.entrez = T)
       fwrite(dtereactex, file = paste0(OUTPUT_DIR,"/enrich_REACTOME_extended.tsv"), sep="\t")
+      saveRDS(ereact, file = paste0(OUTPUT_DIR, "/enrich_REACTOME.rds"))
     }else{
         dtereact<-emptytable
     }
