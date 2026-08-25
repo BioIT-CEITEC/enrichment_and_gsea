@@ -3,8 +3,8 @@ run_all <- function(args){
   input_genes <- args[1]
   OUTPUT_DIR <- args[2]
   organism_kegg <- args[3]
-  kegg2desc <- args[4]
-  kegg2gene <- args[5]
+  kegg2desc.file <- args[4]
+  kegg2gene.file <- args[5]
   n_up <- as.integer(args[6])
   COLORS <- unlist(strsplit(args[7],split=":"))[1]
   enrich_padj <- as.numeric(args[8])
@@ -24,6 +24,9 @@ run_all <- function(args){
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
   deseq2_tab <- unique(deseq2_tab)
+
+  kegg2desc <- fread(kegg2desc.file, header=F)
+  kegg2gene <- fread(kegg2gene.file, header=F)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
@@ -83,7 +86,6 @@ run_all <- function(args){
       #                   maxGSSize     = enrich_maxGSSize)
       ekegg <- enricher(gene          = deseq2_tab$ENTREZID,
                         universe      = universe$ENTREZID,
-                        gson          = NULL,
                         TERM2GENE     = kegg2gene,
                         TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,
@@ -101,7 +103,6 @@ run_all <- function(args){
       #                   maxGSSize     = enrich_maxGSSize)
       ekegg <- enricher(gene          = deseq2_tab$Geneid,
                         universe      = universe$TAIR,
-                        gson          = NULL,
                         TERM2GENE     = kegg2gene,
                         TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,

@@ -98,6 +98,7 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOBP <- as.data.table(gseaGOBP)
+  setnames(dtgseaGOBP, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOBP$ID) > 0){
     dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
@@ -118,6 +119,7 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOMF <- as.data.table(gseaGOMF)
+  setnames(dtgseaGOMF, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOMF$ID) > 0){
     dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
@@ -138,6 +140,7 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOCC <- as.data.table(gseaGOCC)
+  setnames(dtgseaGOCC, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOCC$ID) > 0){
     dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")

@@ -3,8 +3,8 @@ run_all <- function(args){
   input_genes <- args[1]
   OUTPUT_DIR <- args[2]
   organism_kegg <- args[3]
-  kegg2desc <- args[4]
-  kegg2gene <- args[5]
+  kegg2desc.file <- args[4]
+  kegg2gene.file <- args[5]
   n_up <- as.integer(args[6])
   n_down <- as.integer(args[7])
   COLORS <- unlist(strsplit(args[8],split=":"))
@@ -28,6 +28,9 @@ run_all <- function(args){
   deseq2_tab <- fread(input_genes,header = T)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
   deseq2_tab <- unique(deseq2_tab)
+
+  kegg2desc <- fread(kegg2desc.file, header=F)
+  kegg2gene <- fread(kegg2gene.file, header=F)
 
   ## lookup gene symbol and unigene ID for the 1st 6 keys
   universe <- fread(input_universe)
@@ -111,6 +114,7 @@ run_all <- function(args){
                    by            = gsea_by)
 
   dtgseaKEGG <- as.data.table(gseaKEGG)
+  setnames(dtgseaKEGG, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaKEGG$ID) > 0){
     if(organism_kegg != "ath"){
       dtgseaKEGGex <- convert_geneid(dtgseaKEGG, deseq2_tab, is.gsea = T, is.entrez = T)

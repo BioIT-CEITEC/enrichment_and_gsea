@@ -87,6 +87,7 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaWP <- as.data.table(gseaWP)
+  setnames(dtgseaWP, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaWP$ID) > 0){
     dtgseaWPex <- convert_geneid(dtgseaWP, deseq2_tab, is.gsea = T, is.entrez = T)
     fwrite(dtgseaWPex, file = paste0(OUTPUT_DIR,"/GSEA_WP_extended.tsv"), sep="\t")
