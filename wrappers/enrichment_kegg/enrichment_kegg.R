@@ -3,13 +3,15 @@ run_all <- function(args){
   input_genes <- args[1]
   OUTPUT_DIR <- args[2]
   organism_kegg <- args[3]
-  n_up <- as.integer(args[4])
-  COLORS <- unlist(strsplit(args[5],split=":"))[1]
-  enrich_padj <- as.numeric(args[6])
-  enrich_padjmethod <- args[7]
-  enrich_minGSSize <- as.numeric(args[8])
-  enrich_maxGSSize <- as.numeric(args[9])
-  input_universe <- args[10]
+  kegg2desc <- args[4]
+  kegg2gene <- args[5]
+  n_up <- as.integer(args[6])
+  COLORS <- unlist(strsplit(args[7],split=":"))[1]
+  enrich_padj <- as.numeric(args[8])
+  enrich_padjmethod <- args[9]
+  enrich_minGSSize <- as.numeric(args[10])
+  enrich_maxGSSize <- as.numeric(args[11])
+  input_universe <- args[12]
 
   library("data.table")
   library("clusterProfiler")

@@ -3,17 +3,19 @@ run_all <- function(args){
   input_genes <- args[1]
   OUTPUT_DIR <- args[2]
   organism_kegg <- args[3]
-  n_up <- as.integer(args[4])
-  n_down <- as.integer(args[5])
-  COLORS <- unlist(strsplit(args[6],split=":"))
-  gsea_padj <- as.numeric(args[7])
-  gsea_padjmethod <- args[8]
-  gsea_minGSSize <- as.numeric(args[9])
-  gsea_maxGSSize <- as.numeric(args[10])
-  gsea_eps <- as.numeric(args[11])
-  gsea_nPermSimple <- as.integer(args[12])
-  gsea_by <- args[13]
-  input_universe <- args[14]
+  kegg2desc <- args[4]
+  kegg2gene <- args[5]
+  n_up <- as.integer(args[6])
+  n_down <- as.integer(args[7])
+  COLORS <- unlist(strsplit(args[8],split=":"))
+  gsea_padj <- as.numeric(args[9])
+  gsea_padjmethod <- args[10]
+  gsea_minGSSize <- as.numeric(args[11])
+  gsea_maxGSSize <- as.numeric(args[12])
+  gsea_eps <- as.numeric(args[13])
+  gsea_nPermSimple <- as.integer(args[14])
+  gsea_by <- args[15]
+  input_universe <- args[16]
 
   library("data.table")
   library("clusterProfiler")

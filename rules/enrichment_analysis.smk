@@ -108,6 +108,8 @@ rule enrichment_kegg:
             table = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_KEGG_{enrich}/enrich_KEGG.tsv"
     params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichment_KEGG_{enrich}",
             organism_kegg = config["organism_kegg"],
+            kegg2desc = os.path.join(config["kegg_path"], "/KEGG2DESC.tsv")
+            kegg2gene = os.path.join(config["kegg_path"], "/KEGG2GENE.tsv")
             n_up = config["n_up"],
             colors = config["colors"],
             enrich_padj = config["enrich_padj"],

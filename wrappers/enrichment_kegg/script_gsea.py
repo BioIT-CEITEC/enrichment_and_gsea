@@ -15,6 +15,8 @@ command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/GSEA_kegg.R "
           snakemake.input.tsv + " " + \
           snakemake.params.outdir + " " + \
           snakemake.params.organism_kegg + " " + \
+          snakemake.params.kegg2desc + " " +\
+          snakemake.params.kegg2gene + " " +\
           snakemake.params.n_up + " " + \
           snakemake.params.n_down + " " + \
           snakemake.params.colors + " " + \
