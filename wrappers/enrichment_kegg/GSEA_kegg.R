@@ -88,16 +88,27 @@ run_all <- function(args){
     dir.create(OUTPUT_DIR, recursive = T)
   }
 
-  gseaKEGG <- gseKEGG(gene         = rankGenes,
-                    organism      = organism_kegg,
-                    keyType       = "kegg",
-                    pAdjustMethod = gsea_padjmethod,
-                    pvalueCutoff  = gsea_padj,
-                    minGSSize     = gsea_minGSSize,
-                    maxGSSize     = gsea_maxGSSize,
-                    nPermSimple   = gsea_nPermSimple,
-                    eps           = gsea_eps,
-                    by            = gsea_by)
+  # gseaKEGG <- gseKEGG(gene         = rankGenes,
+  #                   organism      = organism_kegg,
+  #                   keyType       = "kegg",
+  #                   pAdjustMethod = gsea_padjmethod,
+  #                   pvalueCutoff  = gsea_padj,
+  #                   minGSSize     = gsea_minGSSize,
+  #                   maxGSSize     = gsea_maxGSSize,
+  #                   nPermSimple   = gsea_nPermSimple,
+  #                   eps           = gsea_eps,
+  #                   by            = gsea_by)
+  gseaKEGG <- GSEA(gene          = rankGenes,
+                   gson          = NULL,
+                   TERM2GENE     = kegg2gene,
+                   TERM2NAME     = kegg2desc,
+                   pAdjustMethod = gsea_padjmethod,
+                   pvalueCutoff  = gsea_padj,
+                   minGSSize     = gsea_minGSSize,
+                   maxGSSize     = gsea_maxGSSize,
+                   nPermSimple   = gsea_nPermSimple,
+                   eps           = gsea_eps,
+                   by            = gsea_by)
 
   dtgseaKEGG <- as.data.table(gseaKEGG)
   if(length(dtgseaKEGG$ID) > 0){

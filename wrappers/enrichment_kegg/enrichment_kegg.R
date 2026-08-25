@@ -73,19 +73,37 @@ run_all <- function(args){
     }
 
     if(organism_kegg != "ath"){
-      ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+      # ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+      #                   universe      = universe$ENTREZID,
+      #                   organism      = organism_kegg,
+      #                   keyType       = "kegg",
+      #                   pAdjustMethod = enrich_padjmethod,
+      #                   pvalueCutoff  = enrich_padj,
+      #                   minGSSize     = enrich_minGSSize,
+      #                   maxGSSize     = enrich_maxGSSize)
+      ekegg <- enricher(gene          = deseq2_tab$ENTREZID,
                         universe      = universe$ENTREZID,
-                        organism      = organism_kegg,
-                        keyType       = "kegg",
+                        gson          = NULL,
+                        TERM2GENE     = kegg2gene,
+                        TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,
                         pvalueCutoff  = enrich_padj,
                         minGSSize     = enrich_minGSSize,
                         maxGSSize     = enrich_maxGSSize)
     }else{
-      ekegg <- enrichKEGG(gene        = deseq2_tab$Geneid,
+      # ekegg <- enrichKEGG(gene        = deseq2_tab$Geneid,
+      #                   universe      = universe$TAIR,
+      #                   organism      = organism_kegg,
+      #                   keyType       = "kegg",
+      #                   pAdjustMethod = enrich_padjmethod,
+      #                   pvalueCutoff  = enrich_padj,
+      #                   minGSSize     = enrich_minGSSize,
+      #                   maxGSSize     = enrich_maxGSSize)
+      ekegg <- enricher(gene          = deseq2_tab$Geneid,
                         universe      = universe$TAIR,
-                        organism      = organism_kegg,
-                        keyType       = "kegg",
+                        gson          = NULL,
+                        TERM2GENE     = kegg2gene,
+                        TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,
                         pvalueCutoff  = enrich_padj,
                         minGSSize     = enrich_minGSSize,
