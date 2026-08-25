@@ -130,8 +130,7 @@ if config["kallisto"]:
 if len(analysis) == 0:
     raise ValueError("There was no RSEM or featureCount used in previous analysis!")
 
-if config["kegg"] and config["organism_kegg"] != "-":
-    config["kegg_path"] = os.path.join(GLOBAL_REF_PATH, "tools","KEGG", config["organism_kegg"])
+config["kegg_path"] = os.path.join(GLOBAL_REF_PATH.replace("base/references_backup", "resources"), "tools","KEGG", config["organism_kegg"])
 
 def get_comparison_dir_list(condition_list):
     comparison_dir_list = list()
