@@ -36,8 +36,9 @@ if os.path.getsize(snakemake.params.gene_list) > 0:
     f.write("## COMMAND: " + command + "\n")
 
     # Run gseapy and capture stderr to check for ValueError
+    # Use "true ||" prefix to prevent shell from failing on non-zero exit code
     error_log = snakemake.params.outdir + "/gseapy_error.tmp"
-    command_with_capture = command + " 2> " + error_log
+    command_with_capture = "( " + command + " 2> " + error_log + " ) || true"
     shell(command_with_capture)
 
     # Check if ValueError occurred (no enrich terms after cutoff) by reading the error log

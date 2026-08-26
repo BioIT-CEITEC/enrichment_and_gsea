@@ -43,10 +43,10 @@ run_all <- function(args){
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
         tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
@@ -57,10 +57,10 @@ run_all <- function(args){
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
         tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
