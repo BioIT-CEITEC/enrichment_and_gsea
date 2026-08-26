@@ -34,14 +34,35 @@ if os.path.getsize(snakemake.params.gene_list) > 0:
               " --cut " + snakemake.params.enrich_padj
     f = open(log_filename, 'a+')
     f.write("## COMMAND: " + command + "\n")
-    shell(command)
 
-    # Append logs and clean up
-    command = "cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log >> " + log_filename
-    shell(command)
+    # Run gseapy and capture stderr to check for ValueError
+    error_log = snakemake.params.outdir + "/gseapy_error.tmp"
+    command_with_capture = command + " 2> " + error_log
+    shell(command_with_capture)
 
-    command = "rm " + snakemake.params.outdir + "/gseapy.enrichr.*.log"
-    shell(command)
+    # Check if ValueError occurred (no enrich terms after cutoff) by reading the error log
+    has_error = False
+    if os.path.exists(error_log):
+        with open(error_log, 'r') as errf:
+            error_content = errf.read()
+        if 'ValueError' in error_content or 'No enrich terms' in error_content:
+            has_error = True
+
+    if has_error:
+        f.write("## WARNING: gseapy enrichr found no enrich terms after cutoff. Creating empty outputs.\n")
+        # Create empty plot file
+        shell("touch " + snakemake.output.plot)
+        # Create empty TAB-delimited output file with header
+        header = "Gene_set\tTerm\tOverlap\tP-value\tAdjusted P-value\tOld P-value\tOld Adjusted P-value\tOdds Ratio\tCombined Score\tGenes\n"
+        with open(snakemake.output.table, 'w') as outf:
+            outf.write(header)
+        f.write("## Created empty output files.\n")
+        shell("rm " + error_log)
+    else:
+        # Append logs and clean up
+        shell("cat " + snakemake.params.outdir + "/gseapy.enrichr.*.log >> " + log_filename)
+        shell("rm " + snakemake.params.outdir + "/gseapy.enrichr.*.log")
+        shell("rm -f " + error_log)
 else:
     # Create an empty plot file if gene list is empty
     command = "touch " + snakemake.output.plot
