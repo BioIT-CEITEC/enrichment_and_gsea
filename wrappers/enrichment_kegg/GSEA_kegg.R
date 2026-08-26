@@ -102,7 +102,6 @@ run_all <- function(args){
   #                   eps           = gsea_eps,
   #                   by            = gsea_by)
   gseaKEGG <- GSEA(gene          = rankGenes,
-                   gson          = NULL,
                    TERM2GENE     = kegg2gene,
                    TERM2NAME     = kegg2desc,
                    pAdjustMethod = gsea_padjmethod,
