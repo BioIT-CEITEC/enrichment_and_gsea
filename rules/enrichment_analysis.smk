@@ -127,8 +127,8 @@ rule GSEA_kegg:
             table = "enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_KEGG/GSEA_KEGG.tsv"
     params: outdir = "enrichment_gsea/DE_{analysis_type}/{comparison}/GSEA_KEGG",
             organism_kegg = config["organism_kegg"],
-            kegg2desc = os.path.join(config["kegg_path"], "/KEGG2DESC.tsv"),
-            kegg2gene = os.path.join(config["kegg_path"], "/KEGG2GENE.tsv"),
+            kegg2desc = os.path.join(config["kegg_path"], "KEGG2DESC.tsv"),
+            kegg2gene = os.path.join(config["kegg_path"], "KEGG2GENE.tsv"),
             n_up = config["n_up"],
             n_down= config["n_down"],
             colors = config["colors"],
