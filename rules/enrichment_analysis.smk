@@ -225,7 +225,7 @@ rule gseapy_enrichr:
     output: plot = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/"+enrichr_db+"."+enrichr_org+".enrichr.reports.svg",
             table = "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/"+enrichr_db+"."+enrichr_org+".enrichr.reports.txt"
     params: outdir= "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}",
-            gene_list= "enrichment_gsea/DE_{analysis_type}/{comparison}/gene_for_enrichment_{enrich}.tsv",
+            gene_list= "enrichment_gsea/DE_{analysis_type}/{comparison}/enrichr_{enrich}/gene_list.tmp",
             enrichr_org = enrichr_org,
             enrichr_db = enrichr_db,
             n_up = config["n_up"],
