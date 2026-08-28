@@ -47,10 +47,6 @@ set_flextable_defaults(
 )
 ```
 
-```{r variables, results='asis', echo=FALSE}
-`%!in%` <- Negate(`%in%`)
-```
-
 <style>
 /* Custom CSS for modern look */
 :root {
@@ -359,23 +355,28 @@ print_figure <- function(plotpath, de, comp, enrich, alt_text, plot_title = "Enr
   cat('</div>')
 }
 
-# Helper: find result tsv and its plot, print figure with title or warning
-show_result_files <- function(subdir, filename, alt_text, warn_msg, plot_title = "Enrichment"){
-  dt <- build_result_table(subdir, filename)
+# Helper: display plots from the summary_enrich_stats table (built in the
+# summary-dashboard chunk). Rows are selected by prefix on the Enrichment
+# column (e.g. "enrichment_KEGG" matches enrichment_KEGG_all/up/down).
+# Enriched == 0 -> warning message instead of the plot.
+# Title = Analysis - Comparison - Enrichment
+show_result_files <- function(stats, pattern, alt_text, warn_msg){
+  dt <- stats[grepl(paste0("^", pattern), Enrichment)]
   if(nrow(dt) == 0){
     cat('<div class="info-box">No results available for this database.</div>')
     return(invisible())
   }
   for(i in seq_len(nrow(dt))){
-    tab <- dt$tablpath[i]
-    plotpath <- paste0(dirname(tab), "/", gsub(".tsv$", ".svg", basename(tab)))
-    tab_content <- tryCatch(fread(tab), error = function(e) NULL)
-    n_terms <- if(is.null(tab_content)) 0 else nrow(tab_content)
-    if(n_terms == 0){
-      cat(paste0('<div class="warning-box"><strong>', warn_msg, '</strong> for ',
-                 dt$de[i], ' - ', dt$comp[i], '</div>'))
+    title <- paste0(dt$Analysis[i], " - ", dt$Comparison[i], " - ", dt$Enrichment[i])
+    if(dt$Enriched[i] == 0){
+      cat(paste0('<div class="warning-box"><strong>', warn_msg, '</strong> for ', title, '</div>'))
     } else {
-      print_figure(plotpath, dt$de[i], dt$comp[i], dt$enrich[i], alt_text, plot_title)
+      cat('<div class="figure-container">')
+      cat('<h4>', title, '</h4>')
+      if(file.exists(dt$plot_path[i])){
+        cat('<img src="', dt$plot_path[i], '" alt="', alt_text, '">', sep="")
+      }
+      cat('</div>')
     }
   }
 }
@@ -439,12 +440,13 @@ for (d in DE){
           summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
           }
         }
-        
+
         gsea_path <- paste0(d, "/", f, "/GSEA_GO/GSEA_GO_", h, ".tsv")
         if(file.exists(gsea_path)){
-        gsea_file <- fread(gsea_path, header = T)
-        n_gsea <- length(gsea_file$ID)
-        dtt <- data.table(Analysis=d, Comparison=f, Enrichment=paste0("GSEA_GO_", h), Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+          gsea_file <- fread(gsea_path, header = T)
+          n_gsea <- length(gsea_file$ID)
+          dtt <- data.table(Analysis=d, Comparison=f, Enrichment=paste0("GSEA_GO_", h), Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+          summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
         }
       }
     }
@@ -463,6 +465,7 @@ for (d in DE){
         gsea_file <- fread(gsea_path, header = T)
         n_gsea <- length(gsea_file$ID)
         dtt <- data.table(Analysis=d, Comparison=f, Enrichment="GSEA_KEGG", Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+        summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
       }
     }
     if(config_json$reactome[1] == T){
@@ -479,7 +482,8 @@ for (d in DE){
       if(file.exists(gsea_path)){
         gsea_file <- fread(gsea_path, header = T)
         n_gsea <- length(gsea_file$ID)
-        dtt <- data.table(Analysis=d, Comparison=f, Enrichment="/GSEA_REACTOME", Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+        dtt <- data.table(Analysis=d, Comparison=f, Enrichment="GSEA_REACTOME", Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+        summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
       }
     }
     if(config_json$wikipathways[1] == T){
@@ -497,6 +501,7 @@ for (d in DE){
         gsea_file <- fread(gsea_path, header = T)
         n_gsea <- length(gsea_file$ID)
         dtt <- data.table(Analysis=d, Comparison=f, Enrichment="GSEA_WP", Enriched=n_gsea, plot_path=gsub("tsv$","svg",gsea_path))
+        summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
       }
     }
     if(config_json$gseapy_enrichr[1] == T){
@@ -509,79 +514,6 @@ for (d in DE){
           summary_enrich_stats <- rbind(summary_enrich_stats, dtt)
         }
       }
-    }
-  }
-}
-
-
-
-    de_path <- paste0(d, "/", f, "/gene_for_gsea.tsv")
-    if(file.exists(de_path)){
-      de <- fread(de_path, header = T)
-      names(de)[1] <- 'Geneid'
-
-
-
-
-
-
-      # Count significant enrichment terms per database ("all" gene set, padj < cutoff)
-      padj_cut <- as.numeric(config_json$enrich_padj[1])
-      count_terms <- function(subdir, filename){
-        tab <- paste0(d, "/", f, "/", subdir, "/", filename)
-        if(!file.exists(tab)) return(0)
-        res <- tryCatch(fread(tab), error = function(e) NULL)
-        if(is.null(res) || nrow(res) == 0 || !"p.adjust" %in% names(res)) return(0)
-        sum(res$p.adjust <= padj_cut)
-      }
-
-      n_go <- n_kegg <- n_reactome <- n_wp <- n_enrichr <- 0L
-      if(config_json$onthology[1]==TRUE){
-        n_go <- count_terms("enrichment_GO_all", "enrich_GO_BP.tsv") +
-                count_terms("enrichment_GO_all", "enrich_GO_MF.tsv") +
-                count_terms("enrichment_GO_all", "enrich_GO_CC.tsv")
-      }
-      if(config_json$kegg[1]==TRUE){
-        n_kegg <- count_terms("enrichment_KEGG_all", "enrich_KEGG.tsv")
-      }
-      if(config_json$reactome[1]==TRUE){
-        n_reactome <- count_terms("enrichment_REACTOME_all", "enrich_REACTOME.tsv")
-      }
-      if(config_json$wikipathways[1]==TRUE){
-        n_wp <- count_terms("enrichment_WP_all", "enrich_WP.tsv")
-      }
-      if(config_json$gseapy_enrichr[1]==TRUE){
-        enr_tab <- paste0(d, "/", f, "/enrichr_all/", config_json$enrichR_DB[1], ".", config_json$organism_enrichR[1], ".enrichr.reports.txt")
-        if(file.exists(enr_tab)){
-          enr_res <- tryCatch(fread(enr_tab), error = function(e) NULL)
-          if(!is.null(enr_res) && nrow(enr_res) > 0) n_enrichr <- nrow(enr_res)
-        }
-      }
-
-      dt <- data.table(
-        Analysis = d,
-        Comparison = f,
-        `Total Genes` = length(de$Geneid),
-        `DE Genes` = length(enrich_genes$Geneid),
-        `Up` = n_up,
-        `Down` = n_down
-      )
-      if(config_json$onthology[1]==TRUE) dt[, `GO Terms` := n_go]
-      if(config_json$kegg[1]==TRUE) dt[, `KEGG Terms` := n_kegg]
-      if(config_json$reactome[1]==TRUE) dt[, `Reactome Terms` := n_reactome]
-      if(config_json$wikipathways[1]==TRUE) dt[, `WP Terms` := n_wp]
-      if(config_json$gseapy_enrichr[1]==TRUE) dt[, `EnrichR Terms` := n_enrichr]
-
-      summary_stats <- rbindlist(list(summary_stats, dt), fill = TRUE)
-    }
-  }
-}
-# Zero out NAs in numeric columns (from rbindlist fill) - per column, since
-# data.table `[<-` does not accept a logical matrix as row index
-if(nrow(summary_stats) > 0){
-  for(cn in names(summary_stats)){
-    if(is.numeric(summary_stats[[cn]])){
-      summary_stats[[cn]][is.na(summary_stats[[cn]])] <- 0
     }
   }
 }
@@ -607,16 +539,45 @@ cat('</div>')
 cat('</div>')
 ```
 
-<div class="result-card">
-<h3 style="margin-top: 0;">Summary per Comparison</h3>
-<p>Number of genes and significant enrichment terms (adjusted p-value ≤ `r config_json$enrich_padj[1]`) for each comparison, based on the "all" gene set:</p>
-```{r summary-table, echo=FALSE, results='asis', ft.split=F}
-if(nrow(summary_stats) > 0){
-  ft <- qflextable(data = as.data.frame(summary_stats))
-  ft <- fit_to_width(ft, max_width = 12)
+```{r summary-tables-display, echo=FALSE, results='asis'}
+# Plain HTML table printer (flextable output is unreliable inside cat()/asis chunks)
+cat_sticky_table <- function(dt, max_height = 380){
+  cat('<style>')
+  cat('.scroll-table{max-height:', max_height, 'px;overflow-y:auto;border:1px solid #e0e0e0;border-radius:4px;margin-top:10px;}', sep = "")
+  cat('.scroll-table table{width:100%;border-collapse:collapse;margin:0;}')
+  cat('.scroll-table th{position:sticky;top:0;z-index:2;background:#2c3e50;color:white;padding:8px 10px;text-align:center;border:none;}')
+  cat('.scroll-table td{padding:6px 10px;text-align:center;border:none;border-bottom:1px solid #eee;background:white;}')
+  cat('.scroll-table tr:nth-child(even) td{background:#f8f9fa;}')
+  cat('</style>')
+  cat('<div class="scroll-table">')
+  cat('<table>')
+  cat('<thead><tr>', paste0('<th>', colnames(dt), '</th>', collapse = ""), '</tr></thead>')
+  cat('<tbody>')
+  for(i in seq_len(nrow(dt))){
+    cat('<tr>', paste0('<td>', as.character(unlist(dt[i, ])), '</td>', collapse = ""), '</tr>')
+  }
+  cat('</tbody>')
+  cat('</table>')
+  cat('</div>')
 }
+
+cat('<div class="result-card">')
+cat('<h3 style="margin-top: 0;">Genes per Analysis and Comparison</h3>')
+cat(paste0('<p>Number of genes passing the enrichment cutoffs (|log2FC| ≥ ',config_json$cutoff_log2fc_enrich[1],' padj ≤ ', config_json$cutoff_padj_enrich[1], ') and used for GSEA:</p>'))
+if(nrow(summary_gene_stats) > 0){
+  cat_sticky_table(summary_gene_stats)
+}
+cat('</div>')
+
+cat('<div class="result-card">')
+cat('<h3 style="margin-top: 0;">Enriched Terms per Analysis and Comparison</h3>')
+cat(paste0('<p>Number of significant terms (adjusted p-value ≤ ',config_json$enrich_padj[1],') found by each enrichment/GSEA method:</p>'))
+if(nrow(summary_enrich_stats) > 0){
+  cat_sticky_table(summary_enrich_stats[, !c("plot_path"), with = FALSE])
+}
+cat('</div>')
 ```
-</div>
+
 
 <div class="info-box">
 <strong>About this report:</strong> This report presents gene enrichment and Gene Set Enrichment Analysis (GSEA) results.
@@ -703,7 +664,8 @@ if(nrow(comparison_dt) > 0){
       "Total Genes" = "Total"
     ) %>%
     align(align = "center") %>%
-    header_style(color = "white", bg = "#2c3e50")
+    color(part = "header", color = "white") %>%
+    bg(part = "header", bg = "#2c3e50")
 
   print(ft)
   cat('</details>')
@@ -746,37 +708,53 @@ if(nrow(comparison_dt) > 0){
 `r if(config_json$onthology[1]==TRUE) '<span class=\"section-badge badge-go\">Gene Ontology</span>'`
 `r if(config_json$onthology[1]==TRUE) '<h2>Gene Ontology Analysis</h2>'`
 
-`r if(config_json$onthology[1]==TRUE) '<details><summary>Biological Process (BP)</summary>'`
+`r if(config_json$onthology[1]==TRUE) '<h3>Biological Process (BP)</h3>'`
+`r if(config_json$onthology[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
 ```{r enrich-BP-modern, echo=FALSE, results='asis'}
 if(config_json$onthology[1]==TRUE){
-  show_result_files("enrichment_GO_", "enrich_GO_BP.tsv", "GO BP Enrichment", "No significant enrichment", "GO BP Enrichment")
+  show_result_files(summary_enrich_stats, "enrichment_GO_BP", "GO BP Enrichment", "No significant enrichment")
 }
 ```
 `r if(config_json$onthology[1]==TRUE) '</details>'`
 
-`r if(config_json$onthology[1]==TRUE) '<details><summary>Molecular Function (MF)</summary>'`
-```{r enrich-MF-modern, echo=FALSE, results='asis'}
-if(config_json$onthology[1]==TRUE){
-  show_result_files("enrichment_GO_", "enrich_GO_MF.tsv", "GO MF Enrichment", "No significant enrichment", "GO MF Enrichment")
-}
-```
-`r if(config_json$onthology[1]==TRUE) '</details>'`
-
-`r if(config_json$onthology[1]==TRUE) '<details><summary>Cellular Component (CC)</summary>'`
-```{r enrich-CC-modern, echo=FALSE, results='asis'}
-if(config_json$onthology[1]==TRUE){
-  show_result_files("enrichment_GO_", "enrich_GO_CC.tsv", "GO CC Enrichment", "No significant enrichment", "GO CC Enrichment")
-}
-```
-`r if(config_json$onthology[1]==TRUE) '</details>'`
-
-`r if(config_json$onthology[1]==TRUE) '<hr>'`
-`r if(config_json$onthology[1]==TRUE) '<h3 style="color:#9b59b6;">GSEA - Gene Set Enrichment Analysis</h3>'`
-
-`r if(config_json$onthology[1]==TRUE) '<details><summary>GSEA Biological Process</summary>'`
+`r if(config_json$onthology[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
 ```{r gsea-BP-modern, echo=FALSE, results='asis'}
 if(config_json$onthology[1]==TRUE){
-  show_result_files("GSEA_GO", "GSEA_GO_BP.tsv", "GSEA GO BP", "No gene set enrichment", "GSEA GO BP")
+  show_result_files(summary_enrich_stats, "GSEA_GO_BP", "GSEA GO BP", "No gene set enrichment")
+}
+```
+`r if(config_json$onthology[1]==TRUE) '</details>'`
+
+`r if(config_json$onthology[1]==TRUE) '<h3>Molecular Function (MF)</h3>'`
+`r if(config_json$onthology[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
+```{r enrich-MF-modern, echo=FALSE, results='asis'}
+if(config_json$onthology[1]==TRUE){
+  show_result_files(summary_enrich_stats, "enrichment_GO_MF", "GO MF Enrichment", "No significant enrichment")
+}
+```
+`r if(config_json$onthology[1]==TRUE) '</details>'`
+
+`r if(config_json$onthology[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
+```{r gsea-MF-modern, echo=FALSE, results='asis'}
+if(config_json$onthology[1]==TRUE){
+  show_result_files(summary_enrich_stats, "GSEA_GO_MF", "GSEA GO MF", "No gene set enrichment")
+}
+```
+`r if(config_json$onthology[1]==TRUE) '</details>'`
+
+`r if(config_json$onthology[1]==TRUE) '<h3>Cellular Component (CC)</h3>'`
+`r if(config_json$onthology[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
+```{r enrich-CC-modern, echo=FALSE, results='asis'}
+if(config_json$onthology[1]==TRUE){
+  show_result_files(summary_enrich_stats, "enrichment_GO_CC", "GO CC Enrichment", "No significant enrichment")
+}
+```
+`r if(config_json$onthology[1]==TRUE) '</details>'`
+
+`r if(config_json$onthology[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
+```{r gsea-CC-modern, echo=FALSE, results='asis'}
+if(config_json$onthology[1]==TRUE){
+  show_result_files(summary_enrich_stats, "GSEA_GO_CC", "GSEA GO CC", "No gene set enrichment")
 }
 ```
 `r if(config_json$onthology[1]==TRUE) '</details>'`
@@ -788,10 +766,10 @@ if(config_json$onthology[1]==TRUE){
 `r if(config_json$kegg[1]==TRUE) '<span class=\"section-badge badge-kegg\">KEGG Pathways</span>'`
 `r if(config_json$kegg[1]==TRUE) '<h2>KEGG Pathway Analysis</h2>'`
 
-`r if(config_json$kegg[1]==TRUE) '<details open><summary>Enrichment Analysis</summary>'`
+`r if(config_json$kegg[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
 ```{r enrich-kegg-modern, echo=FALSE, results='asis'}
 if(config_json$kegg[1]==TRUE){
-  show_result_files("enrichment_KEGG_", "enrich_KEGG.tsv", "KEGG Enrichment", "No significant enrichment", "KEGG Enrichment")
+  show_result_files(summary_enrich_stats, "enrichment_KEGG", "KEGG Enrichment", "No significant enrichment")
 }
 ```
 `r if(config_json$kegg[1]==TRUE) '</details>'`
@@ -799,7 +777,7 @@ if(config_json$kegg[1]==TRUE){
 `r if(config_json$kegg[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
 ```{r gsea-kegg-modern, echo=FALSE, results='asis'}
 if(config_json$kegg[1]==TRUE){
-  show_result_files("GSEA_KEGG", "GSEA_KEGG.tsv", "GSEA KEGG", "No gene set enrichment", "GSEA KEGG")
+  show_result_files(summary_enrich_stats, "GSEA_KEGG", "GSEA KEGG", "No gene set enrichment")
 }
 ```
 `r if(config_json$kegg[1]==TRUE) '</details>'`
@@ -810,10 +788,10 @@ if(config_json$kegg[1]==TRUE){
 `r if(config_json$reactome[1]==TRUE) '<span class=\"section-badge badge-reactome\">Reactome Pathways</span>'`
 `r if(config_json$reactome[1]==TRUE) '<h2>Reactome Pathway Analysis</h2>'`
 
-`r if(config_json$reactome[1]==TRUE) '<details open><summary>Enrichment Analysis</summary>'`
+`r if(config_json$reactome[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
 ```{r enrich-reactome-modern, echo=FALSE, results='asis'}
 if(config_json$reactome[1]==TRUE){
-  show_result_files("enrichment_REACTOME_", "enrich_REACTOME.tsv", "Reactome Enrichment", "No significant enrichment", "Reactome Enrichment")
+  show_result_files(summary_enrich_stats, "enrichment_REACTOME", "Reactome Enrichment", "No significant enrichment")
 }
 ```
 `r if(config_json$reactome[1]==TRUE) '</details>'`
@@ -821,7 +799,7 @@ if(config_json$reactome[1]==TRUE){
 `r if(config_json$reactome[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
 ```{r gsea-reactome-modern, echo=FALSE, results='asis'}
 if(config_json$reactome[1]==TRUE){
-  show_result_files("GSEA_REACTOME", "GSEA_REACTOME.tsv", "GSEA Reactome", "No gene set enrichment", "GSEA Reactome")
+  show_result_files(summary_enrich_stats, "GSEA_REACTOME", "GSEA Reactome", "No gene set enrichment")
 }
 ```
 `r if(config_json$reactome[1]==TRUE) '</details>'`
@@ -832,10 +810,10 @@ if(config_json$reactome[1]==TRUE){
 `r if(config_json$wikipathways[1]==TRUE) '<span class=\"section-badge badge-wp\">WikiPathways</span>'`
 `r if(config_json$wikipathways[1]==TRUE) '<h2>WikiPathways Analysis</h2>'`
 
-`r if(config_json$wikipathways[1]==TRUE) '<details open><summary>Enrichment Analysis</summary>'`
+`r if(config_json$wikipathways[1]==TRUE) '<details><summary>Enrichment Analysis</summary>'`
 ```{r enrich-wp-modern, echo=FALSE, results='asis'}
 if(config_json$wikipathways[1]==TRUE){
-  show_result_files("enrichment_WP_", "enrich_WP.tsv", "WikiPathways Enrichment", "No significant enrichment", "WikiPathways Enrichment")
+  show_result_files(summary_enrich_stats, "enrichment_WP", "WikiPathways Enrichment", "No significant enrichment")
 }
 ```
 `r if(config_json$wikipathways[1]==TRUE) '</details>'`
@@ -843,7 +821,7 @@ if(config_json$wikipathways[1]==TRUE){
 `r if(config_json$wikipathways[1]==TRUE) '<details><summary>GSEA Analysis</summary>'`
 ```{r gsea-wp-modern, echo=FALSE, results='asis'}
 if(config_json$wikipathways[1]==TRUE){
-  show_result_files("GSEA_WP", "GSEA_WP.tsv", "GSEA WikiPathways", "No gene set enrichment", "GSEA WikiPathways")
+  show_result_files(summary_enrich_stats, "GSEA_WP", "GSEA WikiPathways", "No gene set enrichment")
 }
 ```
 `r if(config_json$wikipathways[1]==TRUE) '</details>'`
@@ -854,44 +832,10 @@ if(config_json$wikipathways[1]==TRUE){
 `r if(config_json$gseapy_enrichr[1]==TRUE) '<span class=\"section-badge badge-enrichr\">EnrichR</span>'`
 `r if(config_json$gseapy_enrichr[1]==TRUE) '<h2>EnrichR Analysis</h2>'`
 
-`r if(config_json$gseapy_enrichr[1]==TRUE) paste0('<details open><summary>EnrichR Results (', config_json$enrichR_DB[1], ')</summary>')`
+`r if(config_json$gseapy_enrichr[1]==TRUE) paste0('<details><summary>EnrichR Results (', config_json$enrichR_DB[1], ')</summary>')`
 ```{r enrich-enrichr-modern, echo=FALSE, results='asis'}
 if(config_json$gseapy_enrichr[1]==TRUE){
-  # Find all enrichr plot files (DE_analysis/comparison/enrichr_X/DB.org.enrichr.reports.svg)
-  # by listing inside each DE_* folder, as for the other databases
-  svg_pat <- paste0(config_json$enrichR_DB[1], ".", config_json$organism_enrichR[1], ".enrichr.reports.svg")
-  dt <- data.table(tablpath = character(0))
-  for(d in DE){
-    files <- list.files(path = d, pattern = gsub(".", "\\.", svg_pat), full.names = TRUE, recursive = TRUE)
-    if(length(files) > 0){
-      dt <- rbindlist(list(dt, data.table(tablpath = files)), fill = TRUE)
-    }
-  }
-
-  if(nrow(dt) == 0){
-    cat('<div class="info-box">No EnrichR results found.</div>')
-  } else {
-    dt[, de := unlist(strsplit(tablpath, "/"))[1], by = .(tablpath)]
-    dt[, comp := unlist(strsplit(tablpath, "/"))[2], by = .(tablpath)]
-    dt[, subdir_name := unlist(strsplit(tablpath, "/"))[3], by = .(tablpath)]
-    dt[, enrich := ifelse(grepl("_(all|up|down)$", subdir_name), sub(".*_", "", subdir_name), "")]
-    for(i in seq_len(nrow(dt))){
-      # Check the associated result table: warn if it contains no terms
-      tab <- paste0(dirname(dt$tablpath[i]), "/",
-                    config_json$enrichR_DB[1], ".", config_json$organism_enrichR[1], ".enrichr.reports.txt")
-      n_terms <- 0
-      if(file.exists(tab)){
-        tab_content <- tryCatch(fread(tab), error = function(e) NULL)
-        n_terms <- if(is.null(tab_content)) 0 else nrow(tab_content)
-      }
-      if(n_terms == 0){
-        cat(paste0('<div class="warning-box"><strong>No significant enrichment</strong> for ',
-                   dt$de[i], ' - ', dt$comp[i], '</div>'))
-      } else {
-        print_figure(dt$tablpath[i], dt$de[i], dt$comp[i], dt$enrich[i], "EnrichR Results", "EnrichR Enrichment")
-      }
-    }
-  }
+  show_result_files(summary_enrich_stats, "enrichR", "EnrichR", "No gene set enrichment")
 }
 ```
 `r if(config_json$gseapy_enrichr[1]==TRUE) '</details>'`
