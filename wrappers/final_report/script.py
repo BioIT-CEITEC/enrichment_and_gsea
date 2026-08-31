@@ -11,11 +11,11 @@ f = open(log_filename, 'a+')
 f.write("\n##\n## RULE: final_report \n##\n")
 f.close()
 
-command = " cp '"+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GSEA_final_report_modern.Rmd' enrichment_gsea/"
+command = " cp '"+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GSEA_final_report.Rmd' enrichment_gsea/"
 
 shell(command)
 
-command = """ Rscript -e "rmarkdown::render('enrichment_gsea/enrichment_GSEA_final_report_modern.Rmd', params=list(config = '""" + snakemake.params.config + """' ))" """ +\
+command = """ Rscript -e "rmarkdown::render('enrichment_gsea/enrichment_GSEA_final_report.Rmd', params=list(config = '""" + snakemake.params.config + """' ))" """ +\
             " >> " + log_filename + " 2>&1 "
 
 f = open(log_filename, 'a+')
@@ -28,6 +28,6 @@ f = open(log_filename, 'a+')
 f.write("## COMMAND: "+command+"\n")
 shell(command)
 
-command = " rm enrichment_gsea/enrichment_GSEA_final_report_modern.Rmd"
+command = " rm enrichment_gsea/enrichment_GSEA_final_report.Rmd"
 
 shell(command)
