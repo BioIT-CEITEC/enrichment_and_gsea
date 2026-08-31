@@ -2,6 +2,7 @@
 # wrapper for rule: enrichment_enrichr
 #############################################################
 import os
+import subprocess
 import sys
 import time
 from snakemake.shell import shell
@@ -38,8 +39,9 @@ if os.path.getsize(snakemake.params.gene_list) > 0:
     f.write("## COMMAND: " + command + "\n")
 
     # Run gseapy, capturing stderr to a per-run temp file. The exit code is
-    # captured (has_fail=True) instead of being masked with "|| true" so real
-    # failures are detected, not just the "no enrich terms" ValueError.
+    # captured via subprocess.run (no raise on non-zero) instead of being
+    # masked with "|| true", so real failures are detected, not just the
+    # "no enrich terms" ValueError.
     error_log = snakemake.params.outdir + "/gseapy_error.tmp"
     command_with_capture = command + " 2> " + error_log
 
@@ -52,7 +54,12 @@ if os.path.getsize(snakemake.params.gene_list) > 0:
     failed = False
     error_content = ""
     for attempt in range(1, max_attempts + 1):
-        failed = shell(command_with_capture, has_fail=True)
+        # shell.has_fail is not available in all Snakemake versions, so run
+        # the command directly; stderr is already redirected to error_log by
+        # the shell redirection in the command itself. check=False keeps the
+        # exit code for inspection instead of raising.
+        proc = subprocess.run(["/bin/bash", "-c", command_with_capture], check=False)
+        failed = proc.returncode != 0
         error_content = ""
         if os.path.exists(error_log):
             with open(error_log, 'r') as errf:
