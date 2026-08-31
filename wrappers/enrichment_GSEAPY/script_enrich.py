@@ -17,7 +17,7 @@ f.write("## COMMAND: " + command + "\n")
 shell(command)
 
 # Generate gene list
-command = "awk -F'\t' '$1 != $2' " + snakemake.input.tsv + " | cut -f 2 | tail -n +2 | sed -e 's/__.*$//' | sort | uniq > " + snakemake.params.gene_list
+command = "awk -F'\t' '$1 != $2' " + snakemake.input.tsv + " | cut -f 2 | tail -n +2 | sed -e 's/__.*$//' | sort | uniq | grep -v '^$' > " + snakemake.params.gene_list
 f = open(log_filename, 'a+')
 f.write("## COMMAND: " + command + "\n")
 shell(command)
