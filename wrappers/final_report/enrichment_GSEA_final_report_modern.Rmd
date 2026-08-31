@@ -20,8 +20,7 @@ output:
     css: styles_modern.css
     self_contained: false
 params:
-  # config parameter kept for snakemake compatibility but not used
-  config: ""
+  config: snakemake.params.config
 ---
 
 ```{r setup, include=FALSE}
@@ -39,11 +38,11 @@ set_flextable_defaults(
   font.family = "Segoe UI",
   font.size = 11,
   padding.top = 4,
-  padding.bottom = 4,
-  border.top = NULL,
-  border.bottom = NULL,
-  border.left = NULL,
-  border.right = NULL
+  padding.bottom = 4#,
+  # border.top = NULL,
+  # border.bottom = NULL,
+  # border.left = NULL,
+  # border.right = NULL
 )
 ```
 
@@ -297,7 +296,7 @@ pre {
 ```{r load-config-data, include=FALSE}
 # Load config data - assumes running from enrichment_gsea/ directory
 # where config_enrichment_gsea.json is located
-config_json <- as.data.table(fromJSON("config_enrichment_gsea.json"))
+config_json <- as.data.table(fromJSON(txt = params$config))
 config_json[,condition := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$condition)]
 config_json[,tag       := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$tag)]
 config_json[,full_name := sapply(1:length(config_json$samples),function(x) config_json$samples[[x]]$sample_name)]
