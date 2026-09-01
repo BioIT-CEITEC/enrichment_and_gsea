@@ -18,7 +18,7 @@ output:
       collapsed: false
       smooth_scroll: true
     css: styles_modern.css
-    self_contained: false
+    self_contained: true
 params:
   config: snakemake.params.config
 ---
@@ -339,6 +339,18 @@ build_result_table <- function(subdir, filename){
   dt
 }
 
+# Helper: read an image file and return it as a base64 data URI, so plots are
+# embedded directly in the HTML (fully standalone, single-file report).
+img_data_uri <- function(path){
+  ext <- tolower(tools::file_ext(path))
+  mime <- switch(ext, png = "image/png", jpg = "image/jpeg",
+                 jpeg = "image/jpeg", gif = "image/gif",
+                 svg = "image/svg+xml", "image/png")
+  b64 <- jsonlite::base64_enc(readBin(path, what = "raw",
+                                      n = file.info(path)$size))
+  paste0("data:", mime, ";base64,", b64)
+}
+
 # Helper: print a figure container with a readable title
 # (plot name - analysis - comparison [- gene set])
 print_figure <- function(plotpath, de, comp, enrich, alt_text, plot_title = "Enrichment"){
@@ -349,7 +361,7 @@ print_figure <- function(plotpath, de, comp, enrich, alt_text, plot_title = "Enr
   cat('<div class="figure-container">')
   cat('<h4>', title, '</h4>')
   if(file.exists(plotpath)){
-    cat('<img src="', plotpath, '" alt="', alt_text, '">', sep="")
+    cat('<img src="', img_data_uri(plotpath), '" alt="', alt_text, '">', sep="")
   }
   cat('</div>')
 }
@@ -373,7 +385,7 @@ show_result_files <- function(stats, pattern, alt_text, warn_msg){
       cat('<div class="figure-container">')
       cat('<h4>', title, '</h4>')
       if(file.exists(dt$plot_path[i])){
-        cat('<img src="', dt$plot_path[i], '" alt="', alt_text, '">', sep="")
+        cat('<img src="', img_data_uri(dt$plot_path[i]), '" alt="', alt_text, '">', sep="")
       }
       cat('</div>')
     }
