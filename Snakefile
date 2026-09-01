@@ -130,6 +130,7 @@ if config["kallisto"]:
 if len(analysis) == 0:
     raise ValueError("There was no RSEM or featureCount used in previous analysis!")
 
+config["kegg_path"] = os.path.join(GLOBAL_REF_PATH.replace("base/references_backup", "resources"), "tools","KEGG", config["organism_kegg"])
 
 def get_comparison_dir_list(condition_list):
     comparison_dir_list = list()
@@ -177,10 +178,10 @@ f.close()
 wildcard_constraints:
     sample = "|".join(sample_tab.sample_name) + "|all_samples",
     lib_name = "[^\.\/]+",
-    analysis_type= "featureCount_exon|featureCount_gene|featureCount_transcript|featureCount_3pUTRn|featureCount_5pUTR|HTSeqCount_exon|HTSeqCount_gene|HTSeqCount_transcript|HTSeqCount_3pUTRn|HTSeqCount_5pUTR|RSEM|salmon_map|salmon_align|kallisto",
+    analysis_type= "featureCount_exon|featureCount_gene|featureCount_transcript|featureCount_3pUTR|featureCount_5pUTR|HTSeqCount_exon|HTSeqCount_gene|HTSeqCount_transcript|HTSeqCount_3pUTRn|HTSeqCount_5pUTR|RSEM|salmon_map|salmon_align|kallisto",
     condition_list = "|".join(condition_list),
     biotype = "|".join(biotype_dir_list),
-    comparison = "|".join(comparison_dir_list)
+    comparison = "|".join(comparison_dir_list),
     enrich = "all|up|down"
 
 ##### Target rules #####

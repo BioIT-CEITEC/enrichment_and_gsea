@@ -45,33 +45,33 @@ run_all <- function(args){
 
       if (is.entrez == FALSE){
         tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+                      by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
       }else{
         tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
+                      by="ENTREZID", all.x=T, allow.cartesian=TRUE)
       }
       tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
       setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
     }else{
       tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                          by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-      ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+                          by = .(ID, Description, NES, pvalue, p.adjust, qvalue, core_enrichment)
+      ][,.(ID, Description, NES, pvalue, p.adjust, qvalue, geneID = V1)]
 
       if (is.entrez == FALSE){
         tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENSEMBL", all.x=T)
+                      by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
       }else{
         tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                      by="ENTREZID", all.x=T)
+                      by="ENTREZID", all.x=T, allow.cartesian=TRUE)
       }
-      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+      tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
       setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
     }
     return(tabl)
   }
 
   ## select just entrez id and stat/logFC
-  genes <- deseq2_tab[,.(Geneid, logFC = log2FoldChange)]
+  genes <- deseq2_tab[!is.na(Geneid) & !duplicated(Geneid),.(Geneid, logFC = log2FoldChange)]
   ## remove NA values
   genes <- na.omit(genes)
   ## order by decreasing logFC
@@ -98,9 +98,11 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOBP <- as.data.table(gseaGOBP)
+  setnames(dtgseaGOBP, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOBP$ID) > 0){
     dtgseaGOBPex <- convert_geneid(dtgseaGOBP, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOBPex, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP_extended.tsv"), sep="\t")
+    saveRDS(gseaGOBP, file = paste0(OUTPUT_DIR, "/GSEA_GO_BP.rds"))
   }
   fwrite(dtgseaGOBP, file = paste0(OUTPUT_DIR,"/GSEA_GO_BP.tsv"), sep="\t")
 
@@ -117,9 +119,11 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOMF <- as.data.table(gseaGOMF)
+  setnames(dtgseaGOMF, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOMF$ID) > 0){
     dtgseaGOMFex <- convert_geneid(dtgseaGOMF, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOMFex, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF_extended.tsv"), sep="\t")
+    saveRDS(gseaGOMF, file = paste0(OUTPUT_DIR, "/GSEA_GO_MF.rds"))
   }
   fwrite(dtgseaGOMF, file = paste0(OUTPUT_DIR,"/GSEA_GO_MF.tsv"), sep="\t")
 
@@ -136,9 +140,11 @@ run_all <- function(args){
                     by            = gsea_by)
 
   dtgseaGOCC <- as.data.table(gseaGOCC)
+  setnames(dtgseaGOCC, "qvalues", "qvalue", skip_absent = T) # sanity check, as some version have qvalues
   if(length(dtgseaGOCC$ID) > 0){
     dtgseaGOCCex <- convert_geneid(dtgseaGOCC, deseq2_tab, is.gsea = T, is.entrez = F)
     fwrite(dtgseaGOCCex, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC_extended.tsv"), sep="\t")
+    saveRDS(gseaGOCC, file = paste0(OUTPUT_DIR, "/GSEA_GO_CC.rds"))
   }
   fwrite(dtgseaGOCC, file = paste0(OUTPUT_DIR,"/GSEA_GO_CC.tsv"), sep="\t")
 

@@ -15,6 +15,12 @@ command = " cp '"+os.path.abspath(os.path.dirname(__file__))+"/enrichment_GSEA_f
 
 shell(command)
 
+# the CSS is inlined by pandoc (self_contained: true), so it must sit next to
+# the copied Rmd in the render directory
+command = " cp '"+os.path.abspath(os.path.dirname(__file__))+"/styles_modern.css' enrichment_gsea/"
+
+shell(command)
+
 command = """ Rscript -e "rmarkdown::render('enrichment_gsea/enrichment_GSEA_final_report.Rmd', params=list(config = '""" + snakemake.params.config + """' ))" """ +\
             " >> " + log_filename + " 2>&1 "
 
@@ -28,6 +34,6 @@ f = open(log_filename, 'a+')
 f.write("## COMMAND: "+command+"\n")
 shell(command)
 
-command = " rm enrichment_gsea/enrichment_GSEA_final_report.Rmd"
+command = " rm enrichment_gsea/enrichment_GSEA_final_report.Rmd enrichment_gsea/styles_modern.css"
 
 shell(command)

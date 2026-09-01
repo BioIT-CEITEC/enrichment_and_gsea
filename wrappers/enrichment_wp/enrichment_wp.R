@@ -42,26 +42,26 @@ run_all <- function(args){
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
         tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }else{
         tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                            by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-        ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+                            by = .(ID, Description, NES, pvalue, p.adjust, qvalue, core_enrichment)
+        ][,.(ID, Description, NES, pvalue, p.adjust, qvalue, geneID = V1)]
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
-        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
       return(tabl)
@@ -78,12 +78,13 @@ run_all <- function(args){
     dtewp <- as.data.table(ewp)
     if(length(dtewp$ID) > 0){
       dtewpex <- convert_geneid(dtewp, deseq2_tab, is.gsea = F, is.entrez = T)
-      fwrite(dtewpex, file = paste0(OUTPUT_DIR,"/WP_enrich_extended.tsv"), sep="\t")
+      fwrite(dtewpex, file = paste0(OUTPUT_DIR,"/enrich_WP_extended.tsv"), sep="\t")
+      saveRDS(ewp, file = paste0(OUTPUT_DIR, "/enrich_WP.rds"))
     }else{
         dtewp<-emptytable
     }
   }
-  fwrite(dtewp, file = paste0(OUTPUT_DIR,"/WP_enrich.tsv"), sep="\t")
+  fwrite(dtewp, file = paste0(OUTPUT_DIR,"/enrich_WP.tsv"), sep="\t")
 
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtewp,
@@ -122,11 +123,11 @@ run_all <- function(args){
                              PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "WikiPathways")
-  ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.pdf",sep=""),
+  ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/enrich_WP.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.svg",sep=""),
+  ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/enrich_WP.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  # ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/WP_enrich.png",sep=""),
+  # ggsave(WP_plot, filename = paste0(OUTPUT_DIR,"/enrich_WP.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
 
 }

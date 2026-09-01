@@ -5,13 +5,13 @@ run_all <- function(args){
   output_gsea <- args[3]
   output_universe <- args[4]
   organism <- args[5]
-  cutoff_log2fc_enrich <- as.numeric(args[6])
-  cutoff_padj_enrich <- as.numeric(args[7])
-  cutoff_log2fc_gsea <- as.numeric(args[8])
-  cutoff_padj_gsea <- as.numeric(args[9])
+  cutoff_log2fc_enrich <- as.numeric(eval(parse(text=args[6]))) # allow to recognise input like "log2(1.5)"
+  cutoff_padj_enrich <- as.numeric(eval(parse(text=args[7])))
+  cutoff_log2fc_gsea <- as.numeric(eval(parse(text=args[8])))
+  cutoff_padj_gsea <- as.numeric(eval(parse(text=args[9])))
 
-  output_enrich_up <- paste0(sub(".tsv", "", output_enrich), "_up.tsv")
-  output_enrich_down <- paste0(sub(".tsv", "", output_enrich), "_down.tsv")
+  output_enrich_up <- gsub("_all.tsv", "_up.tsv", output_enrich)
+  output_enrich_down <- gsub("_all.tsv", "_down.tsv", output_enrich)
 
   library("data.table")
 

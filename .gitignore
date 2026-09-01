@@ -1,0 +1,21 @@
+# IDE directories
+.idea/
+.vscode/
+logs/
+enrichment_gsea/
+DE_HTSeqCount_3pUTR/
+DE_HTSeqCount_5pUTR/
+DE_HTSeqCount_exon/
+DE_HTSeqCount_gene/
+DE_HTSeqCount_transcript/
+DE_RSEM/
+DE_featureCount_3pUTR/
+DE_featureCount_5pUTR/
+DE_featureCount_exon/
+DE_featureCount_gene/
+DE_featureCount_transcript/
+DE_kallisto/
+DE_salmon_align/
+DE_salmon_map/
+config.json
+config_demo.json

@@ -15,6 +15,8 @@ command = " Rscript "+os.path.abspath(os.path.dirname(__file__))+"/enrichment_ke
             snakemake.input.tsv + " " +\
             snakemake.params.outdir + " " +\
             snakemake.params.organism_kegg + " " +\
+            snakemake.params.kegg2desc + " " +\
+            snakemake.params.kegg2gene + " " +\
             snakemake.params.n_up + " " +\
             snakemake.params.colors + " " +\
             snakemake.params.enrich_padj + " " +\

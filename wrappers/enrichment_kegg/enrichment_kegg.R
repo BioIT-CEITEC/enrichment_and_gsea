@@ -3,13 +3,15 @@ run_all <- function(args){
   input_genes <- args[1]
   OUTPUT_DIR <- args[2]
   organism_kegg <- args[3]
-  n_up <- as.integer(args[4])
-  COLORS <- unlist(strsplit(args[5],split=":"))[1]
-  enrich_padj <- as.numeric(args[6])
-  enrich_padjmethod <- args[7]
-  enrich_minGSSize <- as.numeric(args[8])
-  enrich_maxGSSize <- as.numeric(args[9])
-  input_universe <- args[10]
+  kegg2desc.file <- args[4]
+  kegg2gene.file <- args[5]
+  n_up <- as.integer(args[6])
+  COLORS <- unlist(strsplit(args[7],split=":"))[1]
+  enrich_padj <- as.numeric(args[8])
+  enrich_padjmethod <- args[9]
+  enrich_minGSSize <- as.numeric(args[10])
+  enrich_maxGSSize <- as.numeric(args[11])
+  input_universe <- args[12]
 
   library("data.table")
   library("clusterProfiler")
@@ -22,6 +24,9 @@ run_all <- function(args){
   deseq2_tab <- fread(input_genes)
   deseq2_tab$ENTREZID <- as.character(deseq2_tab$ENTREZID)
   deseq2_tab <- unique(deseq2_tab)
+
+  kegg2desc <- fread(kegg2desc.file, header=F)
+  kegg2gene <- fread(kegg2gene.file, header=F)
 
   if(dir.exists(OUTPUT_DIR)==F){
     dir.create(OUTPUT_DIR, recursive = T)
@@ -45,45 +50,61 @@ run_all <- function(args){
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
         tabl <- tabl[, .(ID, Description, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }else{
         tabl <- setDT(dt)[, strsplit(as.character(core_enrichment), "/", fixed=TRUE),
-                            by = .(ID, Description, NES, pvalue, p.adjust, qvalues, core_enrichment)
-        ][,.(ID, Description, NES, pvalue, p.adjust, qvalues, geneID = V1)]
+                            by = .(ID, Description, NES, pvalue, p.adjust, qvalue, core_enrichment)
+        ][,.(ID, Description, NES, pvalue, p.adjust, qvalue, geneID = V1)]
 
         if (is.entrez == FALSE){
           tabl <- merge(tabl[, ENSEMBL := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENSEMBL", all.x=T)
+                        by="ENSEMBL", all.x=T, allow.cartesian=TRUE)
         }else{
           tabl <- merge(tabl[, ENTREZID := geneID], deseq_tab[, .(ENSEMBL = Geneid, gene_name, ENTREZID)],
-                        by="ENTREZID", all.x=T)
+                        by="ENTREZID", all.x=T, allow.cartesian=TRUE)
         }
-        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalues, ENSEMBL, gene_name, ENTREZID)]
+        tabl <- tabl[, .(ID, Description, NES, pvalue, p.adjust, qvalue, ENSEMBL, gene_name, ENTREZID)]
         setorder(tabl, p.adjust, pvalue, ID, ENSEMBL)
       }
       return(tabl)
     }
 
     if(organism_kegg != "ath"){
-      ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+      # ekegg <- enrichKEGG(gene        = deseq2_tab$ENTREZID,
+      #                   universe      = universe$ENTREZID,
+      #                   organism      = organism_kegg,
+      #                   keyType       = "kegg",
+      #                   pAdjustMethod = enrich_padjmethod,
+      #                   pvalueCutoff  = enrich_padj,
+      #                   minGSSize     = enrich_minGSSize,
+      #                   maxGSSize     = enrich_maxGSSize)
+      ekegg <- enricher(gene          = deseq2_tab$ENTREZID,
                         universe      = universe$ENTREZID,
-                        organism      = organism_kegg,
-                        keyType       = "kegg",
+                        TERM2GENE     = kegg2gene,
+                        TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,
                         pvalueCutoff  = enrich_padj,
                         minGSSize     = enrich_minGSSize,
                         maxGSSize     = enrich_maxGSSize)
     }else{
-      ekegg <- enrichKEGG(gene        = deseq2_tab$Geneid,
+      # ekegg <- enrichKEGG(gene        = deseq2_tab$Geneid,
+      #                   universe      = universe$TAIR,
+      #                   organism      = organism_kegg,
+      #                   keyType       = "kegg",
+      #                   pAdjustMethod = enrich_padjmethod,
+      #                   pvalueCutoff  = enrich_padj,
+      #                   minGSSize     = enrich_minGSSize,
+      #                   maxGSSize     = enrich_maxGSSize)
+      ekegg <- enricher(gene          = deseq2_tab$Geneid,
                         universe      = universe$TAIR,
-                        organism      = organism_kegg,
-                        keyType       = "kegg",
+                        TERM2GENE     = kegg2gene,
+                        TERM2NAME     = kegg2desc,
                         pAdjustMethod = enrich_padjmethod,
                         pvalueCutoff  = enrich_padj,
                         minGSSize     = enrich_minGSSize,
@@ -92,18 +113,19 @@ run_all <- function(args){
 
     dtekegg <- as.data.table(ekegg)
     if(length(dtekegg$ID) > 0){
+      saveRDS(ekegg, file = paste0(OUTPUT_DIR, "/enrich_KEGG.rds"))
       if(organism_kegg != "ath"){
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = T)
-        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/enrich_KEGG_extended.tsv"), sep="\t")
       }else{
         dtekeggex <- convert_geneid(dtekegg, deseq2_tab, is.gsea = F, is.entrez = F)
-        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/KEGG_enrich_extended.tsv"), sep="\t")
+        fwrite(dtekeggex, file = paste0(OUTPUT_DIR,"/enrich_KEGG_extended.tsv"), sep="\t")
       }
     }else{
         dtekegg<-emptytable
     }
   }
-  fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/KEGG_enrich.tsv"), sep="\t")
+  fwrite(dtekegg, file = paste0(OUTPUT_DIR,"/enrich_KEGG.tsv"), sep="\t")
 
   # Plot enrichment plot
   myEnrichPlot <- function(go.table = dtekegg,
@@ -142,11 +164,11 @@ run_all <- function(args){
                              PADJ = enrich_padj,
                              mycol = COLORS,
                              ploTitle = "KEGG pathways")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.pdf",sep=""),
+  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.pdf",sep=""),
        width = 10, height = 7, device = "pdf")
-  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.svg",sep=""),
+  ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.svg",sep=""),
        width = 10, height = 7, device = "svg")
-  # ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/KEGG_enrich.png",sep=""),
+  # ggsave(KEGG_plot, filename = paste0(OUTPUT_DIR,"/enrich_KEGG.png",sep=""),
   #      width = 10, height = 7, device = "png", bg='transparent')
 
 }
